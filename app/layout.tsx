@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata = {
@@ -5,7 +6,7 @@ export const metadata = {
   description: 'One Frequency. Many Worlds.',
 };
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default function RootLayout(props: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>{props.children}</body>
