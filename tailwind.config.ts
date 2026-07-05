@@ -7,6 +7,13 @@ const config: Config = {
       colors: {
         void: '#030006',
         obsidian: '#090012',
+        purple: {
+          100: '#f3e8ff',
+          200: '#e9d5ff',
+          300: '#d8b4fe',
+          400: '#c084fc',
+          500: '#a855f7',
+        },
         harmonic: {
           purple: '#8b5cf6',
           neon: '#b76cff',
