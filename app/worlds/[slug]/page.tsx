@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { FrequencyDock } from '@/components/FrequencyDock';
 
 const worlds = {
   melodic: {
@@ -63,7 +64,8 @@ export default function WorldPage({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <main className="min-h-screen px-6 py-8">
+    <main className="min-h-screen px-6 py-8 pb-28">
+      <FrequencyDock />
       <div className="harmonic-container">
         <Link href="/#worlds" className="inline-flex rounded-full border border-white/15 px-5 py-3 text-sm font-bold text-purple-100/75 glass-panel">
           ← Back to OS
