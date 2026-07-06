@@ -5,10 +5,12 @@ import { FourWorlds } from '@/components/FourWorlds';
 import { JoinDaSymphony } from '@/components/JoinDaSymphony';
 import { HarmonicBiblePreview } from '@/components/HarmonicBiblePreview';
 import { Footer } from '@/components/Footer';
+import { FrequencyDock } from '@/components/FrequencyDock';
 
 export default function Home() {
   return (
-    <main>
+    <main className="pb-28">
+      <FrequencyDock />
       <BootLoader />
       <Hero />
       <FutureBootSequence />
