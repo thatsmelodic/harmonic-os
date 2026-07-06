@@ -1,11 +1,7 @@
 /**
  * Design Tokens
- * 
+ *
  * Centralized design values for Harmonic OS.
- * Used across components for consistency.
- * Editable for future Harmony Core (v0.4) integration.
- * 
- * Reference: docs/codex/04-brand-dna.md
  */
 
 export const COLORS = {
@@ -30,7 +26,9 @@ export const COLORS = {
     friedem: '#f97316',
     schmackinn: '#06b6d4',
   },
-};\n\nexport const TIMING = {
+};
+
+export const TIMING = {
   fast: 0.2,
   normal: 0.3,
   slow: 0.5,
