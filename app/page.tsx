@@ -1,7 +1,4 @@
-import { BootLoader } from '@/components/BootLoader';
-import { Hero } from '@/components/Hero';
-import { FutureBootSequence } from '@/components/FutureBootSequence';
-import { FourWorlds } from '@/components/FourWorlds';
+import { IdentityHero } from '@/components/brand/IdentityHero';
 import { CommandHub } from '@/components/CommandHub';
 import { JoinDaSymphony } from '@/components/JoinDaSymphony';
 import { HarmonicBiblePreview } from '@/components/HarmonicBiblePreview';
@@ -12,10 +9,7 @@ export default function Home() {
   return (
     <main className="pb-28">
       <FrequencyDock />
-      <BootLoader />
-      <Hero />
-      <FutureBootSequence />
-      <FourWorlds />
+      <IdentityHero />
       <div id="hub">
         <CommandHub />
       </div>
