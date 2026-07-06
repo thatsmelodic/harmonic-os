@@ -1,5 +1,6 @@
 import { creatorControls, defaultCopy } from '@/lib/cms-schema';
 import { databaseTables, platformStack, storageBuckets } from '@/lib/storage-plan';
+import { SupabaseStatus } from './SupabaseStatus';
 
 export function CreatorStudioPreview() {
   return (
@@ -8,6 +9,10 @@ export function CreatorStudioPreview() {
         <p className="text-sm uppercase tracking-[0.4em] text-purple-200/60">Creator Studio</p>
         <h2 className="mt-3 text-4xl font-black md:text-6xl">This is where you control the OS.</h2>
         <p className="mt-4 max-w-3xl leading-7 text-purple-100/65">The next layer turns the Hub into your CMS: edit words, upload assets, activate seasons, manage worlds, schedule content, and control community.</p>
+      </div>
+
+      <div className="mb-5">
+        <SupabaseStatus />
       </div>
 
       <div className="grid gap-5 md:grid-cols-[1fr_.9fr]">
