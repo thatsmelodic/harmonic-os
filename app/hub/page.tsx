@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { FrequencyDock } from '@/components/FrequencyDock';
 import { VersionOneDashboard } from '@/components/VersionOneDashboard';
+import { V1Roadmap } from '@/components/V1Roadmap';
 
 export const metadata = {
   title: 'Creator Hub | Harmonic OS',
@@ -15,6 +16,7 @@ export default function HubPage() {
         <Link href="/" className="inline-flex rounded-full border border-white/15 px-5 py-3 text-sm font-bold text-purple-100/75 glass-panel">← Back to OS</Link>
       </div>
       <VersionOneDashboard />
+      <V1Roadmap />
     </main>
   );
 }
