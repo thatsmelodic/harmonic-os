@@ -25,7 +25,7 @@ const worldLore = [
 
 export function HarmonicBiblePreview() {
   return (
-    <section id="bible" className="harmonic-container py-24">
+    <section id="bible" className="harmonic-container py-20 md:py-24">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm uppercase tracking-[0.4em] text-purple-200/60">The Harmonic Bible</p>
@@ -36,22 +36,23 @@ export function HarmonicBiblePreview() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_1.2fr] items-stretch">
-        <div className="glass-panel rounded-[2rem] p-8 flex flex-col justify-between">
-          <div>
+      <div className="grid items-stretch gap-6 md:grid-cols-[1fr_1.2fr]">
+        <div className="glass-panel relative flex flex-col justify-between overflow-hidden rounded-[2rem] p-8">
+          <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-purple-300/15 blur-3xl" />
+          <div className="relative">
             <p className="text-xs uppercase tracking-[0.35em] text-purple-200/45">Origin Sequence</p>
             <p className="mt-5 text-lg leading-8 text-purple-100/75">
               The Cup pours creative frequency. The frequency forms the Heart. The Heart opens many worlds from one source. Harmonic OS is the interface where that story becomes usable.
             </p>
           </div>
-          <a href="#bible-worlds" className="mt-8 inline-flex w-fit rounded-full border border-white/15 px-5 py-3 font-bold text-purple-100 transition hover:border-purple-200/60 hover:bg-white/10">
+          <a href="#bible-worlds" className="relative mt-8 inline-flex w-fit rounded-full border border-white/15 px-5 py-3 font-bold text-purple-100 transition hover:border-purple-200/60 hover:bg-white/10">
             Read the World Lore
           </a>
         </div>
 
         <div className="grid gap-4">
           {loreEntries.map((entry) => (
-            <article key={entry.title} className="glass-panel rounded-[2rem] p-6">
+            <article key={entry.title} className="portal-sheen glass-panel rounded-[2rem] p-6 transition hover:-translate-y-1 hover:shadow-purple-glow">
               <p className="text-xs uppercase tracking-[0.3em] text-purple-200/45">{entry.label}</p>
               <h3 className="mt-3 text-2xl font-black text-purple-50">{entry.title}</h3>
               <p className="mt-3 leading-7 text-purple-100/65">{entry.copy}</p>
@@ -60,20 +61,20 @@ export function HarmonicBiblePreview() {
         </div>
       </div>
 
-      <div id="bible-worlds" className="mt-6 glass-panel rounded-[2.5rem] p-6 md:p-8">
+      <div id="bible-worlds" className="glass-panel mt-6 rounded-[2.5rem] p-6 md:p-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.35em] text-purple-200/45">Four Worlds</p>
             <h3 className="mt-3 text-3xl font-black md:text-5xl">One source. Four expressions.</h3>
           </div>
-          <a href="#worlds" className="rounded-full bg-purple-200 px-5 py-3 text-sm font-black text-black shadow-purple-glow">
+          <a href="#worlds" className="rounded-full bg-purple-200 px-5 py-3 text-center text-sm font-black text-black shadow-purple-glow transition hover:-translate-y-0.5 hover:bg-purple-100">
             Open Portals
           </a>
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
           {worldLore.map(([name, copy]) => (
-            <div key={name} className="rounded-3xl border border-white/10 bg-black/20 p-5">
+            <div key={name} className="rounded-3xl border border-white/10 bg-black/20 p-5 transition hover:bg-white/10">
               <h4 className="text-xl font-black text-purple-50">{name}</h4>
               <p className="mt-3 text-sm leading-6 text-purple-100/60">{copy}</p>
             </div>
