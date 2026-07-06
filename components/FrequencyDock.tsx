@@ -1,6 +1,7 @@
 const links = [
   ['OS', '/'],
   ['Hub', '/hub'],
+  ['Studio', '/studio'],
   ['Profile', '/profile'],
   ['Shop', '/shop'],
   ['Beats', '/beats'],
