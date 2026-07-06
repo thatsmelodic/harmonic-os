@@ -2,6 +2,7 @@ import { BootLoader } from '@/components/BootLoader';
 import { Hero } from '@/components/Hero';
 import { FutureBootSequence } from '@/components/FutureBootSequence';
 import { FourWorlds } from '@/components/FourWorlds';
+import { CommandHub } from '@/components/CommandHub';
 import { JoinDaSymphony } from '@/components/JoinDaSymphony';
 import { HarmonicBiblePreview } from '@/components/HarmonicBiblePreview';
 import { Footer } from '@/components/Footer';
@@ -15,6 +16,9 @@ export default function Home() {
       <Hero />
       <FutureBootSequence />
       <FourWorlds />
+      <div id="hub">
+        <CommandHub />
+      </div>
       <JoinDaSymphony />
       <HarmonicBiblePreview />
       <Footer />
