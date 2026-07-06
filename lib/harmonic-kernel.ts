@@ -18,10 +18,10 @@ export const kernel = {
   activePalette: 'cyber-wave' as PaletteKey,
   defaultPermission: 'guest' as PermissionLevel,
   ai: {
-    enabled: false,
+    enabled: true,
     label: 'Harmonic AI',
-    phase: 'Phase 4',
-    purpose: 'Brand-native assistant prepared to read the OS data model later.',
+    phase: 'MVP local routing layer',
+    purpose: 'Brand-native assistant that reads the OS data model and routes visitors through worlds, modules, and creator tools.',
   },
 };
 
