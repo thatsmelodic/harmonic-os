@@ -7,14 +7,18 @@ import { FrequencyDock } from '@/components/FrequencyDock';
 
 export default function Home() {
   return (
-    <main className="pb-28">
+    <main className="relative overflow-hidden pb-28">
       <FrequencyDock />
       <IdentityHero />
-      <div id="hub">
+      <div id="hub" className="cinematic-section">
         <CommandHub />
       </div>
-      <JoinDaSymphony />
-      <HarmonicBiblePreview />
+      <div className="cinematic-section">
+        <JoinDaSymphony />
+      </div>
+      <div className="cinematic-section">
+        <HarmonicBiblePreview />
+      </div>
       <Footer />
     </main>
   );
