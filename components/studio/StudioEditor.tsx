@@ -24,6 +24,19 @@ type AssetRow = {
   created_at: string;
 };
 
+type WorldRow = {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  route: string;
+  theme_color: string;
+  logo_asset_url: string | null;
+  active: boolean;
+  sort_order: number;
+  updated_at: string;
+};
+
 const bucketLabels: Record<string, string> = {
   'brand-assets': 'Brand Assets',
   'world-media': 'World Media',
@@ -37,11 +50,14 @@ export function StudioEditor() {
   const [copy, setCopy] = useState<CopyRow | null>(null);
   const [message, setMessage] = useState('');
   const [assetMessage, setAssetMessage] = useState('');
+  const [worldMessage, setWorldMessage] = useState('');
   const [assetTitle, setAssetTitle] = useState('');
   const [assetType, setAssetType] = useState<'image' | 'video' | 'audio' | 'document'>('image');
   const [bucket, setBucket] = useState('brand-assets');
   const [assets, setAssets] = useState<AssetRow[]>([]);
   const [assetsLoading, setAssetsLoading] = useState(false);
+  const [worlds, setWorlds] = useState<WorldRow[]>([]);
+  const [worldsLoading, setWorldsLoading] = useState(false);
 
   async function loadAssets() {
     if (!isSupabaseConfigured) return;
@@ -57,6 +73,19 @@ export function StudioEditor() {
     setAssetsLoading(false);
   }
 
+  async function loadWorlds() {
+    if (!isSupabaseConfigured) return;
+    setWorldsLoading(true);
+    const supabase = createSupabaseBrowserClient();
+    const { data, error } = await supabase
+      .from('worlds')
+      .select('id,name,tagline,description,route,theme_color,logo_asset_url,active,sort_order,updated_at')
+      .order('sort_order', { ascending: true });
+
+    if (!error && data) setWorlds(data as WorldRow[]);
+    setWorldsLoading(false);
+  }
+
   useEffect(() => {
     async function loadStudio() {
       if (!isSupabaseConfigured) return;
@@ -67,10 +96,37 @@ export function StudioEditor() {
       const { data } = await supabase.from('cms_copy').select('*').eq('id', 'home-hero').single();
       if (data) setCopy(data as CopyRow);
       await loadAssets();
+      await loadWorlds();
     }
 
     loadStudio();
   }, []);
+
+  function updateWorld(id: string, patch: Partial<WorldRow>) {
+    setWorlds((current) => current.map((world) => (world.id === id ? { ...world, ...patch } : world)));
+  }
+
+  async function saveWorld(world: WorldRow) {
+    setWorldMessage('');
+    const supabase = createSupabaseBrowserClient();
+    const { error } = await supabase
+      .from('worlds')
+      .update({
+        name: world.name,
+        tagline: world.tagline,
+        description: world.description,
+        route: world.route,
+        theme_color: world.theme_color,
+        logo_asset_url: world.logo_asset_url || null,
+        active: world.active,
+        sort_order: world.sort_order,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', world.id);
+
+    setWorldMessage(error ? error.message : `${world.name} world saved.`);
+    if (!error) await loadWorlds();
+  }
 
   async function saveCopy(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -209,6 +265,74 @@ export function StudioEditor() {
             {assetMessage && <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-purple-100/70">{assetMessage}</div>}
           </div>
         </form>
+      </section>
+
+      <section className="glass-panel mt-5 rounded-[2.5rem] p-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-purple-200/45">World Manager</p>
+            <h2 className="mt-3 text-3xl font-black">Control the Worlds</h2>
+            <p className="mt-2 text-sm text-purple-100/60">Edit each world, route, color, logo URL, and whether it is live inside Harmonic OS.</p>
+          </div>
+          <button type="button" onClick={loadWorlds} className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-purple-100/80 hover:border-purple-300/70">
+            {worldsLoading ? 'Refreshing...' : 'Refresh Worlds'}
+          </button>
+        </div>
+
+        {worldMessage && <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-purple-100/70">{worldMessage}</div>}
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-2">
+          {worlds.map((world) => (
+            <article key={world.id} className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+              <div className="mb-5 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 text-xs font-black" style={{ backgroundColor: `${world.theme_color}33`, color: world.theme_color }}>
+                    {world.name.slice(0, 2).toUpperCase()}
+                  </span>
+                  <div>
+                    <h3 className="text-2xl font-black text-purple-50">{world.name}</h3>
+                    <p className="text-xs uppercase tracking-[0.2em] text-purple-100/45">{world.id}</p>
+                  </div>
+                </div>
+                <label className="flex items-center gap-2 text-sm font-black text-purple-100/70">
+                  <input type="checkbox" checked={world.active} onChange={(event) => updateWorld(world.id, { active: event.target.checked })} />
+                  Live
+                </label>
+              </div>
+
+              <div className="grid gap-3">
+                <label className="grid gap-2 text-sm font-bold text-purple-100/70">World Name
+                  <input value={world.name} onChange={(event) => updateWorld(world.id, { name: event.target.value })} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-purple-50 outline-none focus:border-purple-300" />
+                </label>
+                <label className="grid gap-2 text-sm font-bold text-purple-100/70">Tagline
+                  <input value={world.tagline} onChange={(event) => updateWorld(world.id, { tagline: event.target.value })} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-purple-50 outline-none focus:border-purple-300" />
+                </label>
+                <label className="grid gap-2 text-sm font-bold text-purple-100/70">Description
+                  <textarea value={world.description} onChange={(event) => updateWorld(world.id, { description: event.target.value })} rows={3} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-purple-50 outline-none focus:border-purple-300" />
+                </label>
+                <div className="grid gap-3 md:grid-cols-3">
+                  <label className="grid gap-2 text-sm font-bold text-purple-100/70">Route
+                    <input value={world.route} onChange={(event) => updateWorld(world.id, { route: event.target.value })} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-purple-50 outline-none focus:border-purple-300" />
+                  </label>
+                  <label className="grid gap-2 text-sm font-bold text-purple-100/70">Theme
+                    <input value={world.theme_color} onChange={(event) => updateWorld(world.id, { theme_color: event.target.value })} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-purple-50 outline-none focus:border-purple-300" />
+                  </label>
+                  <label className="grid gap-2 text-sm font-bold text-purple-100/70">Order
+                    <input type="number" value={world.sort_order} onChange={(event) => updateWorld(world.id, { sort_order: Number(event.target.value) })} className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-purple-50 outline-none focus:border-purple-300" />
+                  </label>
+                </div>
+                <label className="grid gap-2 text-sm font-bold text-purple-100/70">Logo Asset URL
+                  <input value={world.logo_asset_url ?? ''} onChange={(event) => updateWorld(world.id, { logo_asset_url: event.target.value })} placeholder="Paste a copied asset URL here" className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-purple-50 outline-none focus:border-purple-300" />
+                </label>
+                <button type="button" onClick={() => saveWorld(world)} className="rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow">Save {world.name}</button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {!worldsLoading && worlds.length === 0 && (
+          <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/5 p-6 text-purple-100/60">Run the latest Supabase schema to unlock the World Manager.</div>
+        )}
       </section>
 
       <section className="glass-panel mt-5 rounded-[2.5rem] p-6">
