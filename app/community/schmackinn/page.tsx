@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { FrequencyDock } from '@/components/FrequencyDock';
+import { ProfileGate } from '@/components/ProfileGate';
 
 const reviews = [
-  ['MelodicEats', '4.8', 'The mac was crazy. Greens had soul. Cornbread needed more honey but I would spin back.'],
-  ['BaltimoreBites', '4.5', 'Best late-night plate I had this month. Service was fast and the sauce carried.'],
-  ['SymphMember', '4.9', 'This spot belongs in the top tier. Get the wings and the peach drink.'],
+  ['MelodicEats', '4.8', 'The mac was crazy. Greens had soul. Cornbread needed more honey but I would spin back.', '214 helpful'],
+  ['BaltimoreBites', '4.5', 'Best late-night plate I had this month. Service was fast and the sauce carried.', '98 helpful'],
+  ['SymphMember', '4.9', 'This spot belongs in the top tier. Get the wings and the peach drink.', '141 helpful'],
 ];
 
 const questions = [
@@ -12,6 +13,8 @@ const questions = [
   ['What should Mel try first?', 'Wings, mac, greens, and whatever dessert they got that day.'],
   ['Is it Schmackinn or just hype?', 'Community score says Schmackinn. Needs a full episode.'],
 ];
+
+const recommendationFlow = ['Submit spot', 'Community votes', 'Mel reviews', 'Score updates', 'Bucket list saves'];
 
 export const metadata = {
   title: 'Schmackinn Community | Harmonic OS',
@@ -31,22 +34,31 @@ export default function SchmackinnCommunityPage() {
           <p className="mt-6 max-w-3xl text-lg leading-8 text-purple-100/75">Guests can read. Harmonic profiles unlock posting reviews, recommendations, comments, food photos, likes, saves, and questions.</p>
         </section>
 
+        <section className="mb-8 grid gap-5 md:grid-cols-5">
+          {recommendationFlow.map((step, index) => (
+            <article key={step} className="glass-panel rounded-[2rem] p-5">
+              <p className="text-xs uppercase tracking-[0.25em] text-purple-200/45">Step 0{index + 1}</p>
+              <h2 className="mt-3 text-xl font-black">{step}</h2>
+            </article>
+          ))}
+        </section>
+
         <section className="grid gap-5 md:grid-cols-[1fr_.8fr]">
           <div className="glass-panel rounded-[2.25rem] p-6">
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex items-center justify-between gap-4">
               <h2 className="text-3xl font-black">Community Reviews</h2>
-              <span className="rounded-full bg-purple-300 px-4 py-2 text-sm font-black text-black">Profile Required</span>
+              <span className="rounded-full bg-purple-300 px-4 py-2 text-sm font-black text-black">Profile Required to Post</span>
             </div>
             <div className="grid gap-4">
-              {reviews.map(([user, rating, copy]) => (
+              {reviews.map(([user, rating, copy, helpful]) => (
                 <article key={user} className="rounded-3xl border border-white/10 bg-white/5 p-5">
                   <div className="flex items-center justify-between">
                     <h3 className="font-black">@{user}</h3>
                     <span className="font-black text-purple-200">{rating}/5</span>
                   </div>
                   <p className="mt-3 leading-7 text-purple-100/70">{copy}</p>
-                  <div className="mt-4 flex gap-3 text-sm text-purple-100/50">
-                    <span>Helpful</span><span>Comment</span><span>Save</span>
+                  <div className="mt-4 flex flex-wrap gap-3 text-sm text-purple-100/50">
+                    <span>{helpful}</span><span>Comment</span><span>Save</span><span>Ask reviewer</span>
                   </div>
                 </article>
               ))}
@@ -54,14 +66,11 @@ export default function SchmackinnCommunityPage() {
           </div>
 
           <div className="grid gap-5">
-            <div className="glass-panel rounded-[2.25rem] p-6">
-              <h2 className="text-3xl font-black">Recommendation Box</h2>
-              <p className="mt-3 text-purple-100/65">Users with profiles can recommend where Mel should eat next.</p>
-              <div className="mt-5 rounded-3xl border border-white/10 bg-black/25 p-5 text-purple-100/45">Sign in to recommend a restaurant.</div>
-            </div>
+            <ProfileGate title="Recommendation Box" description="Users with profiles can recommend where Mel should eat next and the community can vote spots up before they become episodes." lockedAction="recommend a restaurant" />
 
             <div className="glass-panel rounded-[2.25rem] p-6">
               <h2 className="text-3xl font-black">Q&A</h2>
+              <p className="mt-3 text-purple-100/60">Questions are public to read. Asking and answering requires a profile so the community stays accountable.</p>
               <div className="mt-5 grid gap-4">
                 {questions.map(([q, a]) => (
                   <article key={q} className="rounded-3xl bg-white/5 p-4">
