@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
 import { frequencies, type FrequencyId } from '@/lib/frequencies';
 
 const bootLines = [
@@ -27,7 +27,7 @@ export function HarmonicOSApp() {
           '--frequency-secondary': active.palette.secondary,
           '--frequency-aura': active.palette.aura,
           '--frequency-text': active.palette.text,
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       <div className="frequency-grid absolute inset-0 -z-20 opacity-70" />
