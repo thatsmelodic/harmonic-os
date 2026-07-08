@@ -1,35 +1,10 @@
 import { defaultCopy } from '@/lib/cms-schema';
+import { frequencies } from '@/lib/frequencies';
 import { HarmonicMark } from './HarmonicMark';
 import { NeonCup } from './NeonCup';
 
 const heroCopy = defaultCopy.find((copy) => copy.id === 'home-hero') ?? defaultCopy[0];
-
-const portals = [
-  {
-    name: 'Melodic',
-    signal: 'Music / Sound / Identity',
-    href: '/worlds/melodic',
-    copy: 'Songs, beats, visuals, and the source frequency.',
-  },
-  {
-    name: '2 Harmonic',
-    signal: 'Fashion / Stitched Melodies',
-    href: '/worlds/2-harmonic',
-    copy: 'Drops, symbols, lookbooks, and wearable meaning.',
-  },
-  {
-    name: 'Fried Em',
-    signal: 'Basketball / Smoke / Victory',
-    href: '/worlds/fried-em',
-    copy: 'Competition, episodes, challenges, and court energy.',
-  },
-  {
-    name: 'Schmackinn',
-    signal: 'Food / Reviews / Culture',
-    href: '/worlds/schmackinn',
-    copy: 'Taste tests, restaurant lore, reactions, and community scores.',
-  },
-];
+const portals = frequencies.filter((frequency) => frequency.key !== 'os');
 
 export function IdentityHero() {
   const [firstLine, secondLine] = heroCopy.headline.split('. ');
@@ -59,7 +34,7 @@ export function IdentityHero() {
           </div>
 
           <div className="mt-8 grid w-full max-w-2xl gap-3 text-left sm:grid-cols-3">
-            {['Boot sequence ready', 'Four worlds online', 'Bible preview active'].map((status) => (
+            {['Boot sequence online', 'Frequency engine live', 'Four worlds synced'].map((status) => (
               <div key={status} className="rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-purple-100/50 backdrop-blur-xl">
                 {status}
               </div>
@@ -85,11 +60,11 @@ export function IdentityHero() {
         </div>
         <div className="grid gap-4 md:grid-cols-4">
           {portals.map((portal) => (
-            <a key={portal.name} href={portal.href} className="portal-sheen group rounded-[2rem] border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-purple-200/40 hover:shadow-purple-glow">
-              <div className="mb-6 h-20 rounded-[1.5rem] border border-white/10 bg-gradient-to-br from-purple-300/20 via-white/5 to-cyan-300/10" />
+            <a key={portal.key} href={portal.href} className="portal-sheen group rounded-[2rem] border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-purple-200/40 hover:shadow-purple-glow">
+              <div className="mb-6 h-20 rounded-[1.5rem] border border-white/10" style={{ background: `linear-gradient(135deg, ${portal.primary}33, rgba(255,255,255,.06), ${portal.secondary}22)` }} />
               <p className="text-xs uppercase tracking-[0.25em] text-purple-200/45">{portal.signal}</p>
-              <h3 className="mt-3 text-2xl font-black text-purple-50">{portal.name}</h3>
-              <p className="mt-3 min-h-[3rem] text-sm leading-6 text-purple-100/55">{portal.copy}</p>
+              <h3 className="mt-3 text-2xl font-black text-purple-50">{portal.world}</h3>
+              <p className="mt-3 min-h-[3rem] text-sm leading-6 text-purple-100/55">{portal.tagline}</p>
               <p className="mt-5 text-sm font-bold text-purple-100/55 transition group-hover:text-purple-100">Enter World</p>
             </a>
           ))}
