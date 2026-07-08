@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { MelodicVisualizer } from '@/components/worlds/MelodicVisualizer';
+import { conductMelodicVibe } from '@/lib/vibe-conductor';
 import {
   melodicVisualDefaults,
   particleShapes,
@@ -39,6 +40,9 @@ export function MelodicControlRoom() {
   const [tempo, setTempo] = useState(80);
   const [ambientAudio, setAmbientAudio] = useState(true);
   const [visualSettings, setVisualSettings] = useState<MelodicVisualSettings>(melodicVisualDefaults);
+  const [vibePrompt, setVibePrompt] = useState('make it feel like purple pain turning into healing light');
+  const [vibeName, setVibeName] = useState('Manual Mode');
+  const [vibeDescription, setVibeDescription] = useState('Use the controls below or let the Vibe Conductor translate a mood into settings.');
   const [tracks, setTracks] = useState<TrackDraft[]>(startingTracks);
   const [draft, setDraft] = useState<TrackDraft>({ title: '', bpm: '', mood: '', status: 'Draft', context: '' });
 
@@ -50,6 +54,22 @@ export function MelodicControlRoom() {
 
   function setVisual<K extends keyof MelodicVisualSettings>(key: K, value: MelodicVisualSettings[K]) {
     setVisualSettings((current) => ({ ...current, [key]: value }));
+  }
+
+  function runVibeConductor() {
+    const result = conductMelodicVibe(vibePrompt);
+    setAmbience(result.ambience);
+    setCursor(result.cursor);
+    setTransition(result.transition);
+    setTempo(result.tempo);
+    setAmbientAudio(result.ambientAudio);
+    setVisualSettings((current) => ({
+      ...result.visualSettings,
+      logoUrl: current.logoUrl,
+      customImageUrl: current.customImageUrl,
+    }));
+    setVibeName(result.name);
+    setVibeDescription(result.description);
   }
 
   function addTrack() {
@@ -65,35 +85,58 @@ export function MelodicControlRoom() {
           <p className="text-xs font-black uppercase tracking-[.34em] text-purple-100/45">Melodic Command Center</p>
           <h2 className="mt-3 text-3xl font-black tracking-[-.06em] sm:text-5xl">Control the music world</h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-purple-100/62">
-            This Visual Lab now shares the same visualizer engine used by the real Melodic world. Supabase will make these settings permanent next.
+            The Vibe Conductor is the first step toward AI-controlled world building: describe a mood, and Harmonic OS translates it into lighting, motion, particles, and visualizer behavior.
           </p>
         </div>
         <a href="/worlds/melodic" className="rounded-full bg-purple-300 px-5 py-3 text-sm font-black text-black shadow-purple-glow">View Melodic</a>
       </div>
+
+      <article className="mb-5 rounded-[2rem] border border-purple-200/15 bg-black/35 p-5">
+        <div className="grid gap-5 lg:grid-cols-[1fr_.85fr] lg:items-end">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[.32em] text-purple-100/45">Vibe Conductor</p>
+            <h3 className="mt-3 text-3xl font-black tracking-[-.05em]">Tell the OS the feeling.</h3>
+            <p className="mt-3 text-sm leading-7 text-purple-100/60">
+              Try: “dark heartbreak but heavenly,” “luxury purple studio,” “hard trap 808 motion,” or “uplifting angelic healing.”
+            </p>
+            <textarea
+              value={vibePrompt}
+              onChange={(event) => setVibePrompt(event.target.value)}
+              rows={4}
+              className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300"
+              placeholder="Describe the world vibe..."
+            />
+            <button type="button" onClick={runVibeConductor} className="mt-4 rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow">
+              Conduct Vibe
+            </button>
+          </div>
+          <div className="rounded-[2rem] border border-white/10 bg-white/[.045] p-5">
+            <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">Translation</p>
+            <h4 className="mt-3 text-2xl font-black tracking-[-.04em]">{vibeName}</h4>
+            <p className="mt-3 text-sm leading-7 text-white/58">{vibeDescription}</p>
+            <div className="mt-4 grid gap-2 text-xs font-mono text-purple-100/55">
+              <p>Ambience: {ambience}</p>
+              <p>Cursor: {cursor}</p>
+              <p>Transition: {transition}</p>
+              <p>Tempo: {tempo} BPM</p>
+            </div>
+          </div>
+        </div>
+      </article>
 
       <div className="grid gap-5 xl:grid-cols-[.95fr_1.05fr]">
         <div className="grid gap-5">
           <article className="rounded-[2rem] border border-white/10 bg-black/30 p-5">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">World Behavior</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-bold text-purple-100/70">Background Theme
-                <select value={ambience} onChange={(event) => setAmbience(event.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300">
-                  {ambienceModes.map((mode) => <option key={mode}>{mode}</option>)}
-                </select>
-              </label>
-              <label className="grid gap-2 text-sm font-bold text-purple-100/70">Cursor Effect
-                <select value={cursor} onChange={(event) => setCursor(event.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300">
-                  {cursorModes.map((mode) => <option key={mode}>{mode}</option>)}
-                </select>
-              </label>
+              <SelectControl label="Background Theme" value={ambience} options={ambienceModes} onChange={setAmbience} />
+              <SelectControl label="Cursor Effect" value={cursor} options={cursorModes} onChange={setCursor} />
               <label className="grid gap-2 text-sm font-bold text-purple-100/70 sm:col-span-2">Transition Style
                 <select value={transition} onChange={(event) => setTransition(event.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300">
                   {transitionModes.map((mode) => <option key={mode}>{mode}</option>)}
                 </select>
               </label>
-              <label className="grid gap-2 text-sm font-bold text-purple-100/70">Tempo Feel: {tempo} BPM
-                <input type="range" min="60" max="170" value={tempo} onChange={(event) => setTempo(Number(event.target.value))} />
-              </label>
+              <RangeControl label="Tempo Feel" value={tempo} min={60} max={170} onChange={setTempo} suffix=" BPM" />
               <button type="button" onClick={() => setAmbientAudio((current) => !current)} className="rounded-2xl border border-purple-200/20 px-5 py-3 text-sm font-black text-purple-100/80 hover:bg-purple-200/10">
                 Ambient Audio: {ambientAudio ? 'Enabled' : 'Disabled'}
               </button>
@@ -196,6 +239,17 @@ function RangeControl(props: { label: string; value: number; min: number; max: n
     <label className="grid gap-2 text-sm font-bold text-purple-100/70">
       {props.label}: {props.value}{props.suffix ?? ''}
       <input type="range" min={props.min} max={props.max} value={props.value} onChange={(event) => props.onChange(Number(event.target.value))} />
+    </label>
+  );
+}
+
+function SelectControl(props: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
+  return (
+    <label className="grid gap-2 text-sm font-bold text-purple-100/70">
+      {props.label}
+      <select value={props.value} onChange={(event) => props.onChange(event.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300">
+        {props.options.map((option) => <option key={option}>{option}</option>)}
+      </select>
     </label>
   );
 }
