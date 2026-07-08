@@ -4,11 +4,13 @@ import { JoinDaSymphony } from '@/components/JoinDaSymphony';
 import { HarmonicBiblePreview } from '@/components/HarmonicBiblePreview';
 import { Footer } from '@/components/Footer';
 import { FrequencyDock } from '@/components/FrequencyDock';
+import { HarmonicOSApp } from '@/components/HarmonicOSApp';
 
 export default function Home() {
   return (
     <main className="relative overflow-hidden pb-28">
       <FrequencyDock />
+      <HarmonicOSApp />
       <IdentityHero />
       <div id="hub" className="cinematic-section">
         <CommandHub />
