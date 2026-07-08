@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { frequencies, type FrequencyId, type FrequencyWorld } from '@/lib/frequencies';
 
@@ -17,7 +18,7 @@ export function WorldPage({ world }: WorldPageProps) {
           '--frequency-secondary': world.palette.secondary,
           '--frequency-aura': world.palette.aura,
           '--frequency-text': world.palette.text,
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       <div className="frequency-grid absolute inset-0 -z-20 opacity-60" />
