@@ -13,8 +13,9 @@ export default function StudioPage() {
   return (
     <main className="min-h-screen px-6 py-8 pb-28">
       <FrequencyDock />
-      <div className="harmonic-container">
+      <div className="harmonic-container flex flex-wrap gap-3">
         <Link href="/hub" className="inline-flex rounded-full border border-white/15 px-5 py-3 text-sm font-bold text-purple-100/75 glass-panel">Back to Hub</Link>
+        <Link href="/engine" className="inline-flex rounded-full bg-purple-300 px-5 py-3 text-sm font-black text-black shadow-purple-glow">Open Harmonic Engine</Link>
       </div>
       <section className="harmonic-container py-8">
         <StudioEditor />
