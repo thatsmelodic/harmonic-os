@@ -1,11 +1,6 @@
 import Link from 'next/link';
 import { FrequencyDock } from '@/components/FrequencyDock';
-import { HarmonicEngineBuilder } from '@/components/engine/HarmonicEngineBuilder';
-
-export const metadata = {
-  title: 'Harmonic Engine | Harmonic OS',
-  description: 'Shared world-building engine for every Harmonic OS frequency.',
-};
+import { HarmonicEngineControlRoom } from '@/components/engine/HarmonicEngineControlRoom';
 
 export default function EnginePage() {
   return (
@@ -16,7 +11,7 @@ export default function EnginePage() {
           Back to Creator Studio
         </Link>
       </div>
-      <HarmonicEngineBuilder />
+      <HarmonicEngineControlRoom />
     </main>
   );
 }
