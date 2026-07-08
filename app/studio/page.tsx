@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { FrequencyDock } from '@/components/FrequencyDock';
 import { CreatorStudioPreview } from '@/components/studio/CreatorStudioPreview';
 import { StudioEditor } from '@/components/studio/StudioEditor';
+import { MelodicControlRoom } from '@/components/studio/MelodicControlRoom';
 
 export const metadata = {
   title: 'Creator Studio | Harmonic OS',
@@ -17,6 +18,7 @@ export default function StudioPage() {
       </div>
       <section className="harmonic-container py-8">
         <StudioEditor />
+        <MelodicControlRoom />
       </section>
       <CreatorStudioPreview />
     </main>
