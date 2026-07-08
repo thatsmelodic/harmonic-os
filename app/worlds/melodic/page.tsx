@@ -1,8 +1,10 @@
-import { WorldPage, generateWorldMetadata } from '@/components/WorldPage';
-import { getFrequency } from '@/lib/frequencies';
+import { MelodicWorldExperience } from '@/components/worlds/MelodicWorldExperience';
 
-export const metadata = generateWorldMetadata('melodic');
+export const metadata = {
+  title: 'Melodic | Harmonic OS',
+  description: 'A frequency world where music becomes memory, archive, and motion.',
+};
 
 export default function MelodicWorldPage() {
-  return <WorldPage world={getFrequency('melodic')} />;
+  return <MelodicWorldExperience />;
 }
