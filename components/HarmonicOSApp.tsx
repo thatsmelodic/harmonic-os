@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { frequencies, type FrequencyId } from '@/lib/frequencies';
 
@@ -45,7 +46,7 @@ export function HarmonicOSApp() {
                 </h1>
               </div>
               <div className="hidden rounded-full border border-white/15 px-4 py-2 text-xs font-black text-white/60 sm:block">
-                v0.1 Kernel
+                v0.2 Worlds
               </div>
             </div>
 
@@ -130,6 +131,10 @@ export function HarmonicOSApp() {
                 </span>
               ))}
             </div>
+
+            <Link href={active.path} className="mt-7 block rounded-full bg-[var(--frequency-primary)] px-5 py-4 text-center text-sm font-black text-black shadow-[0_0_34px_var(--frequency-aura)] transition hover:scale-[1.02]">
+              Enter {active.label}
+            </Link>
           </article>
         </div>
       </div>
