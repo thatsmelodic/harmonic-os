@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { melodicVisualDefaults } from '@/lib/melodic-visuals';
+import { melodicWorldVisualDefaults, type MelodicWorldVisualState } from '@/lib/melodic-visuals';
 import { MelodicVisualizer } from '@/components/worlds/MelodicVisualizer';
 
 const tracks = [
@@ -17,7 +17,7 @@ const memoryNodes = [
   'Motion becomes release',
 ];
 
-export function MelodicWorldExperience() {
+export function MelodicWorldExperience({ visualState = melodicWorldVisualDefaults }: { visualState?: MelodicWorldVisualState }) {
   return (
     <main className="melodic-world relative isolate min-h-screen overflow-hidden pb-28">
       <div className="melodic-aurora absolute inset-0 -z-30" />
@@ -44,10 +44,10 @@ export function MelodicWorldExperience() {
               This world does not just store music. It turns your life into sound, then turns the sound into an archive.
             </p>
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/64 sm:text-lg">
-              Melodic behaves like audio: transitions breathe, cards pulse on tempo, memories move in waves, and every track becomes a frequency node inside Harmonic OS.
+              Current vibe: {visualState.vibeName}. {visualState.vibeDescription}
             </p>
 
-            <MelodicVisualizer settings={melodicVisualDefaults} className="mt-8" label="Signal Visualizer" />
+            <MelodicVisualizer settings={visualState.visualSettings} className="mt-8" label="Signal Visualizer" />
           </div>
 
           <aside className="glass-panel rounded-[2.5rem] p-6 sm:p-8">
@@ -63,7 +63,7 @@ export function MelodicWorldExperience() {
                 <div className="relative text-center">
                   <p className="font-mono text-xs text-white/45">NOW TUNING</p>
                   <p className="mt-2 text-4xl font-black tracking-[-.07em] text-[#f8f0ff]">Melodic</p>
-                  <p className="mt-2 font-mono text-xs text-purple-100/45">96.6 FM</p>
+                  <p className="mt-2 font-mono text-xs text-purple-100/45">{visualState.tempo} BPM</p>
                 </div>
               </div>
             </div>
@@ -117,10 +117,10 @@ export function MelodicWorldExperience() {
 
       <section className="harmonic-container py-8">
         <div className="rounded-[2.5rem] border border-purple-200/10 bg-[linear-gradient(135deg,rgba(183,108,255,.18),rgba(255,79,216,.08),rgba(255,255,255,.035))] p-6 shadow-purple-glow backdrop-blur-2xl sm:p-8">
-          <p className="text-xs font-black uppercase tracking-[.34em] text-purple-100/45">Next Build Target</p>
-          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">Save the Visual Lab to the real world.</h2>
+          <p className="text-xs font-black uppercase tracking-[.34em] text-purple-100/45">Now Connected</p>
+          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">This page can receive saved Visual Lab settings.</h2>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-white/65 sm:text-base">
-            The visualizer is now shared between Creator Studio and the Melodic page. Next, Supabase will store the settings so your control room changes publish to this world.
+            Once the Supabase table is installed, Creator Studio saves publish directly into this world.
           </p>
         </div>
       </section>
