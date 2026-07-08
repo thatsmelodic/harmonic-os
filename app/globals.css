@@ -209,6 +209,57 @@ a { color: inherit; text-decoration: none; }
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
 }
 
+.engine-preview { isolation: isolate; min-height: 42rem; }
+.engine-environment {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(183,108,255,.34), transparent 24rem),
+    radial-gradient(circle at 90% 20%, rgba(54,178,203,.12), transparent 22rem),
+    rgba(0,0,0,.18);
+}
+.engine-environment[data-world='harmonic'] { background: radial-gradient(circle at 50% 10%, rgba(245,223,184,.30), transparent 24rem), radial-gradient(circle at 80% 25%, rgba(54,178,203,.18), transparent 22rem), rgba(0,0,0,.22); }
+.engine-environment[data-world='fried-em'] { background: radial-gradient(circle at 50% 10%, rgba(255,122,26,.32), transparent 24rem), radial-gradient(circle at 85% 25%, rgba(255,52,52,.18), transparent 20rem), rgba(0,0,0,.22); }
+.engine-environment[data-world='schmackin'] { background: radial-gradient(circle at 50% 10%, rgba(255,64,64,.30), transparent 24rem), radial-gradient(circle at 80% 28%, rgba(255,209,102,.18), transparent 22rem), rgba(0,0,0,.22); }
+.engine-fog {
+  position: absolute;
+  inset: -15%;
+  background: radial-gradient(circle at 35% 50%, rgba(255,255,255,.16), transparent 25rem), radial-gradient(circle at 70% 40%, rgba(216,180,254,.12), transparent 22rem);
+  filter: blur(28px);
+  animation: engineFog 8s ease-in-out infinite;
+}
+.engine-crystal {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 11rem;
+  height: 11rem;
+  margin-left: -5.5rem;
+  margin-top: -5.5rem;
+  transform: rotate(45deg);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 2.4rem;
+  background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(183,108,255,.12));
+  animation: engineCrystal 5s ease-in-out infinite;
+}
+.engine-crystal-core {
+  position: absolute;
+  inset: 24%;
+  border-radius: 999px;
+  background: rgba(216,180,254,.62);
+  filter: blur(14px);
+}
+.engine-particle {
+  position: absolute;
+  z-index: 2;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,.9), rgba(183,108,255,.34), transparent 72%);
+  animation: engineParticle 4s ease-in-out infinite;
+}
+
 @keyframes pulseOrb {
   0%,100% { transform: scale(.96); opacity: .72; }
   50% { transform: scale(1.04); opacity: 1; }
@@ -246,6 +297,18 @@ a { color: inherit; text-decoration: none; }
 @keyframes visualFloat {
   0%, 100% { transform: translate3d(0, 0, 0) scale(.86); }
   50% { transform: translate3d(10px, -18px, 0) scale(1.12); }
+}
+@keyframes engineFog {
+  0%, 100% { transform: translate3d(-2%, 0, 0) scale(1); }
+  50% { transform: translate3d(3%, -2%, 0) scale(1.06); }
+}
+@keyframes engineCrystal {
+  0%, 100% { transform: rotate(45deg) scale(.96); }
+  50% { transform: rotate(45deg) scale(1.08); }
+}
+@keyframes engineParticle {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(.7); opacity: .42; }
+  50% { transform: translate3d(12px, -22px, 0) scale(1.15); opacity: .95; }
 }
 
 @media (prefers-reduced-motion: reduce) {
