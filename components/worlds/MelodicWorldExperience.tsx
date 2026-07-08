@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { melodicVisualDefaults } from '@/lib/melodic-visuals';
+import { MelodicVisualizer } from '@/components/worlds/MelodicVisualizer';
 
 const tracks = [
   { title: 'Lift U Up', type: 'R&B Frequency', bpm: '80 BPM', status: 'Memory Saved' },
@@ -14,8 +16,6 @@ const memoryNodes = [
   'Memory becomes motion',
   'Motion becomes release',
 ];
-
-const signalBars = [36, 58, 82, 48, 70, 94, 54, 76, 42, 88, 64, 52];
 
 export function MelodicWorldExperience() {
   return (
@@ -47,21 +47,7 @@ export function MelodicWorldExperience() {
               Melodic behaves like audio: transitions breathe, cards pulse on tempo, memories move in waves, and every track becomes a frequency node inside Harmonic OS.
             </p>
 
-            <div className="mt-8 rounded-[2rem] border border-white/10 bg-black/35 p-4">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <p className="font-mono text-xs uppercase tracking-[.25em] text-white/45">Signal Visualizer</p>
-                <p className="font-mono text-xs text-[#d8b4fe]">LIVE</p>
-              </div>
-              <div className="flex h-24 items-end gap-2 overflow-hidden rounded-2xl bg-white/[.035] p-4">
-                {signalBars.map((height, index) => (
-                  <span
-                    key={index}
-                    className="melodic-bar flex-1 rounded-full bg-[#b76cff] shadow-[0_0_22px_rgba(183,108,255,.65)]"
-                    style={{ height: `${height}%`, animationDelay: `${index * 90}ms` }}
-                  />
-                ))}
-              </div>
-            </div>
+            <MelodicVisualizer settings={melodicVisualDefaults} className="mt-8" label="Signal Visualizer" />
           </div>
 
           <aside className="glass-panel rounded-[2.5rem] p-6 sm:p-8">
@@ -132,9 +118,9 @@ export function MelodicWorldExperience() {
       <section className="harmonic-container py-8">
         <div className="rounded-[2.5rem] border border-purple-200/10 bg-[linear-gradient(135deg,rgba(183,108,255,.18),rgba(255,79,216,.08),rgba(255,255,255,.035))] p-6 shadow-purple-glow backdrop-blur-2xl sm:p-8">
           <p className="text-xs font-black uppercase tracking-[.34em] text-purple-100/45">Next Build Target</p>
-          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">Turn the vault from display into data.</h2>
+          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">Save the Visual Lab to the real world.</h2>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-white/65 sm:text-base">
-            After this visual layer, the next code step is Supabase-backed track storage: title, bpm, genre, mood, lyrics, audio URL, artwork, release status, and private notes.
+            The visualizer is now shared between Creator Studio and the Melodic page. Next, Supabase will store the settings so your control room changes publish to this world.
           </p>
         </div>
       </section>
