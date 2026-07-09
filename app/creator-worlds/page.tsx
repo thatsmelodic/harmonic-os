@@ -7,9 +7,7 @@ export const metadata = {
 };
 
 const dashboard = {
-  worldName: 'Melodic Universe',
-  ownerHandle: '@thatsmelodic',
-  healthScore: 88,
+  worldName: 'Melodic Universe', ownerHandle: '@thatsmelodic', healthScore: 88,
   metrics: [
     { id: 'visits', label: 'World Visits', value: '12.8K', trend: '+18%', note: 'Projected from world activity, content drops, and community return behavior.' },
     { id: 'members', label: 'Active Members', value: '1.4K', trend: '+11%', note: 'Members interacting with rooms, media, comments, and creator updates.' },
@@ -24,7 +22,7 @@ const dashboard = {
   modules: [
     { id: 'builder', title: 'World Builder', status: 'ready', description: 'Layout, portals, atmosphere, seasonal overrides, and room blocks.' },
     { id: 'ai', title: 'Personal AI', status: 'active', description: 'Approval-first assistant with explain-why logic and creator rules.' },
-    { id: 'community', title: 'Community Hub', status: 'draft', description: 'Channels, roles, premium rooms, announcements, and moderation.' },
+    { id: 'community', title: 'Community Hub', status: 'active', description: 'Channels, roles, premium rooms, announcements, moderation, quests, and inclusive access.' },
     { id: 'media', title: 'Interactive Media', status: 'ready', description: 'Uploads become world events with mood and category reactions.' },
     { id: 'commerce', title: 'Native Commerce', status: 'draft', description: 'Drop rooms, memberships, tickets, digital products, and licensing hooks.' },
     { id: 'marketplace', title: 'Module Store', status: 'locked', description: 'Marketplace for themes, FX, AI personalities, and world modules.' },
@@ -65,6 +63,35 @@ const personalAi = {
     { id: 'collab-portal', title: 'Prepare collab portal', type: 'collab', preview: 'Create a locked portal for a future creator crossover event.', reason: 'Cross-world movement becomes a monetizable experience, not just a link.' },
   ],
   memoryHooks: ['Brand tone', 'Approved colors', 'Rejected edits', 'Upload cadence', 'Audience reactions', 'Best revenue lanes'],
+};
+
+const communityHub = {
+  pulse: 'Inclusive / Immersive / Member-first',
+  effects: ['Live aura pulse when chat spikes', 'Ambient room glow by channel mood', 'Celebration burst for achievements', 'Low-motion accessibility mode', 'Creator announcement spotlight', 'Quiet mode for focus and sensory comfort'],
+  channels: [
+    { name: 'announcements', access: 'Public', purpose: 'Official creator drops, release dates, rules, event changes, and world updates.', effect: 'Spotlight beam + soft chime cue.' },
+    { name: 'general-plaza', access: 'Public', purpose: 'Main inclusive lobby for first-time visitors, fans, and supporters.', effect: 'Warm plaza glow + floating message particles.' },
+    { name: 'members-lounge', access: 'Members', purpose: 'Core community room for regulars, behind-the-scenes updates, and early polls.', effect: 'Velvet neon lounge lighting.' },
+    { name: 'premium-vault', access: 'Premium', purpose: 'Unreleased media, early links, private drops, paid content, and exclusive updates.', effect: 'Locked vault shimmer + gold pulse.' },
+    { name: 'collab-room', access: 'Creators', purpose: 'Creator-to-creator crossover planning, guest portals, and shared event coordination.', effect: 'Portal ripple between worlds.' },
+    { name: 'support-corner', access: 'Safe Space', purpose: 'Inclusive check-in space with community guidelines, support links, and respectful discussion.', effect: 'Soft blue calm mode with reduced motion.' },
+  ],
+  roles: [
+    { title: 'Visitor', powers: 'Can explore public rooms, react, join events, and preview membership.' },
+    { title: 'Member', powers: 'Can access member rooms, quests, polls, early updates, and community badges.' },
+    { title: 'Premium Supporter', powers: 'Can access vault content, early drops, private rooms, and premium event access.' },
+    { title: 'Moderator', powers: 'Can review reports, protect channels, escalate issues, and guide new members.' },
+    { title: 'Creator Ally', powers: 'Can join collab rooms, guest portals, shared campaigns, and crossover planning.' },
+  ],
+  quests: [
+    { title: 'First Frequency', reward: 'Visitor badge', action: 'Join the plaza, react to a world post, and choose your favorite lane.' },
+    { title: 'Vault Listener', reward: 'Media badge', action: 'Save a song, watch a behind-the-scenes clip, or vote on unreleased content.' },
+    { title: 'Drop Scout', reward: 'Commerce badge', action: 'Preview a drop room, wishlist an item, or vote on a colorway.' },
+    { title: 'World Builder Helper', reward: 'Community badge', action: 'Vote on atmosphere, portals, seasonal effects, or room priority.' },
+  ],
+  moderation: ['Clear community code', 'Report queue', 'Muted words layer', 'Creator approval for pinned posts', 'Role-based room access', 'Safety-first moderator tools'],
+  monetization: ['Paid rooms', 'Premium vaults', 'Member subscriptions', 'Event tickets', 'Drop-only community access', 'Creator ally collab rooms'],
+  accessibility: ['Low-motion mode', 'High-contrast room cards', 'Quiet rooms', 'Readable channel labels', 'Inclusive welcome copy', 'Clear moderation rules'],
 };
 
 const phases = [
@@ -113,6 +140,14 @@ export default function CreatorWorldsPage() {
           <div className="mt-6 grid gap-3 md:grid-cols-6">{personalAi.memoryHooks.map((hook) => <p key={hook} className="rounded-2xl border border-purple-200/10 bg-purple-200/[.045] p-4 text-xs leading-6 text-white/52">{hook}</p>)}</div>
         </article>
 
+        <article className="rounded-[2rem] border border-purple-200/20 bg-[linear-gradient(135deg,rgba(54,178,203,.14),rgba(183,108,255,.08),rgba(0,0,0,.4))] p-5 backdrop-blur-2xl">
+          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.28em] text-cyan-100/50">Community Hub</p><h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">A living plaza for every frequency.</h2><p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">Pulse: {communityHub.pulse}. The hub is built to feel social, safe, sensory-aware, and monetizable without excluding casual fans.</p></div><span className="rounded-full border border-cyan-200/20 bg-black/30 px-5 py-3 text-sm font-black text-cyan-100/65">Inclusive by Design</span></div>
+          <div className="mt-6 grid gap-4 xl:grid-cols-3">{communityHub.channels.map((channel) => <section key={channel.name} className="rounded-2xl border border-white/10 bg-white/[.035] p-4"><div className="flex flex-wrap items-center justify-between gap-3"><h3 className="text-lg font-black tracking-[-.04em] text-white/82">#{channel.name}</h3><span className="rounded-full border border-cyan-200/15 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.14em] text-cyan-100/55">{channel.access}</span></div><p className="mt-2 text-xs leading-6 text-white/48">{channel.purpose}</p><p className="mt-3 text-xs leading-6 text-cyan-100/50">Effect: {channel.effect}</p></section>)}</div>
+          <div className="mt-6 grid gap-5 xl:grid-cols-2"><section className="rounded-2xl border border-white/10 bg-black/25 p-4"><p className="text-xs font-black uppercase tracking-[.22em] text-white/35">Roles + Permissions</p><div className="mt-4 grid gap-3">{communityHub.roles.map((role) => <p key={role.title} className="rounded-xl border border-white/10 bg-white/[.035] p-3 text-xs leading-6 text-white/50"><strong className="text-white/78">{role.title}:</strong> {role.powers}</p>)}</div></section><section className="rounded-2xl border border-white/10 bg-black/25 p-4"><p className="text-xs font-black uppercase tracking-[.22em] text-white/35">Quests + Achievements</p><div className="mt-4 grid gap-3">{communityHub.quests.map((quest) => <div key={quest.title} className="rounded-xl border border-white/10 bg-white/[.035] p-3"><strong className="text-sm text-white/78">{quest.title}</strong><p className="mt-2 text-xs leading-6 text-white/45">{quest.action}</p><p className="mt-2 text-xs leading-6 text-cyan-100/50">Reward: {quest.reward}</p></div>)}</div></section></div>
+          <div className="mt-6 grid gap-3 md:grid-cols-3">{communityHub.effects.map((effect) => <p key={effect} className="rounded-2xl border border-cyan-200/10 bg-cyan-200/[.04] p-4 text-xs leading-6 text-white/52">{effect}</p>)}</div>
+          <div className="mt-6 grid gap-3 md:grid-cols-3"><InfoList title="Safety + Moderation" items={communityHub.moderation} /><InfoList title="Monetization" items={communityHub.monetization} /><InfoList title="Accessibility" items={communityHub.accessibility} /></div>
+        </article>
+
         <article className="rounded-[2rem] border border-purple-200/20 bg-[linear-gradient(135deg,rgba(183,108,255,.16),rgba(54,178,203,.05),rgba(0,0,0,.38))] p-5 backdrop-blur-2xl"><p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Full Platform Programming</p><h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">All phases. One creator economy.</h2><p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">Creator Worlds is the centerpiece, but the income system needs all three phases connected: platform, intelligence, and economy.</p></article>
         {phases.map((phase) => (<article key={phase.title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5 backdrop-blur-xl"><p className="text-xs font-black uppercase tracking-[.22em] text-white/35">Priority Phase</p><h2 className="mt-2 text-3xl font-black tracking-[-.06em] text-white/86">{phase.title}</h2><p className="mt-2 text-sm leading-7 text-white/52">{phase.subtitle}</p><div className="mt-5 grid gap-4 xl:grid-cols-3">{phase.features.map(([emoji, title, purpose, revenue]) => (<section key={title} className="rounded-2xl border border-white/10 bg-white/[.035] p-4"><div className="flex items-start gap-3"><span className="text-2xl">{emoji}</span><div><h3 className="text-lg font-black tracking-[-.04em] text-white/82">{title}</h3><p className="mt-2 text-xs leading-6 text-white/48">{purpose}</p></div></div><div className="mt-4 rounded-xl border border-purple-200/10 bg-purple-200/[.045] p-3"><p className="text-[.65rem] font-black uppercase tracking-[.16em] text-purple-100/45">Revenue Impact</p><p className="mt-2 text-xs leading-6 text-white/52">{revenue}</p></div></section>))}</div></article>))}
       </section>
@@ -120,6 +155,5 @@ export default function CreatorWorldsPage() {
   );
 }
 
-function HeroStat({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-2xl border border-white/10 bg-black/30 p-4"><p className="text-xs font-black uppercase tracking-[.2em] text-white/35">{label}</p><p className="mt-2 text-3xl font-black tracking-[-.06em] text-purple-100">{value}</p></div>;
-}
+function HeroStat({ label, value }: { label: string; value: string }) { return <div className="rounded-2xl border border-white/10 bg-black/30 p-4"><p className="text-xs font-black uppercase tracking-[.2em] text-white/35">{label}</p><p className="mt-2 text-3xl font-black tracking-[-.06em] text-purple-100">{value}</p></div>; }
+function InfoList({ title, items }: { title: string; items: string[] }) { return <section className="rounded-2xl border border-white/10 bg-black/25 p-4"><p className="text-xs font-black uppercase tracking-[.22em] text-white/35">{title}</p><div className="mt-4 grid gap-2">{items.map((item) => <p key={item} className="rounded-xl border border-white/10 bg-white/[.035] p-3 text-xs leading-6 text-white/50">{item}</p>)}</div></section>; }
