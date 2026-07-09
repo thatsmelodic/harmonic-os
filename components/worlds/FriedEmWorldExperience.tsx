@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { bootRuntime } from '@/lib/harmonic-signal-bus';
 import { worldDefaults } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
-import { SeasonAtmosphere } from '@/components/seasons/SeasonAtmosphere';
+import { SeasonalWorldLayer } from '@/components/seasons/SeasonalWorldLayer';
 import './FriedEmWorldExperience.module.css';
 
 const runtime = bootRuntime(worldDefaults['fried-em']);
@@ -28,7 +28,7 @@ export function FriedEmWorldExperience() {
 
   return (
     <main className="fried-em-world relative isolate min-h-screen overflow-hidden pb-28">
-      <SeasonAtmosphere season="autumn" intensity={0.64} />
+      <SeasonalWorldLayer world="fried-em" season="autumn" />
       <div className="fried-em-aurora absolute inset-0 -z-30" />
       <div className="court-grid absolute inset-0 -z-20 opacity-50" />
       <div className="arena-light arena-light-left" />
