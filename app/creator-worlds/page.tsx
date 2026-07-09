@@ -47,12 +47,24 @@ const builder = {
     { id: 'stage', title: 'Event Stage', zone: 'events', purpose: 'Premieres, tournaments, listening rooms, pop-ups, and seasonal events.', revenue: 'Tickets, event upgrades, and sponsored moments.' },
     { id: 'studio', title: 'AI Studio', zone: 'ai', purpose: 'Approval-first suggestions, previews, explain-why notes, and creator rules.', revenue: 'Premium AI assistants and advanced automation.' },
   ],
-  presets: [
-    'Fall Masterpiece — leaves, rain, warm light, hoodie energy',
-    'Neon Night — city glow, fog, chrome UI, purple aura',
-    'Luxury Vault — black crystal, spotlight, soft motion',
-    'Community Festival — brighter energy, banners, live event feel',
+  presets: ['Fall Masterpiece — leaves, rain, warm light, hoodie energy', 'Neon Night — city glow, fog, chrome UI, purple aura', 'Luxury Vault — black crystal, spotlight, soft motion', 'Community Festival — brighter energy, banners, live event feel'],
+};
+
+const personalAi = {
+  mode: 'Optional + Approval First',
+  rules: [
+    { title: 'Never publish automatically', detail: 'AI can suggest, preview, and explain. The creator approves before anything changes.' },
+    { title: 'Preview before apply', detail: 'Every change needs a before/after summary so the creator can see what the world will become.' },
+    { title: 'Editable suggestions', detail: 'The creator can accept part of a suggestion, reject parts, or rewrite the direction.' },
+    { title: 'World-aware tone', detail: 'The assistant follows the creator world identity, category lanes, colors, audience, and revenue goals.' },
   ],
+  suggestions: [
+    { id: 'drop-room', title: 'Build a limited drop room', type: 'commerce', preview: 'Add a neon showroom portal tied to music and fashion lanes.', reason: 'Your highest revenue path is connecting content releases with merch drops.' },
+    { id: 'premium-lounge', title: 'Open a premium lounge', type: 'community', preview: 'Add members-only room for behind-the-scenes, unreleased media, and early links.', reason: 'Community activity is high enough to test paid access without forcing checkout.' },
+    { id: 'fall-overlay', title: 'Activate Fall Masterpiece overlay', type: 'season', preview: 'Leaves, rain, fog, warm hoodie lighting, and gold-purple contrast.', reason: 'Fall is the flagship season and should feel most immersive.' },
+    { id: 'collab-portal', title: 'Prepare collab portal', type: 'collab', preview: 'Create a locked portal for a future creator crossover event.', reason: 'Cross-world movement becomes a monetizable experience, not just a link.' },
+  ],
+  memoryHooks: ['Brand tone', 'Approved colors', 'Rejected edits', 'Upload cadence', 'Audience reactions', 'Best revenue lanes'],
 };
 
 const phases = [
@@ -92,6 +104,13 @@ export default function CreatorWorldsPage() {
           <div className="mt-6 grid gap-3 md:grid-cols-4">{builder.controls.map((control) => <div key={control.id} className="rounded-2xl border border-white/10 bg-black/30 p-4"><p className="text-xs font-black uppercase tracking-[.2em] text-white/35">{control.label}</p><p className="mt-2 text-lg font-black text-purple-100">{control.value}</p><p className="mt-2 text-xs leading-6 text-white/45">{control.impact}</p></div>)}</div>
           <div className="mt-6 grid gap-4 xl:grid-cols-3">{builder.rooms.map((room) => <section key={room.id} className="rounded-2xl border border-white/10 bg-white/[.035] p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-lg font-black tracking-[-.04em] text-white/82">{room.title}</h3><span className="rounded-full border border-purple-200/15 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.14em] text-purple-100/50">{room.zone}</span></div><p className="mt-2 text-xs leading-6 text-white/48">{room.purpose}</p><p className="mt-3 text-xs leading-6 text-purple-100/50">{room.revenue}</p></section>)}</div>
           <div className="mt-6 grid gap-3 md:grid-cols-4">{builder.presets.map((preset) => <p key={preset} className="rounded-2xl border border-purple-200/10 bg-purple-200/[.045] p-4 text-xs leading-6 text-white/52">{preset}</p>)}</div>
+        </article>
+
+        <article className="rounded-[2rem] border border-purple-200/20 bg-[linear-gradient(135deg,rgba(183,108,255,.14),rgba(54,178,203,.05),rgba(0,0,0,.38))] p-5 backdrop-blur-2xl">
+          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Personal AI Assistant</p><h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">AI that assists, previews, and waits.</h2><p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">Mode: {personalAi.mode}. The AI can recommend world changes, but it cannot publish without creator approval.</p></div><span className="rounded-full border border-purple-200/20 bg-black/30 px-5 py-3 text-sm font-black text-purple-100/65">Approval Required</span></div>
+          <div className="mt-6 grid gap-3 md:grid-cols-4">{personalAi.rules.map((rule) => <div key={rule.title} className="rounded-2xl border border-white/10 bg-black/30 p-4"><p className="text-sm font-black text-white/80">{rule.title}</p><p className="mt-2 text-xs leading-6 text-white/45">{rule.detail}</p></div>)}</div>
+          <div className="mt-6 grid gap-4 xl:grid-cols-2">{personalAi.suggestions.map((item) => <section key={item.id} className="rounded-2xl border border-white/10 bg-white/[.035] p-4"><div className="flex flex-wrap items-center justify-between gap-3"><h3 className="text-lg font-black tracking-[-.04em] text-white/82">{item.title}</h3><span className="rounded-full border border-purple-200/15 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.14em] text-purple-100/50">{item.type}</span></div><p className="mt-3 text-xs font-black uppercase tracking-[.16em] text-purple-100/45">Preview</p><p className="mt-2 text-xs leading-6 text-white/50">{item.preview}</p><p className="mt-3 text-xs font-black uppercase tracking-[.16em] text-purple-100/45">Explain Why</p><p className="mt-2 text-xs leading-6 text-white/45">{item.reason}</p><div className="mt-4 flex flex-wrap gap-2"><span className="rounded-full border border-white/10 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.12em] text-white/45">Approve</span><span className="rounded-full border border-white/10 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.12em] text-white/45">Edit</span><span className="rounded-full border border-white/10 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.12em] text-white/45">Reject</span></div></section>)}</div>
+          <div className="mt-6 grid gap-3 md:grid-cols-6">{personalAi.memoryHooks.map((hook) => <p key={hook} className="rounded-2xl border border-purple-200/10 bg-purple-200/[.045] p-4 text-xs leading-6 text-white/52">{hook}</p>)}</div>
         </article>
 
         <article className="rounded-[2rem] border border-purple-200/20 bg-[linear-gradient(135deg,rgba(183,108,255,.16),rgba(54,178,203,.05),rgba(0,0,0,.38))] p-5 backdrop-blur-2xl"><p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Full Platform Programming</p><h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">All phases. One creator economy.</h2><p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">Creator Worlds is the centerpiece, but the income system needs all three phases connected: platform, intelligence, and economy.</p></article>
