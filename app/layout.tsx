@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { SeasonProvider } from '@/components/seasons/SeasonProvider';
 import './globals.css';
+import './runtime-personality.css';
 
 export const metadata = {
   title: 'Harmonic OS',
