@@ -5,12 +5,13 @@ import {
   type HarmonicWorldId,
   type EmotionKey,
   type HarmonicEngineState,
-  mergeEngineState,
   translateVibeToEngine,
   worldDefaults,
 } from '@/lib/harmonic-engine';
+import { bootRuntime, dispatchRuntimePatch } from '@/lib/harmonic-signal-bus';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { HarmonicNodeGraph } from '@/components/engine/HarmonicNodeGraph';
+import { HarmonicRuntimePanel } from '@/components/engine/HarmonicRuntimePanel';
 
 const worlds: HarmonicWorldId[] = ['melodic', 'harmonic', 'fried-em', 'schmackin'];
 const emotions: EmotionKey[] = ['hope', 'pain', 'luxury', 'victory', 'chaos', 'peace', 'reflection', 'pressure', 'healing', 'freedom'];
@@ -18,30 +19,32 @@ const emotions: EmotionKey[] = ['hope', 'pain', 'luxury', 'victory', 'chaos', 'p
 export function HarmonicEngineBuilder() {
   const [world, setWorld] = useState<HarmonicWorldId>('melodic');
   const [prompt, setPrompt] = useState('make it feel like surviving your worst year and turning it into purple light');
-  const [state, setState] = useState<HarmonicEngineState>(worldDefaults.melodic);
+  const [runtime, setRuntime] = useState(() => bootRuntime(worldDefaults.melodic));
+  const state = runtime.state;
 
   const worldOptions = useMemo(() => worlds.map((item) => ({ value: item, label: item.replace('-', ' ') })), []);
 
   function changeWorld(nextWorld: HarmonicWorldId) {
     setWorld(nextWorld);
-    setState(worldDefaults[nextWorld]);
+    setRuntime(bootRuntime(worldDefaults[nextWorld]));
   }
 
   function updateState(patch: Partial<HarmonicEngineState>) {
-    setState((current) => mergeEngineState(current.world, { ...current, ...patch }));
+    setRuntime((current) => dispatchRuntimePatch(current, 'creator-control', patch));
   }
 
   function conductPrompt() {
-    setState(translateVibeToEngine(world, prompt));
+    const translated = translateVibeToEngine(world, prompt);
+    setRuntime((current) => dispatchRuntimePatch(current, 'ai-director', translated));
   }
 
   return (
     <section className="harmonic-container py-8">
       <div className="mb-6 rounded-[2.5rem] border border-white/10 bg-[linear-gradient(135deg,rgba(183,108,255,.18),rgba(54,178,203,.06),rgba(255,255,255,.035))] p-6 shadow-purple-glow backdrop-blur-2xl">
-        <p className="text-xs font-black uppercase tracking-[.36em] text-purple-100/45">Harmonic Engine</p>
-        <h1 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-6xl">One mind. Four worlds.</h1>
+        <p className="text-xs font-black uppercase tracking-[.36em] text-purple-100/45">Harmonic Runtime</p>
+        <h1 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-6xl">The nervous system is online.</h1>
         <p className="mt-4 max-w-4xl text-sm leading-7 text-purple-100/62 sm:text-base">
-          This is the shared control brain for Harmonic OS. Every world uses the same engine controls, but each world expresses them through its own Frequency DNA.
+          Every world now talks through a Signal Bus. Creator controls, AI Director, emotion changes, DNA, and world output all broadcast signals through one reusable runtime.
         </p>
       </div>
 
@@ -49,7 +52,7 @@ export function HarmonicEngineBuilder() {
         <HarmonicNodeGraph state={state} />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+      <div className="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
         <div className="grid gap-5">
           <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">AI Director Prototype</p>
@@ -62,7 +65,7 @@ export function HarmonicEngineBuilder() {
               placeholder="Tell Harmonic OS the feeling..."
             />
             <button type="button" onClick={conductPrompt} className="mt-4 rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow">
-              Conduct Engine
+              Conduct Through Signal Bus
             </button>
           </article>
 
@@ -115,7 +118,10 @@ export function HarmonicEngineBuilder() {
           </article>
         </div>
 
-        <HarmonicEnginePreview state={state} />
+        <div className="grid gap-5 content-start">
+          <HarmonicEnginePreview state={state} />
+          <HarmonicRuntimePanel snapshot={runtime} />
+        </div>
       </div>
     </section>
   );
