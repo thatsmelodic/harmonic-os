@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { melodicWorldVisualDefaults, type MelodicWorldVisualState } from '@/lib/melodic-visuals';
 import { MelodicVisualizer } from '@/components/worlds/MelodicVisualizer';
+import { SeasonAtmosphere } from '@/components/seasons/SeasonAtmosphere';
 
 const tracks = [
   { title: 'Lift U Up', type: 'R&B Frequency', bpm: '80 BPM', status: 'Memory Saved' },
@@ -20,6 +21,7 @@ const memoryNodes = [
 export function MelodicWorldExperience({ visualState = melodicWorldVisualDefaults }: { visualState?: MelodicWorldVisualState }) {
   return (
     <main className="melodic-world relative isolate min-h-screen overflow-hidden pb-28">
+      <SeasonAtmosphere season="autumn" intensity={0.72} />
       <div className="melodic-aurora absolute inset-0 -z-30" />
       <div className="frequency-grid absolute inset-0 -z-20 opacity-50" />
       <div className="melodic-ripple melodic-ripple-one" />
@@ -118,9 +120,9 @@ export function MelodicWorldExperience({ visualState = melodicWorldVisualDefault
       <section className="harmonic-container py-8">
         <div className="rounded-[2.5rem] border border-purple-200/10 bg-[linear-gradient(135deg,rgba(183,108,255,.18),rgba(255,79,216,.08),rgba(255,255,255,.035))] p-6 shadow-purple-glow backdrop-blur-2xl sm:p-8">
           <p className="text-xs font-black uppercase tracking-[.34em] text-purple-100/45">Now Connected</p>
-          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">This page can receive saved Visual Lab settings.</h2>
+          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">Autumn now breathes inside this world.</h2>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-white/65 sm:text-base">
-            Once the Supabase table is installed, Creator Studio saves publish directly into this world.
+            Leaves, golden atmosphere, Harmonic Tree glow, and seasonal mood now sit above the Melodic experience.
           </p>
         </div>
       </section>
