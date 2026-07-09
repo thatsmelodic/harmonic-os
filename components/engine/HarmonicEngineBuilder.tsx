@@ -10,6 +10,7 @@ import {
   worldDefaults,
 } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
+import { HarmonicNodeGraph } from '@/components/engine/HarmonicNodeGraph';
 
 const worlds: HarmonicWorldId[] = ['melodic', 'harmonic', 'fried-em', 'schmackin'];
 const emotions: EmotionKey[] = ['hope', 'pain', 'luxury', 'victory', 'chaos', 'peace', 'reflection', 'pressure', 'healing', 'freedom'];
@@ -42,6 +43,10 @@ export function HarmonicEngineBuilder() {
         <p className="mt-4 max-w-4xl text-sm leading-7 text-purple-100/62 sm:text-base">
           This is the shared control brain for Harmonic OS. Every world uses the same engine controls, but each world expresses them through its own Frequency DNA.
         </p>
+      </div>
+
+      <div className="mb-5">
+        <HarmonicNodeGraph state={state} />
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
