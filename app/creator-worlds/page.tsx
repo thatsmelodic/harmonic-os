@@ -29,11 +29,29 @@ const dashboard = {
     { id: 'commerce', title: 'Native Commerce', status: 'draft', description: 'Drop rooms, memberships, tickets, digital products, and licensing hooks.' },
     { id: 'marketplace', title: 'Module Store', status: 'locked', description: 'Marketplace for themes, FX, AI personalities, and world modules.' },
   ],
-  nextActions: [
-    'Connect World Builder controls to real creator settings.',
-    'Create approval queue for AI, events, commerce, and builder changes.',
-    'Wire community rooms and premium access logic.',
-    'Prepare native commerce engine with memberships, drops, tickets, and licensing.',
+  nextActions: ['Connect World Builder controls to real creator settings.', 'Create approval queue for AI, events, commerce, and builder changes.', 'Wire community rooms and premium access logic.', 'Prepare native commerce engine with memberships, drops, tickets, and licensing.'],
+};
+
+const builder = {
+  controls: [
+    { id: 'lighting', label: 'Lighting', value: 'Purple Neon / Golden Fall', impact: 'Controls glow, contrast, mood, and seasonal tone.' },
+    { id: 'atmosphere', label: 'Atmosphere', value: 'Fog, particles, rain, petals, snow', impact: 'Makes each world feel alive instead of flat.' },
+    { id: 'layout', label: 'Layout', value: 'Hero + portals + rooms', impact: 'Defines how visitors travel through the world.' },
+    { id: 'sound', label: 'Ambient Sound', value: 'Optional world ambience', impact: 'Prepares the future audio/fx layer without forcing sound on users.' },
+  ],
+  rooms: [
+    { id: 'vault', title: 'Media Vault', zone: 'media', purpose: 'Exclusive videos, songs, unreleased content, and private drops.', revenue: 'Memberships and paywalled content.' },
+    { id: 'showroom', title: 'Drop Showroom', zone: 'commerce', purpose: 'World-native clothing, merch, digital products, and limited releases.', revenue: 'Native commerce and product drops.' },
+    { id: 'plaza', title: 'Community Plaza', zone: 'community', purpose: 'Announcements, member rooms, roles, quests, and creator updates.', revenue: 'Paid community rooms and subscriptions.' },
+    { id: 'portal', title: 'Collab Portal', zone: 'collab', purpose: 'Cross-world events, guest creators, shared drops, and media swaps.', revenue: 'Collab fees and revenue splits.' },
+    { id: 'stage', title: 'Event Stage', zone: 'events', purpose: 'Premieres, tournaments, listening rooms, pop-ups, and seasonal events.', revenue: 'Tickets, event upgrades, and sponsored moments.' },
+    { id: 'studio', title: 'AI Studio', zone: 'ai', purpose: 'Approval-first suggestions, previews, explain-why notes, and creator rules.', revenue: 'Premium AI assistants and advanced automation.' },
+  ],
+  presets: [
+    'Fall Masterpiece — leaves, rain, warm light, hoodie energy',
+    'Neon Night — city glow, fog, chrome UI, purple aura',
+    'Luxury Vault — black crystal, spotlight, soft motion',
+    'Community Festival — brighter energy, banners, live event feel',
   ],
 };
 
@@ -56,14 +74,7 @@ export default function CreatorWorldsPage() {
       <FrequencyDock />
       <section className="harmonic-container py-8">
         <div className="rounded-[2.8rem] border border-purple-200/15 bg-[linear-gradient(135deg,rgba(183,108,255,.18),rgba(54,178,203,.07),rgba(0,0,0,.42))] p-5 shadow-purple-glow backdrop-blur-2xl sm:p-7">
-          <div className="flex flex-wrap items-start justify-between gap-5">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Platform Layer</p>
-              <h1 className="mt-3 text-5xl font-black tracking-[-.09em] sm:text-7xl">Creator Worlds</h1>
-              <p className="mt-4 max-w-5xl text-sm leading-7 text-purple-100/62 sm:text-base">The monetizable creator universe system for Harmonic OS. Creators do not just get pages; they get living worlds powered by platform tools, intelligence, and creator economy systems.</p>
-            </div>
-            <div className="flex flex-wrap gap-3"><Link href="/studio" className="rounded-full bg-purple-300 px-5 py-3 text-sm font-black text-black shadow-purple-glow">Open Studio</Link><Link href="/worlds" className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-purple-100/75 hover:bg-white/[.06]">Explore Worlds</Link></div>
-          </div>
+          <div className="flex flex-wrap items-start justify-between gap-5"><div><p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Platform Layer</p><h1 className="mt-3 text-5xl font-black tracking-[-.09em] sm:text-7xl">Creator Worlds</h1><p className="mt-4 max-w-5xl text-sm leading-7 text-purple-100/62 sm:text-base">The monetizable creator universe system for Harmonic OS. Creators do not just get pages; they get living worlds powered by platform tools, intelligence, and creator economy systems.</p></div><div className="flex flex-wrap gap-3"><Link href="/studio" className="rounded-full bg-purple-300 px-5 py-3 text-sm font-black text-black shadow-purple-glow">Open Studio</Link><Link href="/worlds" className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-purple-100/75 hover:bg-white/[.06]">Explore Worlds</Link></div></div>
           <div className="mt-6 grid gap-3 md:grid-cols-4">{metrics.map((metric) => <HeroStat key={metric.label} label={metric.label} value={metric.value} />)}</div>
         </div>
       </section>
@@ -74,6 +85,13 @@ export default function CreatorWorldsPage() {
           <div className="mt-6 grid gap-3 md:grid-cols-4">{dashboard.metrics.map((metric) => <div key={metric.id} className="rounded-2xl border border-white/10 bg-black/30 p-4"><p className="text-xs font-black uppercase tracking-[.2em] text-white/35">{metric.label}</p><p className="mt-2 text-3xl font-black tracking-[-.06em] text-purple-100">{metric.value}</p><p className="mt-1 text-xs font-black text-emerald-200/70">{metric.trend}</p><p className="mt-2 text-xs leading-6 text-white/45">{metric.note}</p></div>)}</div>
           <div className="mt-6 grid gap-5 xl:grid-cols-3"><section className="rounded-2xl border border-white/10 bg-black/25 p-4 xl:col-span-2"><p className="text-xs font-black uppercase tracking-[.22em] text-white/35">Approval Queue</p><div className="mt-4 grid gap-3">{dashboard.alerts.map((alert) => <div key={alert.id} className="rounded-xl border border-white/10 bg-white/[.035] p-3"><div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-sm text-white/80">{alert.title}</strong><span className="rounded-full border border-purple-200/15 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.14em] text-purple-100/50">{alert.priority}</span></div><p className="mt-2 text-xs leading-6 text-white/48">{alert.message}</p><p className="mt-2 text-xs font-black uppercase tracking-[.16em] text-purple-100/50">{alert.action}</p></div>)}</div></section><section className="rounded-2xl border border-white/10 bg-black/25 p-4"><p className="text-xs font-black uppercase tracking-[.22em] text-white/35">Next Actions</p><div className="mt-4 grid gap-3">{dashboard.nextActions.map((action) => <p key={action} className="rounded-xl border border-white/10 bg-white/[.035] p-3 text-xs leading-6 text-white/50">{action}</p>)}</div></section></div>
           <div className="mt-6 grid gap-3 md:grid-cols-3">{dashboard.modules.map((module) => <div key={module.id} className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="flex items-center justify-between gap-3"><strong className="text-sm text-white/80">{module.title}</strong><span className="text-xs uppercase tracking-[.14em] text-purple-100/45">{module.status}</span></div><p className="mt-2 text-xs leading-6 text-white/45">{module.description}</p></div>)}</div>
+        </article>
+
+        <article className="rounded-[2rem] border border-purple-200/20 bg-black/35 p-5 backdrop-blur-2xl">
+          <p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">World Builder</p><h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">Build the world, not a page.</h2><p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">Creator Worlds need layout, atmosphere, portals, rooms, themes, seasons, and revenue zones. This is the builder foundation before drag-and-drop is connected.</p>
+          <div className="mt-6 grid gap-3 md:grid-cols-4">{builder.controls.map((control) => <div key={control.id} className="rounded-2xl border border-white/10 bg-black/30 p-4"><p className="text-xs font-black uppercase tracking-[.2em] text-white/35">{control.label}</p><p className="mt-2 text-lg font-black text-purple-100">{control.value}</p><p className="mt-2 text-xs leading-6 text-white/45">{control.impact}</p></div>)}</div>
+          <div className="mt-6 grid gap-4 xl:grid-cols-3">{builder.rooms.map((room) => <section key={room.id} className="rounded-2xl border border-white/10 bg-white/[.035] p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-lg font-black tracking-[-.04em] text-white/82">{room.title}</h3><span className="rounded-full border border-purple-200/15 px-3 py-1 text-[.65rem] font-black uppercase tracking-[.14em] text-purple-100/50">{room.zone}</span></div><p className="mt-2 text-xs leading-6 text-white/48">{room.purpose}</p><p className="mt-3 text-xs leading-6 text-purple-100/50">{room.revenue}</p></section>)}</div>
+          <div className="mt-6 grid gap-3 md:grid-cols-4">{builder.presets.map((preset) => <p key={preset} className="rounded-2xl border border-purple-200/10 bg-purple-200/[.045] p-4 text-xs leading-6 text-white/52">{preset}</p>)}</div>
         </article>
 
         <article className="rounded-[2rem] border border-purple-200/20 bg-[linear-gradient(135deg,rgba(183,108,255,.16),rgba(54,178,203,.05),rgba(0,0,0,.38))] p-5 backdrop-blur-2xl"><p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Full Platform Programming</p><h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">All phases. One creator economy.</h2><p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">Creator Worlds is the centerpiece, but the income system needs all three phases connected: platform, intelligence, and economy.</p></article>
