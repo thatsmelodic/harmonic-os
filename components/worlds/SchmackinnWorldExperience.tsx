@@ -3,7 +3,6 @@ import { bootRuntime } from '@/lib/harmonic-signal-bus';
 import { worldDefaults } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { SeasonalWorldLayer } from '@/components/seasons/SeasonalWorldLayer';
-import './SchmackinnWorldExperience.css';
 
 const runtime = bootRuntime(worldDefaults.schmackin);
 
