@@ -1,5 +1,6 @@
 import { FrequencyDock } from '@/components/FrequencyDock';
 import { CreatorMissionControl } from '@/components/studio/CreatorMissionControl';
+import { AiDirectorV2Studio } from '@/components/studio/AiDirectorV2Studio';
 
 export const metadata = {
   title: 'Creator Studio 2.0 | Harmonic OS',
@@ -11,6 +12,7 @@ export default function StudioPage() {
     <main className="min-h-screen px-6 py-8 pb-28">
       <FrequencyDock />
       <CreatorMissionControl />
+      <AiDirectorV2Studio />
     </main>
   );
 }
