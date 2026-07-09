@@ -1,8 +1,10 @@
-import { WorldPage, generateWorldMetadata } from '@/components/WorldPage';
-import { getFrequency } from '@/lib/frequencies';
+import { HarmonicFashionWorldExperience } from '@/components/worlds/HarmonicFashionWorldExperience';
 
-export const metadata = generateWorldMetadata('harmonic');
+export const metadata = {
+  title: 'Harmonic | Harmonic OS',
+  description: 'An engine-powered fashion world for 2Harmonic design, drops, and stitched melodies.',
+};
 
 export default function HarmonicWorldPage() {
-  return <WorldPage world={getFrequency('harmonic')} />;
+  return <HarmonicFashionWorldExperience />;
 }
