@@ -13,7 +13,8 @@ import {
   translateVibeToEngine,
   worldDefaults,
 } from '@/lib/harmonic-engine';
-import { bootRuntime, dispatchRuntimePatch } from '@/lib/harmonic-signal-bus';
+import { bootRuntime, dispatchRuntimePatch, type HarmonicRuntimeSnapshot } from '@/lib/harmonic-signal-bus';
+import { publishRuntimeSync } from '@/lib/harmonic-live-sync';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { HarmonicRuntimePanel } from '@/components/engine/HarmonicRuntimePanel';
 import { SeasonMissionControl } from '@/components/studio/SeasonMissionControl';
@@ -55,19 +56,26 @@ export function CreatorMissionControl() {
     { label: 'Runtime', value: 'LIVE' },
   ], [state]);
 
+  function commitRuntime(nextRuntime: HarmonicRuntimeSnapshot, source: string) {
+    publishRuntimeSync(nextRuntime, source);
+    return nextRuntime;
+  }
+
   function switchWorld(world: HarmonicWorldId) {
+    const nextRuntime = bootRuntime(worldDefaults[world]);
     setActiveWorld(world);
-    setRuntime(bootRuntime(worldDefaults[world]));
+    setRuntime(nextRuntime);
+    publishRuntimeSync(nextRuntime, 'world-switcher');
     setActivePanel(workspaceMap[world][0]);
   }
 
   function patch(patchState: Partial<HarmonicEngineState>, source = 'mission-control') {
-    setRuntime((current) => dispatchRuntimePatch(current, source, patchState));
+    setRuntime((current) => commitRuntime(dispatchRuntimePatch(current, source, patchState), source));
   }
 
   function conductDirector() {
     const translated = translateVibeToEngine(activeWorld, directorPrompt);
-    setRuntime((current) => dispatchRuntimePatch(current, 'studio-ai-director', translated));
+    setRuntime((current) => commitRuntime(dispatchRuntimePatch(current, 'studio-ai-director', translated), 'studio-ai-director'));
   }
 
   return (
@@ -78,7 +86,7 @@ export function CreatorMissionControl() {
             <p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Creator Studio 2.0</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-6xl">Mission Control</h1>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-purple-100/62 sm:text-base">
-              The cockpit for Harmonic OS. Switch worlds, direct atmosphere, tune environment, lighting, camera, seasons, and watch the runtime react through the Signal Bus.
+              The cockpit for Harmonic OS. Switch worlds, direct atmosphere, tune environment, lighting, camera, seasons, and watch the runtime publish through the live Signal Bus.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
