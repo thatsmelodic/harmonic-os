@@ -43,6 +43,7 @@ export const categoryDefinitions: Record<CreatorWorldCategory, { label: string; 
 };
 
 export const defaultCreatorWorldModules: CreatorWorldModuleId[] = ['ai-assistant', 'media-vault', 'world-chat', 'collabs', 'analytics', 'events', 'commerce-ready', 'marketplace-ready'];
+export const defaultCreatorWorldCategories: CreatorWorldCategory[] = ['music', 'fashion', 'food'];
 
 export function calculateCreatorWorldPricing(categoryCount: number): CreatorWorldPricing {
   const baseMonthly = 29;
@@ -59,7 +60,7 @@ export function calculateCreatorWorldPricing(categoryCount: number): CreatorWorl
 }
 
 export function createCreatorWorldBlueprint(input?: Partial<CreatorWorldBlueprint>): CreatorWorldBlueprint {
-  const categories = input?.categories?.length ? input.categories : ['music', 'fashion', 'food'];
+  const categories: CreatorWorldCategory[] = input?.categories?.length ? input.categories : defaultCreatorWorldCategories;
   return {
     id: input?.id ?? `creator-world-${Date.now()}`,
     name: input?.name ?? 'Melodic Universe',
