@@ -154,20 +154,35 @@ alter table public.creator_ai_approvals enable row level security;
 alter table public.creator_world_events enable row level security;
 alter table public.creator_world_analytics_daily enable row level security;
 
-create policy if not exists "Public can view published worlds" on public.creator_worlds for select using (status = 'published' or visibility in ('public', 'unlisted'));
-create policy if not exists "Owners manage their worlds" on public.creator_worlds for all using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
+drop policy if exists "Public can view published worlds" on public.creator_worlds;
+create policy "Public can view published worlds" on public.creator_worlds for select using (status = 'published' or visibility in ('public', 'unlisted'));
 
-create policy if not exists "Public can view active public rooms" on public.creator_world_rooms for select using (is_active = true and access_level = 'public');
-create policy if not exists "World owners manage rooms" on public.creator_world_rooms for all using (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid())) with check (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid()));
+drop policy if exists "Owners manage their worlds" on public.creator_worlds;
+create policy "Owners manage their worlds" on public.creator_worlds for all using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
 
-create policy if not exists "Public can view active products" on public.creator_products for select using (status = 'active');
-create policy if not exists "Sellers manage products" on public.creator_products for all using (auth.uid() = seller_id) with check (auth.uid() = seller_id);
+drop policy if exists "Public can view active public rooms" on public.creator_world_rooms;
+create policy "Public can view active public rooms" on public.creator_world_rooms for select using (is_active = true and access_level = 'public');
 
-create policy if not exists "Members view their memberships" on public.creator_memberships for select using (auth.uid() = user_id);
-create policy if not exists "Buyers view their orders" on public.creator_orders for select using (auth.uid() = buyer_id);
+drop policy if exists "World owners manage rooms" on public.creator_world_rooms;
+create policy "World owners manage rooms" on public.creator_world_rooms for all using (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid())) with check (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid()));
 
-create policy if not exists "World owners view approvals" on public.creator_ai_approvals for select using (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid()));
-create policy if not exists "World owners manage approvals" on public.creator_ai_approvals for all using (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid())) with check (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid()));
+drop policy if exists "Public can view active products" on public.creator_products;
+create policy "Public can view active products" on public.creator_products for select using (status = 'active');
+
+drop policy if exists "Sellers manage products" on public.creator_products;
+create policy "Sellers manage products" on public.creator_products for all using (auth.uid() = seller_id) with check (auth.uid() = seller_id);
+
+drop policy if exists "Members view their memberships" on public.creator_memberships;
+create policy "Members view their memberships" on public.creator_memberships for select using (auth.uid() = user_id);
+
+drop policy if exists "Buyers view their orders" on public.creator_orders;
+create policy "Buyers view their orders" on public.creator_orders for select using (auth.uid() = buyer_id);
+
+drop policy if exists "World owners view approvals" on public.creator_ai_approvals;
+create policy "World owners view approvals" on public.creator_ai_approvals for select using (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid()));
+
+drop policy if exists "World owners manage approvals" on public.creator_ai_approvals;
+create policy "World owners manage approvals" on public.creator_ai_approvals for all using (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid())) with check (exists (select 1 from public.creator_worlds w where w.id = world_id and w.owner_id = auth.uid()));
 
 create index if not exists creator_worlds_slug_idx on public.creator_worlds(slug);
 create index if not exists creator_world_rooms_world_idx on public.creator_world_rooms(world_id);
