@@ -1,0 +1,138 @@
+.seasonal-world-layer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -5;
+  overflow: hidden;
+}
+
+.seasonal-sky {
+  position: absolute;
+  inset: 0;
+  opacity: .48;
+  mix-blend-mode: screen;
+}
+
+.season-autumn .seasonal-sky {
+  background:
+    radial-gradient(circle at 24% 10%, rgba(255,159,28,.28), transparent 22rem),
+    radial-gradient(circle at 78% 18%, rgba(183,108,255,.22), transparent 24rem),
+    radial-gradient(circle at 50% 78%, rgba(112,49,18,.18), transparent 24rem);
+}
+
+.season-spring .seasonal-sky {
+  background:
+    radial-gradient(circle at 24% 10%, rgba(184,255,207,.24), transparent 22rem),
+    radial-gradient(circle at 78% 18%, rgba(255,159,214,.18), transparent 24rem);
+}
+
+.season-summer .seasonal-sky {
+  background:
+    radial-gradient(circle at 24% 10%, rgba(255,209,102,.24), transparent 22rem),
+    radial-gradient(circle at 78% 18%, rgba(88,199,255,.20), transparent 24rem);
+}
+
+.season-winter .seasonal-sky {
+  background:
+    radial-gradient(circle at 24% 10%, rgba(215,244,255,.22), transparent 22rem),
+    radial-gradient(circle at 78% 18%, rgba(183,108,255,.14), transparent 24rem);
+}
+
+.seasonal-tree-beacon {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 6.5rem;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 1.5rem;
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 0 38px rgba(255,159,28,.18);
+}
+
+.seasonal-tree-symbol {
+  position: relative;
+  z-index: 2;
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 18px rgba(255,159,28,.65));
+  animation: seasonalTreeBreath 4s ease-in-out infinite;
+}
+
+.seasonal-tree-pulse {
+  position: absolute;
+  inset: 18%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,159,28,.32), transparent 68%);
+  animation: seasonalPulse 3.4s ease-in-out infinite;
+}
+
+.autumn-leaf-field {
+  position: absolute;
+  inset: -10vh 0 0;
+}
+
+.autumn-leaf {
+  position: absolute;
+  top: -4rem;
+  font-size: 1.15rem;
+  filter: drop-shadow(0 0 8px rgba(255,159,28,.32));
+  animation-name: autumnLeafFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.seasonal-world-signal {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 6.5rem;
+  z-index: 20;
+  max-width: min(23rem, calc(100vw - 8rem));
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 1.25rem;
+  background: rgba(0,0,0,.30);
+  padding: .9rem 1rem;
+  backdrop-filter: blur(18px);
+  opacity: .72;
+}
+
+.seasonal-world-signal p {
+  margin: 0;
+  color: rgba(255,244,214,.72);
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.seasonal-world-signal span {
+  display: block;
+  margin-top: .4rem;
+  color: rgba(255,255,255,.52);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+
+@keyframes autumnLeafFall {
+  0% { transform: translate3d(0,-8vh,0) rotate(0deg); }
+  50% { transform: translate3d(3rem,52vh,0) rotate(180deg); }
+  100% { transform: translate3d(-2rem,112vh,0) rotate(360deg); }
+}
+
+@keyframes seasonalTreeBreath {
+  0%,100% { transform: scale(.96); opacity: .72; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes seasonalPulse {
+  0%,100% { transform: scale(.8); opacity: .24; }
+  50% { transform: scale(1.35); opacity: .68; }
+}
+
+@media (max-width: 720px) {
+  .seasonal-world-signal { display: none; }
+  .seasonal-tree-beacon { width: 3.8rem; height: 3.8rem; }
+}
