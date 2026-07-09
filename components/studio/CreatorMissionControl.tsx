@@ -10,11 +10,11 @@ import {
   type HarmonicWorldId,
   type LightingMode,
   type PhysicsMode,
-  translateVibeToEngine,
   worldDefaults,
 } from '@/lib/harmonic-engine';
 import { bootRuntime, dispatchRuntimePatch, type HarmonicRuntimeSnapshot } from '@/lib/harmonic-signal-bus';
 import { publishRuntimeSync } from '@/lib/harmonic-live-sync';
+import { createAiDirectorPlan, applySelectedSuggestions, coerceSuggestionValue, type AiDirectorMode, type AiDirectorPlan } from '@/lib/ai-director-approval';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { HarmonicRuntimePanel } from '@/components/engine/HarmonicRuntimePanel';
 import { SeasonMissionControl } from '@/components/studio/SeasonMissionControl';
@@ -45,7 +45,12 @@ export function CreatorMissionControl() {
   const [runtime, setRuntime] = useState(() => bootRuntime(worldDefaults.schmackin));
   const [directorPrompt, setDirectorPrompt] = useState('Make this upload feel warm at first, uncomfortable after the bite, then funny by the verdict.');
   const [activePanel, setActivePanel] = useState('Director');
+  const [aiMode, setAiMode] = useState<AiDirectorMode>('suggest-only');
+  const [aiPlan, setAiPlan] = useState<AiDirectorPlan | null>(null);
+  const [lastRuntime, setLastRuntime] = useState<HarmonicRuntimeSnapshot | null>(null);
   const state = runtime.state;
+
+  const previewState = aiPlan ? aiPlan.previewState : state;
 
   const liveReadout = useMemo(() => [
     { label: 'Emotion', value: state.emotion },
@@ -53,10 +58,11 @@ export function CreatorMissionControl() {
     { label: 'Audio', value: `${state.audioReactivity}%` },
     { label: 'Motion', value: `${state.motionIntensity}%` },
     { label: 'Aura', value: `${state.aura}%` },
-    { label: 'Runtime', value: 'LIVE' },
-  ], [state]);
+    { label: 'AI Mode', value: aiMode === 'off' ? 'OFF' : 'REVIEW' },
+  ], [state, aiMode]);
 
   function commitRuntime(nextRuntime: HarmonicRuntimeSnapshot, source: string) {
+    setLastRuntime(runtime);
     publishRuntimeSync(nextRuntime, source);
     return nextRuntime;
   }
@@ -67,15 +73,45 @@ export function CreatorMissionControl() {
     setRuntime(nextRuntime);
     publishRuntimeSync(nextRuntime, 'world-switcher');
     setActivePanel(workspaceMap[world][0]);
+    setAiPlan(null);
   }
 
   function patch(patchState: Partial<HarmonicEngineState>, source = 'mission-control') {
+    setAiPlan(null);
     setRuntime((current) => commitRuntime(dispatchRuntimePatch(current, source, patchState), source));
   }
 
   function conductDirector() {
-    const translated = translateVibeToEngine(activeWorld, directorPrompt);
-    setRuntime((current) => commitRuntime(dispatchRuntimePatch(current, 'studio-ai-director', translated), 'studio-ai-director'));
+    if (aiMode === 'off') return;
+    setAiPlan(createAiDirectorPlan(activeWorld, state, directorPrompt, aiMode));
+  }
+
+  function toggleSuggestion(id: string) {
+    setAiPlan((plan) => plan ? { ...plan, suggestions: plan.suggestions.map((suggestion) => suggestion.id === id ? { ...suggestion, selected: !suggestion.selected } : suggestion) } : plan);
+  }
+
+  function editSuggestion(id: string, value: string) {
+    setAiPlan((plan) => {
+      if (!plan) return plan;
+      const suggestions = plan.suggestions.map((suggestion) => suggestion.id === id ? { ...suggestion, suggestedValue: coerceSuggestionValue(suggestion.field, value) } : suggestion);
+      const previewState = { ...state, ...applySelectedSuggestions(state, suggestions) } as HarmonicEngineState;
+      return { ...plan, suggestions, previewState };
+    });
+  }
+
+  function applyAiPlan() {
+    if (!aiPlan) return;
+    const selectedPatch = applySelectedSuggestions(state, aiPlan.suggestions);
+    setAiPlan(null);
+    setRuntime((current) => commitRuntime(dispatchRuntimePatch(current, 'approved-ai-director', selectedPatch), 'approved-ai-director'));
+  }
+
+  function undoLastRuntime() {
+    if (!lastRuntime) return;
+    setRuntime(lastRuntime);
+    publishRuntimeSync(lastRuntime, 'undo-ai-change');
+    setLastRuntime(null);
+    setAiPlan(null);
   }
 
   return (
@@ -86,7 +122,7 @@ export function CreatorMissionControl() {
             <p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Creator Studio 2.0</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-6xl">Mission Control</h1>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-purple-100/62 sm:text-base">
-              The cockpit for Harmonic OS. Switch worlds, direct atmosphere, tune environment, lighting, camera, seasons, and watch the runtime publish through the live Signal Bus.
+              The cockpit for Harmonic OS. AI Director is optional and approval-based: suggestions preview first, then you approve, edit, reject, or apply selected changes.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -118,6 +154,16 @@ export function CreatorMissionControl() {
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[.36fr_.64fr]">
         <aside className="grid gap-5 content-start">
+          <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
+            <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">AI Director Mode</p>
+            <div className="mt-4 grid gap-2">
+              {(['off', 'suggest-only', 'preview'] as AiDirectorMode[]).map((mode) => (
+                <button key={mode} type="button" onClick={() => { setAiMode(mode); setAiPlan(null); }} className="rounded-2xl border px-4 py-3 text-left text-sm font-black capitalize transition" style={{ borderColor: aiMode === mode ? 'rgba(216,180,254,.65)' : 'rgba(255,255,255,.10)', background: aiMode === mode ? 'rgba(183,108,255,.16)' : 'rgba(255,255,255,.035)' }}>{mode.replace('-', ' ')}</button>
+              ))}
+            </div>
+            <p className="mt-4 text-xs leading-6 text-white/45">AI never applies changes live by itself. It only creates a preview plan for your approval.</p>
+          </article>
+
           <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">Workspace</p>
             <div className="mt-4 grid gap-2">
@@ -155,11 +201,36 @@ export function CreatorMissionControl() {
             <h2 className="mt-3 text-3xl font-black tracking-[-.06em]">Tell the OS what the experience should feel like.</h2>
             <textarea value={directorPrompt} onChange={(event) => setDirectorPrompt(event.target.value)} rows={4} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300" placeholder="Example: make this review slowly become chaotic before the Bunz reveal..." />
             <div className="mt-4 flex flex-wrap gap-3">
-              <button type="button" onClick={conductDirector} className="rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow">Conduct Runtime</button>
+              <button type="button" onClick={conductDirector} disabled={aiMode === 'off'} className="rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow disabled:cursor-not-allowed disabled:opacity-35">Generate AI Preview</button>
               <button type="button" onClick={() => patch({ emotion: 'chaos', particleDensity: 88, motionIntensity: 92 }, 'quick-preset')} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06]">Chaos Preset</button>
               <button type="button" onClick={() => patch({ emotion: 'luxury', bloom: 88, grain: 6 }, 'quick-preset')} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06]">Luxury Preset</button>
+              <button type="button" onClick={undoLastRuntime} disabled={!lastRuntime} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06] disabled:cursor-not-allowed disabled:opacity-35">Undo Last Apply</button>
             </div>
           </article>
+
+          {aiPlan && (
+            <article className="rounded-[2rem] border border-purple-200/20 bg-purple-200/[.07] p-5 backdrop-blur-2xl">
+              <p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">AI Preview Plan</p>
+              <h3 className="mt-3 text-3xl font-black tracking-[-.06em]">Review before applying.</h3>
+              <p className="mt-3 text-sm leading-7 text-white/60">{aiPlan.summary}</p>
+              <div className="mt-5 grid gap-3">
+                {aiPlan.suggestions.map((suggestion) => (
+                  <div key={suggestion.id} className="grid gap-3 rounded-2xl border border-white/10 bg-black/30 p-4 md:grid-cols-[auto_1fr_.65fr] md:items-center">
+                    <input type="checkbox" checked={suggestion.selected} onChange={() => toggleSuggestion(suggestion.id)} aria-label={`Select ${suggestion.label}`} />
+                    <div>
+                      <p className="font-black text-white/80">{suggestion.label}</p>
+                      <p className="mt-1 text-xs leading-6 text-white/45">{String(suggestion.currentValue)} → {String(suggestion.suggestedValue)}. {suggestion.reason}</p>
+                    </div>
+                    <input value={String(suggestion.suggestedValue)} onChange={(event) => editSuggestion(suggestion.id, event.target.value)} className="rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-sm text-purple-50 outline-none focus:border-purple-300" />
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <button type="button" onClick={applyAiPlan} className="rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow">Approve Selected</button>
+                <button type="button" onClick={() => setAiPlan(null)} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06]">Reject Plan</button>
+              </div>
+            </article>
+          )}
 
           <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">Emotion Matrix</p>
@@ -168,7 +239,10 @@ export function CreatorMissionControl() {
             </div>
           </article>
 
-          <HarmonicEnginePreview state={state} />
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div><p className="mb-3 text-xs font-black uppercase tracking-[.26em] text-white/35">Current</p><HarmonicEnginePreview state={state} /></div>
+            <div><p className="mb-3 text-xs font-black uppercase tracking-[.26em] text-purple-100/45">AI Preview</p><HarmonicEnginePreview state={previewState} /></div>
+          </div>
           <HarmonicRuntimePanel snapshot={runtime} />
         </div>
       </div>
