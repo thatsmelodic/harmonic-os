@@ -184,6 +184,60 @@ a { color: inherit; text-decoration: none; }
 .melodic-orbit-a { width: 78%; height: 78%; animation: melodicOrbit 16s linear infinite; }
 .melodic-orbit-b { width: 56%; height: 56%; animation: melodicOrbit 11s linear infinite reverse; }
 
+.harmonic-fashion-world {
+  --frequency-primary: #f5dfb8;
+  --frequency-aura: rgba(245,223,184,.24);
+  background: #050403;
+}
+.harmonic-fashion-aurora {
+  background:
+    radial-gradient(circle at 20% 12%, rgba(245,223,184,.22), transparent 28rem),
+    radial-gradient(circle at 78% 24%, rgba(54,178,203,.16), transparent 24rem),
+    radial-gradient(circle at 50% 82%, rgba(255,79,216,.08), transparent 26rem),
+    #050403;
+}
+.fashion-thread {
+  position: absolute;
+  z-index: -10;
+  height: 1px;
+  width: 42rem;
+  background: linear-gradient(90deg, transparent, rgba(245,223,184,.46), rgba(54,178,203,.28), transparent);
+  filter: drop-shadow(0 0 18px rgba(245,223,184,.24));
+  animation: threadDrift 8s ease-in-out infinite;
+}
+.fashion-thread-one { top: 12rem; right: -12rem; transform: rotate(-18deg); }
+.fashion-thread-two { bottom: 24rem; left: -16rem; transform: rotate(16deg); animation-delay: 2s; }
+.fabric-card {
+  position: absolute;
+  width: 42%;
+  height: 58%;
+  border-radius: 2rem;
+  border: 1px solid rgba(245,223,184,.16);
+  background: linear-gradient(135deg, rgba(245,223,184,.12), rgba(54,178,203,.07));
+  animation: fabricDrift 6s ease-in-out infinite;
+}
+.fabric-card-a { transform: rotate(-12deg) translate(-18%, 2%); }
+.fabric-card-b { transform: rotate(10deg) translate(18%, -2%); animation-delay: 1.4s; }
+.harmonic-drop-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .35s ease, border-color .35s ease, background .35s ease;
+}
+.harmonic-drop-card:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(120deg, transparent, rgba(245,223,184,.08), transparent);
+  transform: translateX(-100%);
+  transition: transform .7s ease;
+}
+.harmonic-drop-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(245,223,184,.32);
+  background: rgba(245,223,184,.08);
+}
+.harmonic-drop-card:hover:before { transform: translateX(100%); }
+
 .visual-particle {
   position: absolute;
   display: grid;
@@ -309,6 +363,14 @@ a { color: inherit; text-decoration: none; }
 @keyframes engineParticle {
   0%, 100% { transform: translate3d(0, 0, 0) scale(.7); opacity: .42; }
   50% { transform: translate3d(12px, -22px, 0) scale(1.15); opacity: .95; }
+}
+@keyframes threadDrift {
+  0%, 100% { opacity: .22; transform: translate3d(0, 0, 0) rotate(var(--thread-rotate, -18deg)); }
+  50% { opacity: .72; transform: translate3d(2rem, -1rem, 0) rotate(var(--thread-rotate, -18deg)); }
+}
+@keyframes fabricDrift {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(245,223,184,.12)); }
+  50% { filter: drop-shadow(0 0 34px rgba(245,223,184,.26)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
