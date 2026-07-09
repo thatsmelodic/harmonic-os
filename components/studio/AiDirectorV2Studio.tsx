@@ -7,6 +7,7 @@ import { bootRuntime, dispatchRuntimePatch, type HarmonicRuntimeSnapshot } from 
 import { publishRuntimeSync } from '@/lib/harmonic-live-sync';
 import { AiDirectorV2Panel } from '@/components/studio/AiDirectorV2Panel';
 import { HarmonicBrainV3Panel } from '@/components/studio/HarmonicBrainV3Panel';
+import { IntelligenceCompletionPanel } from '@/components/studio/IntelligenceCompletionPanel';
 import { HarmonicRuntimePanel } from '@/components/engine/HarmonicRuntimePanel';
 
 const worlds: HarmonicWorldId[] = ['melodic', 'harmonic', 'fried-em', 'schmackin'];
@@ -39,7 +40,7 @@ export function AiDirectorV2Studio() {
             <p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Optional AI Layer</p>
             <h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-6xl">AI Director V2 + Brain V3</h2>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-purple-100/62 sm:text-base">
-              Each world now has its own personality brain. The AI can read intent through that world’s voice, then generate approval-first cinematic plans.
+              Each world now has its own personality brain, creator memory, explain-why trust logic, and approval-based event engine.
             </p>
           </div>
           <span className="rounded-full border border-purple-200/20 bg-black/30 px-5 py-3 text-sm font-black text-purple-100/65">Approval Required</span>
@@ -62,6 +63,7 @@ export function AiDirectorV2Studio() {
 
       <div className="mt-5 grid gap-5">
         <HarmonicBrainV3Panel world={activeWorld} baseState={runtime.state} prompt={prompt} />
+        <IntelligenceCompletionPanel world={activeWorld} onApplyEvent={applyV2Patch} />
         <AiDirectorV2Panel world={activeWorld} baseState={runtime.state} prompt={prompt} onApply={applyV2Patch} />
         <HarmonicRuntimePanel snapshot={runtime} />
       </div>
