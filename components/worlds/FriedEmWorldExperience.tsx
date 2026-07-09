@@ -3,6 +3,7 @@ import { bootRuntime } from '@/lib/harmonic-signal-bus';
 import { worldDefaults } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { SeasonalWorldLayer } from '@/components/seasons/SeasonalWorldLayer';
+import { RuntimeVisualDriver } from '@/components/runtime/RuntimeVisualDriver';
 
 const runtime = bootRuntime(worldDefaults['fried-em']);
 
@@ -28,6 +29,7 @@ export function FriedEmWorldExperience() {
   return (
     <main className="fried-em-world relative isolate min-h-screen overflow-hidden pb-28">
       <SeasonalWorldLayer world="fried-em" />
+      <RuntimeVisualDriver world="fried-em" />
       <div className="fried-em-aurora absolute inset-0 -z-30" />
       <div className="court-grid absolute inset-0 -z-20 opacity-50" />
       <div className="arena-light arena-light-left" />
