@@ -238,6 +238,61 @@ a { color: inherit; text-decoration: none; }
 }
 .harmonic-drop-card:hover:before { transform: translateX(100%); }
 
+.fried-em-world {
+  --frequency-primary: #ff7a1a;
+  --frequency-aura: rgba(255,122,26,.28);
+  background: #070201;
+}
+.fried-em-aurora {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255,122,26,.32), transparent 26rem),
+    radial-gradient(circle at 80% 22%, rgba(255,52,52,.20), transparent 22rem),
+    radial-gradient(circle at 18% 82%, rgba(255,209,102,.12), transparent 26rem),
+    #070201;
+}
+.court-grid {
+  background-image:
+    linear-gradient(rgba(255,122,26,.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,122,26,.10) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at 50% 20%, black, transparent 75%);
+}
+.arena-light {
+  position: absolute;
+  top: 7rem;
+  z-index: -10;
+  width: 24rem;
+  height: 34rem;
+  background: linear-gradient(180deg, rgba(255,122,26,.30), transparent 74%);
+  filter: blur(20px);
+  opacity: .42;
+  animation: arenaLight 3s ease-in-out infinite;
+}
+.arena-light-left { left: 4%; transform: skewX(-18deg); }
+.arena-light-right { right: 4%; transform: skewX(18deg); animation-delay: 1.2s; }
+.fried-panel { box-shadow: 0 24px 80px rgba(0,0,0,.52), 0 0 55px rgba(255,122,26,.18); }
+.scoreboard { animation: scoreboardPulse 2.6s ease-in-out infinite; }
+.fried-stat, .challenge-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .28s ease, border-color .28s ease, background .28s ease;
+}
+.fried-stat:after, .challenge-card:after {
+  content: '';
+  position: absolute;
+  inset: -40% auto -40% -70%;
+  width: 45%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,122,26,.18), transparent);
+  transition: left .55s ease;
+}
+.fried-stat:hover, .challenge-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  border-color: rgba(255,122,26,.34);
+  background: rgba(255,122,26,.08);
+}
+.fried-stat:hover:after, .challenge-card:hover:after { left: 125%; }
+
 .visual-particle {
   position: absolute;
   display: grid;
@@ -314,64 +369,22 @@ a { color: inherit; text-decoration: none; }
   animation: engineParticle 4s ease-in-out infinite;
 }
 
-@keyframes pulseOrb {
-  0%,100% { transform: scale(.96); opacity: .72; }
-  50% { transform: scale(1.04); opacity: 1; }
-}
-@keyframes riseIn {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes frequencyScan {
-  0%, 24% { transform: translateY(-100%); opacity: 0; }
-  34%, 54% { opacity: .34; }
-  72%, 100% { transform: translateY(100%); opacity: 0; }
-}
-@keyframes terminalBoot {
-  from { opacity: 0; transform: translateY(8px); filter: blur(6px); }
-  to { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-@keyframes crystalBreath {
-  0%, 100% { filter: drop-shadow(0 0 22px var(--frequency-aura, rgba(183,108,255,.28))); }
-  50% { filter: drop-shadow(0 0 54px var(--frequency-aura, rgba(183,108,255,.28))); }
-}
-@keyframes melodicRipple {
-  0%, 100% { transform: scale(.88); opacity: .18; }
-  50% { transform: scale(1.08); opacity: .46; }
-}
-@keyframes melodicBar {
-  0%, 100% { transform: scaleY(.68); opacity: .65; }
-  50% { transform: scaleY(1.08); opacity: 1; }
-}
-@keyframes melodicOrbit {
-  from { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.04); }
-  to { transform: rotate(360deg) scale(1); }
-}
-@keyframes visualFloat {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(.86); }
-  50% { transform: translate3d(10px, -18px, 0) scale(1.12); }
-}
-@keyframes engineFog {
-  0%, 100% { transform: translate3d(-2%, 0, 0) scale(1); }
-  50% { transform: translate3d(3%, -2%, 0) scale(1.06); }
-}
-@keyframes engineCrystal {
-  0%, 100% { transform: rotate(45deg) scale(.96); }
-  50% { transform: rotate(45deg) scale(1.08); }
-}
-@keyframes engineParticle {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(.7); opacity: .42; }
-  50% { transform: translate3d(12px, -22px, 0) scale(1.15); opacity: .95; }
-}
-@keyframes threadDrift {
-  0%, 100% { opacity: .22; transform: translate3d(0, 0, 0) rotate(var(--thread-rotate, -18deg)); }
-  50% { opacity: .72; transform: translate3d(2rem, -1rem, 0) rotate(var(--thread-rotate, -18deg)); }
-}
-@keyframes fabricDrift {
-  0%, 100% { filter: drop-shadow(0 0 12px rgba(245,223,184,.12)); }
-  50% { filter: drop-shadow(0 0 34px rgba(245,223,184,.26)); }
-}
+@keyframes pulseOrb { 0%,100% { transform: scale(.96); opacity: .72; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes frequencyScan { 0%, 24% { transform: translateY(-100%); opacity: 0; } 34%, 54% { opacity: .34; } 72%, 100% { transform: translateY(100%); opacity: 0; } }
+@keyframes terminalBoot { from { opacity: 0; transform: translateY(8px); filter: blur(6px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes crystalBreath { 0%, 100% { filter: drop-shadow(0 0 22px var(--frequency-aura, rgba(183,108,255,.28))); } 50% { filter: drop-shadow(0 0 54px var(--frequency-aura, rgba(183,108,255,.28))); } }
+@keyframes melodicRipple { 0%, 100% { transform: scale(.88); opacity: .18; } 50% { transform: scale(1.08); opacity: .46; } }
+@keyframes melodicBar { 0%, 100% { transform: scaleY(.68); opacity: .65; } 50% { transform: scaleY(1.08); opacity: 1; } }
+@keyframes melodicOrbit { from { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.04); } to { transform: rotate(360deg) scale(1); } }
+@keyframes visualFloat { 0%, 100% { transform: translate3d(0, 0, 0) scale(.86); } 50% { transform: translate3d(10px, -18px, 0) scale(1.12); } }
+@keyframes engineFog { 0%, 100% { transform: translate3d(-2%, 0, 0) scale(1); } 50% { transform: translate3d(3%, -2%, 0) scale(1.06); } }
+@keyframes engineCrystal { 0%, 100% { transform: rotate(45deg) scale(.96); } 50% { transform: rotate(45deg) scale(1.08); } }
+@keyframes engineParticle { 0%, 100% { transform: translate3d(0, 0, 0) scale(.7); opacity: .42; } 50% { transform: translate3d(12px, -22px, 0) scale(1.15); opacity: .95; } }
+@keyframes threadDrift { 0%, 100% { opacity: .22; transform: translate3d(0, 0, 0); } 50% { opacity: .72; transform: translate3d(2rem, -1rem, 0); } }
+@keyframes fabricDrift { 0%, 100% { filter: drop-shadow(0 0 12px rgba(245,223,184,.12)); } 50% { filter: drop-shadow(0 0 34px rgba(245,223,184,.26)); } }
+@keyframes arenaLight { 0%, 100% { opacity: .22; transform: translateY(0) scale(.98); } 50% { opacity: .64; transform: translateY(1rem) scale(1.04); } }
+@keyframes scoreboardPulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
