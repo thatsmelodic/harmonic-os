@@ -1,22 +1,49 @@
 import Link from 'next/link';
 import { FrequencyDock } from '@/components/FrequencyDock';
-import { HarmonicPlatformPhasesPanel } from '@/components/creator-worlds/HarmonicPlatformPhasesPanel';
 
 export const metadata = {
   title: 'Creator Worlds Platform | Harmonic OS',
-  description: 'Dedicated Creator Worlds platform page for dashboards, world building, personal AI, communities, media, collabs, rankings, modules, native commerce, intelligence, and creator economy systems.',
+  description: 'Creator Worlds platform page for dashboards, world building, personal AI, communities, media, collabs, rankings, modules, native commerce, intelligence, and creator economy systems.',
 };
 
-const systems = [
-  { emoji: '🌍', title: 'World Dashboard', purpose: 'The home base for every creator world.', features: ['world health score', 'activity feed', 'module status', 'approval queue', 'revenue readiness'], revenue: 'Premium analytics, creator plans, and dashboard upgrades.' },
-  { emoji: '🏗️', title: 'World Builder', purpose: 'Customize layout, atmosphere, portals, themes, and seasonal overlays.', features: ['living hero scene', 'category portals', 'theme presets', 'atmosphere controls', 'drop zones'], revenue: 'Theme packs, premium layouts, templates, and builder subscriptions.' },
-  { emoji: '🤖', title: 'Personal AI Assistant', purpose: 'A unique approval-first AI for each creator world.', features: ['creator rules', 'world tone', 'suggestion previews', 'explain-why notes', 'content planning'], revenue: 'Premium AI personalities, category assistants, and advanced automation plans.' },
-  { emoji: '💬', title: 'Community Hub', purpose: 'Discord-style channels, roles, announcements, and member rooms.', features: ['channels', 'roles', 'premium rooms', 'mod queue', 'member quests'], revenue: 'Paid channels, subscriptions, private rooms, and fan memberships.' },
-  { emoji: '🎥', title: 'Interactive Media System', purpose: 'Uploads influence the world instead of sitting as static posts.', features: ['video impact score', 'mood tags', 'world reactions', 'exclusive vault', 'viewer triggers'], revenue: 'Paywalled media, vault access, exclusive clips, and drop-linked content.' },
-  { emoji: '🤝', title: 'Collaboration Portals', purpose: 'Connect worlds for crossovers, events, drops, and shared experiences.', features: ['guest portals', 'shared events', 'collab drops', 'media swaps', 'split-ready hooks'], revenue: 'Collab fees, revenue splits, joint events, and creator bundles.' },
-  { emoji: '📈', title: 'World Rankings', purpose: 'Discovery by activity, growth, category, and engagement.', features: ['overall ranks', 'category ranks', 'fastest growing', 'most active', 'featured worlds'], revenue: 'Analytics upgrades and curated discovery without pay-to-win ranking.' },
-  { emoji: '🧩', title: 'Module Store', purpose: 'Creators install optional systems instead of everyone getting the same site.', features: ['FX packs', 'AI packs', 'themes', 'commerce modules', 'community tools'], revenue: 'Marketplace sales, subscriptions, rev-share modules, and premium templates.' },
-  { emoji: '💰', title: 'Native Commerce', purpose: 'Storefronts that feel like part of the world, not generic checkout.', features: ['drop rooms', 'digital products', 'tickets', 'subscriptions', 'licensing hooks'], revenue: 'Platform take rate, creator storefronts, marketplace sales, and licensing.' },
+const phases = [
+  {
+    title: 'Phase 1 — Creator Platform',
+    subtitle: 'The main product surface: creators build worlds instead of profiles.',
+    features: [
+      ['🌍', 'Creator Worlds V3', 'Ownable living worlds with identity, categories, modules, activity, and monetization paths.', 'World subscriptions, category add-ons, plans, and future transaction fees.'],
+      ['📊', 'World Dashboard', 'Creator command center for health, revenue readiness, approvals, activity, and next steps.', 'Premium analytics and dashboard upgrades.'],
+      ['🏗️', 'World Builder', 'Customize layout, atmosphere, portals, rooms, themes, and seasonal overlays.', 'Template packs, premium layouts, FX packs, and builder subscriptions.'],
+      ['🤖', 'Personal AI Assistant', 'World-specific assistant with creator rules, explain-why logic, and approval-first editing.', 'Premium AI personalities, category assistants, and advanced automation plans.'],
+      ['💬', 'Community Hub', 'Discord-style channels, roles, announcements, premium rooms, member quests, and moderation.', 'Paid channels, subscriptions, member tiers, and community upgrades.'],
+      ['🎥', 'Interactive Media', 'Uploads create world events through mood, category, engagement, and approved reactions.', 'Paywalled media, vault access, release events, and premium content.'],
+      ['🤝', 'Collaboration Portals', 'Connect worlds for crossovers, shared rooms, collab drops, and split-ready commerce.', 'Collab fees, revenue splits, joint drops, and creator bundles.'],
+      ['💰', 'Native Commerce', 'Storefronts feel like rooms in the world instead of generic checkout.', 'Transaction fees, creator storefronts, subscriptions, tickets, and licensing.'],
+      ['🧩', 'Module Store', 'Creators install optional systems so every world does not feel identical.', 'Marketplace sales, monthly modules, premium templates, and rev-share modules.'],
+    ],
+  },
+  {
+    title: 'Phase 2 — Intelligence',
+    subtitle: 'The brain layer that makes Harmonic OS feel alive and trustworthy.',
+    features: [
+      ['🧠', 'Creator Memory Engine', 'Remembers creator preferences, style rules, brand context, approval history, and rejected changes.', 'Premium memory tiers and advanced assistant plans.'],
+      ['⚡', 'Harmonic Event Engine', 'Turns uploads, drops, seasons, holidays, collabs, and milestones into world events.', 'Paid events, event rooms, ticketing, and seasonal activations.'],
+      ['💡', 'Intelligence Completion Engine', 'Explains suggestions, risks, and changes before creator approval.', 'Premium AI workflow, creative direction, and platform retention.'],
+      ['🌀', 'Universal Runtime', 'One runtime for all worlds so future worlds scale without rebuilding the engine.', 'Scalable platform infrastructure for paid modules and many creators.'],
+      ['🌐', 'World Interaction Engine', 'Worlds influence each other through ripples, portals, and approved collab triggers.', 'Cross-world bundles, collab monetization, and marketplace discovery.'],
+    ],
+  },
+  {
+    title: 'Phase 3 — Creator Economy',
+    subtitle: 'The money layer: passport, marketplace, licensing, analytics, rankings, and revenue sharing.',
+    features: [
+      ['🎫', 'Creator Passport', 'Identity layer for visitors moving through worlds, memberships, purchases, and achievements.', 'Loyalty, memberships, paid access, and unlock systems.'],
+      ['🛍️', 'Frequency Marketplace', 'Marketplace for themes, FX, AI personalities, templates, modules, music packs, and creator assets.', 'Marketplace commissions, subscriptions, paid listings, and rev-share modules.'],
+      ['📜', 'Licensing Engine', 'Usage-rights layer for beats, templates, themes, modules, clips, and creator IP.', 'License fees, renewals, marketplace commissions, and creator business tools.'],
+      ['🤲', 'Revenue Sharing', 'Tracks splits for collabs, modules, marketplaces, events, and platform fees.', 'Scalable commerce and partnership transactions.'],
+      ['📈', 'Analytics + Rankings', 'Ranks worlds by activity, growth, engagement, category strength, revenue readiness, and community health.', 'Premium analytics, featured discovery, and growth tools.'],
+    ],
+  },
 ];
 
 const metrics = [
@@ -24,14 +51,6 @@ const metrics = [
   { label: 'Revenue Paths', value: '20+' },
   { label: 'AI Control', value: 'Approval' },
   { label: 'Platform Phases', value: '3' },
-];
-
-const commercePaths = [
-  'World memberships for exclusive rooms and private media.',
-  'Limited drops through immersive product rooms.',
-  'Paid events for tournaments, listening rooms, pop-ups, and streams.',
-  'Licensing for beats, templates, themes, FX, and creator modules.',
-  'Marketplace sales for packs, layouts, AI personalities, and world upgrades.',
 ];
 
 export default function CreatorWorldsPage() {
@@ -53,7 +72,6 @@ export default function CreatorWorldsPage() {
               <Link href="/worlds" className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-purple-100/75 hover:bg-white/[.06]">Explore Worlds</Link>
             </div>
           </div>
-
           <div className="mt-6 grid gap-3 md:grid-cols-4">
             {metrics.map((metric) => <HeroStat key={metric.label} label={metric.label} value={metric.value} />)}
           </div>
@@ -61,44 +79,36 @@ export default function CreatorWorldsPage() {
       </section>
 
       <section className="harmonic-container grid gap-5">
-        <HarmonicPlatformPhasesPanel />
-
-        <article className="rounded-[2rem] border border-purple-200/20 bg-black/35 p-5 backdrop-blur-2xl">
-          <p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Creator Worlds Product Surface</p>
-          <h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">The income layer</h2>
-          <p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">
-            This page is the public-facing foundation for the Creator Worlds platform. The Studio version controls the operating system. This standalone page explains the product, business model, creator value, and revenue paths in a stable build-safe way.
-          </p>
+        <article className="rounded-[2rem] border border-purple-200/20 bg-[linear-gradient(135deg,rgba(183,108,255,.16),rgba(54,178,203,.05),rgba(0,0,0,.38))] p-5 backdrop-blur-2xl">
+          <p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Full Platform Programming</p>
+          <h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">All phases. One creator economy.</h2>
+          <p className="mt-3 max-w-5xl text-sm leading-7 text-white/60">Creator Worlds is the centerpiece, but the income system needs all three phases connected: platform, intelligence, and economy.</p>
         </article>
 
-        <div className="grid gap-4 xl:grid-cols-3">
-          {systems.map((system) => (
-            <article key={system.title} className="rounded-2xl border border-white/10 bg-black/25 p-4 backdrop-blur-xl">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">{system.emoji}</span>
-                <div>
-                  <h3 className="text-xl font-black tracking-[-.04em] text-white/82">{system.title}</h3>
-                  <p className="mt-2 text-xs leading-6 text-white/50">{system.purpose}</p>
-                </div>
-              </div>
-              <div className="mt-4 grid gap-2">
-                {system.features.map((feature) => <p key={feature} className="rounded-xl border border-white/10 bg-white/[.035] p-3 text-xs leading-5 text-white/50 capitalize">{feature}</p>)}
-              </div>
-              <div className="mt-4 rounded-xl border border-purple-200/10 bg-purple-200/[.045] p-3">
-                <p className="text-[.65rem] font-black uppercase tracking-[.16em] text-purple-100/45">Revenue Path</p>
-                <p className="mt-2 text-xs leading-6 text-white/56">{system.revenue}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <article className="rounded-[2rem] border border-purple-200/20 bg-[linear-gradient(135deg,rgba(183,108,255,.12),rgba(0,0,0,.36))] p-5 backdrop-blur-2xl">
-          <p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Native Commerce Readiness</p>
-          <h2 className="mt-3 text-3xl font-black tracking-[-.06em]">Commerce should feel like walking into the world.</h2>
-          <div className="mt-5 grid gap-3 md:grid-cols-5">
-            {commercePaths.map((path) => <p key={path} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-xs leading-6 text-white/52">{path}</p>)}
-          </div>
-        </article>
+        {phases.map((phase) => (
+          <article key={phase.title} className="rounded-[2rem] border border-white/10 bg-black/25 p-5 backdrop-blur-xl">
+            <p className="text-xs font-black uppercase tracking-[.22em] text-white/35">Priority Phase</p>
+            <h2 className="mt-2 text-3xl font-black tracking-[-.06em] text-white/86">{phase.title}</h2>
+            <p className="mt-2 text-sm leading-7 text-white/52">{phase.subtitle}</p>
+            <div className="mt-5 grid gap-4 xl:grid-cols-3">
+              {phase.features.map(([emoji, title, purpose, revenue]) => (
+                <section key={title} className="rounded-2xl border border-white/10 bg-white/[.035] p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">{emoji}</span>
+                    <div>
+                      <h3 className="text-lg font-black tracking-[-.04em] text-white/82">{title}</h3>
+                      <p className="mt-2 text-xs leading-6 text-white/48">{purpose}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 rounded-xl border border-purple-200/10 bg-purple-200/[.045] p-3">
+                    <p className="text-[.65rem] font-black uppercase tracking-[.16em] text-purple-100/45">Revenue Impact</p>
+                    <p className="mt-2 text-xs leading-6 text-white/52">{revenue}</p>
+                  </div>
+                </section>
+              ))}
+            </div>
+          </article>
+        ))}
       </section>
     </main>
   );
