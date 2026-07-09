@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { bootRuntime } from '@/lib/harmonic-signal-bus';
 import { worldDefaults } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
+import './FriedEmWorldExperience.module.css';
 
 const runtime = bootRuntime(worldDefaults['fried-em']);
 
@@ -72,7 +73,7 @@ export function FriedEmWorldExperience() {
                   <p className="mt-2 text-6xl font-black tracking-[-.08em] text-orange-200">21</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-black/35 p-5">
-                  <p className="font-mono text-xs text-white/40">OPPS</p>
+                  <p className="font-mono text-xs text-white/40">RIVALS</p>
                   <p className="mt-2 text-6xl font-black tracking-[-.08em] text-white/75">11</p>
                 </div>
               </div>
