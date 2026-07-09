@@ -5,8 +5,8 @@ import { CreatorWorldsPrioritySprint } from '@/components/studio/CreatorWorldsPr
 import { CreatorWorldsPanel } from '@/components/studio/CreatorWorldsPanel';
 
 export const metadata = {
-  title: 'Creator Worlds | Harmonic OS',
-  description: 'Creator Worlds platform layer for creator dashboards, world building, AI assistants, communities, media, collabs, rankings, modules, and native commerce.',
+  title: 'Creator Worlds Platform | Harmonic OS',
+  description: 'Dedicated Creator Worlds platform page for creator dashboards, world building, AI assistants, communities, media, collabs, rankings, modules, and native commerce.',
 };
 
 export default function CreatorWorldsPage() {
