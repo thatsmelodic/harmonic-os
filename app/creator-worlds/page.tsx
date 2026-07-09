@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { FrequencyDock } from '@/components/FrequencyDock';
+import { HarmonicPlatformPhasesPanel } from '@/components/creator-worlds/HarmonicPlatformPhasesPanel';
 
 export const metadata = {
   title: 'Creator Worlds Platform | Harmonic OS',
-  description: 'Dedicated Creator Worlds platform page for dashboards, world building, personal AI, communities, media, collabs, rankings, modules, and native commerce.',
+  description: 'Dedicated Creator Worlds platform page for dashboards, world building, personal AI, communities, media, collabs, rankings, modules, native commerce, intelligence, and creator economy systems.',
 };
 
 const systems = [
@@ -20,9 +21,9 @@ const systems = [
 
 const metrics = [
   { label: 'Creator Type', value: 'World Owner' },
-  { label: 'Revenue Paths', value: '9+' },
+  { label: 'Revenue Paths', value: '20+' },
   { label: 'AI Control', value: 'Approval' },
-  { label: 'Commerce', value: 'Native' },
+  { label: 'Platform Phases', value: '3' },
 ];
 
 const commercePaths = [
@@ -44,7 +45,7 @@ export default function CreatorWorldsPage() {
               <p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Platform Layer</p>
               <h1 className="mt-3 text-5xl font-black tracking-[-.09em] sm:text-7xl">Creator Worlds</h1>
               <p className="mt-4 max-w-5xl text-sm leading-7 text-purple-100/62 sm:text-base">
-                The monetizable creator universe system for Harmonic OS. Creators do not just get pages; they get living worlds with dashboards, builder tools, personal AI, community, interactive media, collabs, rankings, modules, and native commerce paths.
+                The monetizable creator universe system for Harmonic OS. Creators do not just get pages; they get living worlds powered by platform tools, intelligence, and creator economy systems.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -60,6 +61,8 @@ export default function CreatorWorldsPage() {
       </section>
 
       <section className="harmonic-container grid gap-5">
+        <HarmonicPlatformPhasesPanel />
+
         <article className="rounded-[2rem] border border-purple-200/20 bg-black/35 p-5 backdrop-blur-2xl">
           <p className="text-xs font-black uppercase tracking-[.28em] text-purple-100/50">Creator Worlds Product Surface</p>
           <h2 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-5xl">The income layer</h2>
