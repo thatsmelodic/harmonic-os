@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { bootRuntime } from '@/lib/harmonic-signal-bus';
 import { worldDefaults } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
-import { SeasonAtmosphere } from '@/components/seasons/SeasonAtmosphere';
+import { SeasonalWorldLayer } from '@/components/seasons/SeasonalWorldLayer';
 import './SchmackinnWorldExperience.module.css';
 
 const runtime = bootRuntime(worldDefaults.schmackin);
@@ -33,7 +33,7 @@ export function SchmackinnWorldExperience() {
 
   return (
     <main className="schmackinn-world relative isolate min-h-screen overflow-hidden pb-28">
-      <SeasonAtmosphere season="autumn" intensity={1} />
+      <SeasonalWorldLayer world="schmackin" season="autumn" />
       <div className="schmackinn-aurora absolute inset-0 -z-30" />
       <div className="restaurant-rain absolute inset-0 -z-20 opacity-50" />
       <div className="steam-cloud steam-one" />
