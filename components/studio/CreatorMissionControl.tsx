@@ -48,8 +48,8 @@ export function CreatorMissionControl() {
 
   const liveReadout = useMemo(() => [
     { label: 'Emotion', value: state.emotion },
-    { label: 'Momentum', value: `${state.momentum}%` },
-    { label: 'Crowd', value: `${state.crowdEnergy}%` },
+    { label: 'Particles', value: `${state.particleDensity}%` },
+    { label: 'Audio', value: `${state.audioReactivity}%` },
     { label: 'Motion', value: `${state.motionIntensity}%` },
     { label: 'Aura', value: `${state.aura}%` },
     { label: 'Runtime', value: 'LIVE' },
@@ -123,7 +123,7 @@ export function CreatorMissionControl() {
             <SelectControl label="Environment" value={state.environment} options={environments} onChange={(value) => patch({ environment: value as EnvironmentMode })} />
             <RangeControl label="Fog / Steam / Smoke" value={state.fog} onChange={(value) => patch({ fog: value })} />
             <RangeControl label="Aura" value={state.aura} onChange={(value) => patch({ aura: value })} />
-            <RangeControl label="Ambient Life" value={state.crowdEnergy} onChange={(value) => patch({ crowdEnergy: value })} />
+            <RangeControl label="Particles" value={state.particleDensity} onChange={(value) => patch({ particleDensity: value })} />
           </ControlPanel>
 
           <ControlPanel title="Lighting" eyebrow="Cinematic Grade">
@@ -148,7 +148,7 @@ export function CreatorMissionControl() {
             <textarea value={directorPrompt} onChange={(event) => setDirectorPrompt(event.target.value)} rows={4} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300" placeholder="Example: make this review slowly become chaotic before the Bunz reveal..." />
             <div className="mt-4 flex flex-wrap gap-3">
               <button type="button" onClick={conductDirector} className="rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow">Conduct Runtime</button>
-              <button type="button" onClick={() => patch({ emotion: 'chaos', momentum: 88, motionIntensity: 92 }, 'quick-preset')} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06]">Chaos Preset</button>
+              <button type="button" onClick={() => patch({ emotion: 'chaos', particleDensity: 88, motionIntensity: 92 }, 'quick-preset')} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06]">Chaos Preset</button>
               <button type="button" onClick={() => patch({ emotion: 'luxury', bloom: 88, grain: 6 }, 'quick-preset')} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06]">Luxury Preset</button>
             </div>
           </article>
