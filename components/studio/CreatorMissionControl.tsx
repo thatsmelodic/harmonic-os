@@ -18,6 +18,7 @@ import { createAiDirectorPlan, applySelectedSuggestions, coerceSuggestionValue, 
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { HarmonicRuntimePanel } from '@/components/engine/HarmonicRuntimePanel';
 import { SeasonMissionControl } from '@/components/studio/SeasonMissionControl';
+import { DirectorTimelinePanel } from '@/components/studio/DirectorTimelinePanel';
 
 const worlds: HarmonicWorldId[] = ['melodic', 'harmonic', 'fried-em', 'schmackin'];
 const emotions: EmotionKey[] = ['hope', 'pain', 'luxury', 'victory', 'chaos', 'peace', 'reflection', 'pressure', 'healing', 'freedom'];
@@ -106,6 +107,11 @@ export function CreatorMissionControl() {
     setRuntime((current) => commitRuntime(dispatchRuntimePatch(current, 'approved-ai-director', selectedPatch), 'approved-ai-director'));
   }
 
+  function applyTimelineKeyframe(timelinePatch: Partial<HarmonicEngineState>, label: string) {
+    setAiPlan(null);
+    setRuntime((current) => commitRuntime(dispatchRuntimePatch(current, `director-timeline-${label.toLowerCase().replace(/\s+/g, '-')}`, timelinePatch), 'director-timeline'));
+  }
+
   function undoLastRuntime() {
     if (!lastRuntime) return;
     setRuntime(lastRuntime);
@@ -122,7 +128,7 @@ export function CreatorMissionControl() {
             <p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Creator Studio 2.0</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-6xl">Mission Control</h1>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-purple-100/62 sm:text-base">
-              The cockpit for Harmonic OS. AI Director is optional and approval-based: suggestions preview first, then you approve, edit, reject, or apply selected changes.
+              The cockpit for Harmonic OS. AI Director is optional and approval-based. Director Timeline lets you preview cinematic keyframes before applying them live.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -231,6 +237,8 @@ export function CreatorMissionControl() {
               </div>
             </article>
           )}
+
+          <DirectorTimelinePanel baseState={state} onApplyKeyframe={applyTimelineKeyframe} />
 
           <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">Emotion Matrix</p>
