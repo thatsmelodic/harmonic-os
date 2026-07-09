@@ -10,6 +10,7 @@ import { HarmonicBrainV3Panel } from '@/components/studio/HarmonicBrainV3Panel';
 import { IntelligenceCompletionPanel } from '@/components/studio/IntelligenceCompletionPanel';
 import { SeasonalFxHolidayPanel } from '@/components/studio/SeasonalFxHolidayPanel';
 import { CreatorWorldsPanel } from '@/components/studio/CreatorWorldsPanel';
+import { CreatorWorldsPrioritySprint } from '@/components/studio/CreatorWorldsPrioritySprint';
 import { HarmonicRuntimePanel } from '@/components/engine/HarmonicRuntimePanel';
 
 const worlds: HarmonicWorldId[] = ['melodic', 'harmonic', 'fried-em', 'schmackin'];
@@ -64,6 +65,7 @@ export function AiDirectorV2Studio() {
       </div>
 
       <div className="mt-5 grid gap-5">
+        <CreatorWorldsPrioritySprint />
         <CreatorWorldsPanel />
         <HarmonicBrainV3Panel world={activeWorld} baseState={runtime.state} prompt={prompt} />
         <SeasonalFxHolidayPanel world={activeWorld} onApply={applyV2Patch} />
