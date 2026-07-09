@@ -21,7 +21,7 @@ const memoryNodes = [
 export function MelodicWorldExperience({ visualState = melodicWorldVisualDefaults }: { visualState?: MelodicWorldVisualState }) {
   return (
     <main className="melodic-world relative isolate min-h-screen overflow-hidden pb-28">
-      <SeasonalWorldLayer world="melodic" season="autumn" />
+      <SeasonalWorldLayer world="melodic" />
       <div className="melodic-aurora absolute inset-0 -z-30" />
       <div className="frequency-grid absolute inset-0 -z-20 opacity-50" />
       <div className="melodic-ripple melodic-ripple-one" />
@@ -55,7 +55,7 @@ export function MelodicWorldExperience({ visualState = melodicWorldVisualDefault
           <aside className="glass-panel rounded-[2.5rem] p-6 sm:p-8">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Memory Loop</p>
-              <span className="rounded-full border border-purple-200/20 px-3 py-1 font-mono text-xs text-purple-100/55">AUTUMN LIVE</span>
+              <span className="rounded-full border border-purple-200/20 px-3 py-1 font-mono text-xs text-purple-100/55">SEASON LIVE</span>
             </div>
             <div className="relative mx-auto grid aspect-square max-w-md place-items-center rounded-full border border-purple-200/10 bg-[radial-gradient(circle,rgba(183,108,255,.22),rgba(0,0,0,.22)_58%)]">
               <div className="melodic-orbit melodic-orbit-a" />
@@ -99,7 +99,7 @@ export function MelodicWorldExperience({ visualState = melodicWorldVisualDefault
             <p className="text-xs font-black uppercase tracking-[.32em] text-white/40">Context Engine</p>
             <h2 className="mt-4 text-3xl font-black tracking-[-.05em]">Melodic remembers why the song exists.</h2>
             <p className="mt-4 text-sm leading-7 text-white/62">
-              Autumn adds vinyl warmth, orange-purple skies, emotional hooks, and leaves moving to tempo.
+              The Season Engine now sits above Melodic, adapting the world’s atmosphere from Mission Control.
             </p>
           </div>
 
@@ -120,9 +120,9 @@ export function MelodicWorldExperience({ visualState = melodicWorldVisualDefault
       <section className="harmonic-container py-8">
         <div className="rounded-[2.5rem] border border-purple-200/10 bg-[linear-gradient(135deg,rgba(183,108,255,.18),rgba(255,79,216,.08),rgba(255,255,255,.035))] p-6 shadow-purple-glow backdrop-blur-2xl sm:p-8">
           <p className="text-xs font-black uppercase tracking-[.34em] text-purple-100/45">Season Connected</p>
-          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">Autumn now breathes inside this world.</h2>
+          <h2 className="mt-4 text-3xl font-black tracking-[-.06em] sm:text-5xl">This world now reads the global season.</h2>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-white/65 sm:text-base">
-            Leaves, golden atmosphere, Harmonic Tree glow, and seasonal mood now sit above the Melodic experience.
+            Change the Season Engine in Mission Control and this world follows.
           </p>
         </div>
       </section>
