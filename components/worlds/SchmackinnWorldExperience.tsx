@@ -33,7 +33,7 @@ export function SchmackinnWorldExperience() {
 
   return (
     <main className="schmackinn-world relative isolate min-h-screen overflow-hidden pb-28">
-      <SeasonalWorldLayer world="schmackin" season="autumn" />
+      <SeasonalWorldLayer world="schmackin" />
       <div className="schmackinn-aurora absolute inset-0 -z-30" />
       <div className="restaurant-rain absolute inset-0 -z-20 opacity-50" />
       <div className="steam-cloud steam-one" />
@@ -51,12 +51,12 @@ export function SchmackinnWorldExperience() {
             <p className="text-xs font-black uppercase tracking-[.42em] text-purple-100/55">Flavor District</p>
             <h1 className="mt-5 text-5xl font-black leading-none tracking-[-.09em] text-purple-50 sm:text-7xl lg:text-8xl">What does life taste like?</h1>
             <p className="mt-6 max-w-2xl text-xl font-black leading-tight tracking-[-.04em] text-white/88 sm:text-3xl">Schmackinn is a living food city where every review becomes a frequency, and your verdict controls the atmosphere.</p>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-white/64 sm:text-lg">Autumn brings fogged windows, heavier steam, cider warmth, seasonal menus, comfort food, and firewood glow into the district.</p>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/64 sm:text-lg">The Season Engine now shifts Schmackinn through global weather, menus, warmth, holidays, and district mood from Mission Control.</p>
             <div className="mt-8 grid gap-3 sm:grid-cols-3"><Metric label="Food DNA" value={state.dna.food} /><Metric label="Community" value={state.dna.community} /><Metric label="Culture" value={state.dna.emotion} /></div>
           </div>
 
           <aside className="living-sign rounded-[2.5rem] border border-purple-200/15 bg-black/55 p-6 shadow-[0_0_60px_rgba(183,108,255,.24)] backdrop-blur-2xl sm:p-8">
-            <div className="mb-6 flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Neon Verdict</p><span className="rounded-full border border-purple-200/20 px-3 py-1 font-mono text-xs text-purple-100/60">AUTUMN MENU</span></div>
+            <div className="mb-6 flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Neon Verdict</p><span className="rounded-full border border-purple-200/20 px-3 py-1 font-mono text-xs text-purple-100/60">SEASON MENU</span></div>
             <div className="logo-verdict-grid rounded-[2rem] border border-purple-200/10 bg-[radial-gradient(circle,rgba(183,108,255,.22),rgba(0,0,0,.38)_62%)] p-5"><div className="harmonic-food-logo mx-auto grid h-44 w-44 place-items-center rounded-[3rem] border border-purple-200/20 bg-black/35 text-7xl font-black text-purple-200 sm:h-56 sm:w-56">⧖</div><p className="mt-5 text-center text-3xl font-black tracking-[-.06em] text-purple-100">Schmakinn</p><p className="mt-2 text-center text-sm leading-6 text-white/55">All four segments illuminate when the food finds its frequency.</p></div>
           </aside>
         </div>
