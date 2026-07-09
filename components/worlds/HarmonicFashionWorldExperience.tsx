@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { bootRuntime } from '@/lib/harmonic-signal-bus';
 import { worldDefaults } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
-import { SeasonAtmosphere } from '@/components/seasons/SeasonAtmosphere';
+import { SeasonalWorldLayer } from '@/components/seasons/SeasonalWorldLayer';
 
 const drops = [
   { title: 'Acid Wash Base Tee', status: 'Foundation Drop', detail: 'Front mark, back connection marks, sleeve loop language.' },
@@ -19,7 +19,7 @@ export function HarmonicFashionWorldExperience() {
 
   return (
     <main className="harmonic-fashion-world relative isolate min-h-screen overflow-hidden pb-28">
-      <SeasonAtmosphere season="autumn" intensity={0.88} />
+      <SeasonalWorldLayer world="harmonic" season="autumn" />
       <div className="harmonic-fashion-aurora absolute inset-0 -z-30" />
       <div className="frequency-grid absolute inset-0 -z-20 opacity-40" />
       <div className="fashion-thread fashion-thread-one" />
