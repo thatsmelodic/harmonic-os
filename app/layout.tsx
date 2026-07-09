@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { SeasonProvider } from '@/components/seasons/SeasonProvider';
 import './globals.css';
 
 export const metadata = {
@@ -9,7 +10,9 @@ export const metadata = {
 export default function RootLayout(props: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{props.children}</body>
+      <body>
+        <SeasonProvider>{props.children}</SeasonProvider>
+      </body>
     </html>
   );
 }
