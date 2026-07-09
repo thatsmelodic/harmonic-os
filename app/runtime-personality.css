@@ -9,76 +9,98 @@
   animation: runtimePersonalityPulse 4s ease-in-out infinite;
 }
 
-.runtime-mode-steam .runtime-personality-burst {
-  background: radial-gradient(circle at 50% 70%, rgba(255,255,255,.22), var(--frequency-aura, rgba(183,108,255,.24)), transparent 66%);
-  animation: steamRise 5.8s ease-in-out infinite;
+.runtime-mode-steam .runtime-personality-burst { background: radial-gradient(circle at 50% 70%, rgba(255,255,255,.22), var(--frequency-aura, rgba(183,108,255,.24)), transparent 66%); animation: steamRise 5.8s ease-in-out infinite; }
+.runtime-mode-fire .runtime-personality-burst { background: radial-gradient(circle, rgba(255,122,26,.62), rgba(255,52,52,.18), transparent 64%); animation: runtimeFirePop 1.8s ease-in-out infinite; }
+.runtime-mode-rain .runtime-personality-burst { background: linear-gradient(115deg, transparent, rgba(216,180,254,.18), transparent); animation: runtimeRainSweep 2.8s linear infinite; }
+.runtime-mode-memory .runtime-personality-burst { background: radial-gradient(circle, rgba(216,180,254,.34), rgba(54,178,203,.10), transparent 68%); animation: melodicOrbit 12s linear infinite; }
+.runtime-mode-fabric .runtime-personality-burst { border-radius: 22%; background: linear-gradient(135deg, rgba(245,223,184,.28), rgba(54,178,203,.12), transparent 70%); animation: fabricDrift 5.5s ease-in-out infinite; }
+.runtime-mode-spotlight .runtime-personality-burst { inset: 0 22%; border-radius: 0; background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,122,26,.12), transparent 72%); filter: blur(22px); animation: arenaLight 3.2s ease-in-out infinite; }
+.runtime-mode-luxury .runtime-personality-burst { background: radial-gradient(circle, rgba(245,223,184,.28), rgba(183,108,255,.12), transparent 66%); animation: crystalBreath 5.8s ease-in-out infinite; }
+.runtime-emotion-chaos .runtime-personality-burst { animation-duration: 1.7s; }
+.runtime-emotion-victory .runtime-personality-burst { opacity: .44 !important; }
+.runtime-readout-chip { max-width: min(22rem, calc(100vw - 2rem)); }
+.runtime-readout-chip small { max-width: 18rem; line-height: 1.35; text-transform: none; letter-spacing: .04em; }
+
+.living-world-overlay {
+  position: fixed;
+  left: 1.25rem;
+  top: 5.25rem;
+  z-index: 29;
+  width: min(24rem, calc(100vw - 2.5rem));
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 1.4rem;
+  background: linear-gradient(135deg, rgba(0,0,0,.48), rgba(255,255,255,.045));
+  padding: 1rem;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 0 44px rgba(183,108,255,.14);
+  overflow: hidden;
 }
 
-.runtime-mode-fire .runtime-personality-burst {
-  background: radial-gradient(circle, rgba(255,122,26,.62), rgba(255,52,52,.18), transparent 64%);
-  animation: runtimeFirePop 1.8s ease-in-out infinite;
+.living-world-orb {
+  position: absolute;
+  right: -2rem;
+  top: -2rem;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--frequency-primary, #b76cff), transparent 68%);
+  opacity: .24;
+  filter: blur(10px);
+  animation: runtimePersonalityPulse 4.8s ease-in-out infinite;
 }
 
-.runtime-mode-rain .runtime-personality-burst {
-  background: linear-gradient(115deg, transparent, rgba(216,180,254,.18), transparent);
-  animation: runtimeRainSweep 2.8s linear infinite;
+.living-world-eyebrow {
+  margin: 0;
+  color: rgba(255,255,255,.42);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .24em;
+  text-transform: uppercase;
 }
 
-.runtime-mode-memory .runtime-personality-burst {
-  background: radial-gradient(circle, rgba(216,180,254,.34), rgba(54,178,203,.10), transparent 68%);
-  animation: melodicOrbit 12s linear infinite;
+.living-world-overlay h3 {
+  position: relative;
+  margin: .55rem 0 0;
+  color: rgba(255,255,255,.86);
+  font-size: 1.15rem;
+  font-weight: 950;
+  letter-spacing: -.04em;
 }
 
-.runtime-mode-fabric .runtime-personality-burst {
-  border-radius: 22%;
-  background: linear-gradient(135deg, rgba(245,223,184,.28), rgba(54,178,203,.12), transparent 70%);
-  animation: fabricDrift 5.5s ease-in-out infinite;
+.living-world-overlay p:not(.living-world-eyebrow) {
+  position: relative;
+  margin: .5rem 0 0;
+  color: rgba(255,255,255,.56);
+  font-size: .78rem;
+  line-height: 1.55;
 }
 
-.runtime-mode-spotlight .runtime-personality-burst {
-  inset: 0 22%;
-  border-radius: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,122,26,.12), transparent 72%);
-  filter: blur(22px);
-  animation: arenaLight 3.2s ease-in-out infinite;
+.living-world-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: .42fr .58fr;
+  gap: .5rem .75rem;
+  margin-top: .85rem;
+  border-top: 1px solid rgba(255,255,255,.09);
+  padding-top: .85rem;
 }
 
-.runtime-mode-luxury .runtime-personality-burst {
-  background: radial-gradient(circle, rgba(245,223,184,.28), rgba(183,108,255,.12), transparent 66%);
-  animation: crystalBreath 5.8s ease-in-out infinite;
+.living-world-grid span {
+  color: rgba(255,255,255,.34);
+  font-size: .62rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
 }
 
-.runtime-emotion-chaos .runtime-personality-burst {
-  animation-duration: 1.7s;
-}
-
-.runtime-emotion-victory .runtime-personality-burst {
-  opacity: .44 !important;
-}
-
-.runtime-readout-chip {
-  max-width: min(22rem, calc(100vw - 2rem));
-}
-
-.runtime-readout-chip small {
-  max-width: 18rem;
+.living-world-grid strong {
+  color: rgba(255,255,255,.68);
+  font-size: .68rem;
   line-height: 1.35;
-  text-transform: none;
-  letter-spacing: .04em;
 }
 
-@keyframes runtimePersonalityPulse {
-  0%, 100% { transform: scale(calc(var(--runtime-motion-scale, 1) * .88)); opacity: .16; }
-  50% { transform: scale(calc(var(--runtime-motion-scale, 1) * 1.08)); opacity: .42; }
-}
+@keyframes runtimePersonalityPulse { 0%, 100% { transform: scale(calc(var(--runtime-motion-scale, 1) * .88)); opacity: .16; } 50% { transform: scale(calc(var(--runtime-motion-scale, 1) * 1.08)); opacity: .42; } }
+@keyframes runtimeFirePop { 0%, 100% { transform: scale(.88) translateY(1rem); opacity: .18; } 50% { transform: scale(1.12) translateY(-.5rem); opacity: .48; } }
+@keyframes runtimeRainSweep { 0% { transform: translate3d(-22%, -12%, 0) rotate(8deg); opacity: .08; } 50% { opacity: .32; } 100% { transform: translate3d(22%, 12%, 0) rotate(8deg); opacity: .08; } }
 
-@keyframes runtimeFirePop {
-  0%, 100% { transform: scale(.88) translateY(1rem); opacity: .18; }
-  50% { transform: scale(1.12) translateY(-.5rem); opacity: .48; }
-}
-
-@keyframes runtimeRainSweep {
-  0% { transform: translate3d(-22%, -12%, 0) rotate(8deg); opacity: .08; }
-  50% { opacity: .32; }
-  100% { transform: translate3d(22%, 12%, 0) rotate(8deg); opacity: .08; }
-}
+@media (max-width: 720px) { .living-world-overlay { display: none; } }
