@@ -16,6 +16,7 @@ import {
 import { bootRuntime, dispatchRuntimePatch } from '@/lib/harmonic-signal-bus';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { HarmonicRuntimePanel } from '@/components/engine/HarmonicRuntimePanel';
+import { SeasonMissionControl } from '@/components/studio/SeasonMissionControl';
 
 const worlds: HarmonicWorldId[] = ['melodic', 'harmonic', 'fried-em', 'schmackin'];
 const emotions: EmotionKey[] = ['hope', 'pain', 'luxury', 'victory', 'chaos', 'peace', 'reflection', 'pressure', 'healing', 'freedom'];
@@ -77,7 +78,7 @@ export function CreatorMissionControl() {
             <p className="text-xs font-black uppercase tracking-[.38em] text-purple-100/45">Creator Studio 2.0</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-.08em] sm:text-6xl">Mission Control</h1>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-purple-100/62 sm:text-base">
-              The cockpit for Harmonic OS. Switch worlds, direct atmosphere, tune environment, lighting, camera, FX, logo energy, and watch the runtime react through the Signal Bus.
+              The cockpit for Harmonic OS. Switch worlds, direct atmosphere, tune environment, lighting, camera, seasons, and watch the runtime react through the Signal Bus.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -88,13 +89,7 @@ export function CreatorMissionControl() {
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {worlds.map((world) => (
-            <button
-              key={world}
-              type="button"
-              onClick={() => switchWorld(world)}
-              className="rounded-2xl border p-4 text-left transition hover:-translate-y-1"
-              style={{ borderColor: activeWorld === world ? 'rgba(216,180,254,.72)' : 'rgba(255,255,255,.10)', background: activeWorld === world ? 'rgba(183,108,255,.18)' : 'rgba(255,255,255,.04)' }}
-            >
+            <button key={world} type="button" onClick={() => switchWorld(world)} className="rounded-2xl border p-4 text-left transition hover:-translate-y-1" style={{ borderColor: activeWorld === world ? 'rgba(216,180,254,.72)' : 'rgba(255,255,255,.10)', background: activeWorld === world ? 'rgba(183,108,255,.18)' : 'rgba(255,255,255,.04)' }}>
               <p className="text-lg font-black capitalize">{world.replace('-', ' ')}</p>
               <p className="mt-2 font-mono text-xs uppercase tracking-[.18em] text-white/35">{worldDefaults[world].creativeMode} workspace</p>
             </button>
@@ -111,21 +106,15 @@ export function CreatorMissionControl() {
         </div>
       </div>
 
+      <SeasonMissionControl />
+
       <div className="mt-5 grid gap-5 xl:grid-cols-[.36fr_.64fr]">
         <aside className="grid gap-5 content-start">
           <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">Workspace</p>
             <div className="mt-4 grid gap-2">
               {workspaceMap[activeWorld].map((panel) => (
-                <button
-                  key={panel}
-                  type="button"
-                  onClick={() => setActivePanel(panel)}
-                  className="rounded-2xl border px-4 py-3 text-left text-sm font-black transition"
-                  style={{ borderColor: activePanel === panel ? 'rgba(216,180,254,.65)' : 'rgba(255,255,255,.10)', background: activePanel === panel ? 'rgba(183,108,255,.16)' : 'rgba(255,255,255,.035)' }}
-                >
-                  {panel}
-                </button>
+                <button key={panel} type="button" onClick={() => setActivePanel(panel)} className="rounded-2xl border px-4 py-3 text-left text-sm font-black transition" style={{ borderColor: activePanel === panel ? 'rgba(216,180,254,.65)' : 'rgba(255,255,255,.10)', background: activePanel === panel ? 'rgba(183,108,255,.16)' : 'rgba(255,255,255,.035)' }}>{panel}</button>
               ))}
             </div>
           </article>
@@ -156,13 +145,7 @@ export function CreatorMissionControl() {
           <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">Director Workspace</p>
             <h2 className="mt-3 text-3xl font-black tracking-[-.06em]">Tell the OS what the experience should feel like.</h2>
-            <textarea
-              value={directorPrompt}
-              onChange={(event) => setDirectorPrompt(event.target.value)}
-              rows={4}
-              className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300"
-              placeholder="Example: make this review slowly become chaotic before the Bunz reveal..."
-            />
+            <textarea value={directorPrompt} onChange={(event) => setDirectorPrompt(event.target.value)} rows={4} className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300" placeholder="Example: make this review slowly become chaotic before the Bunz reveal..." />
             <div className="mt-4 flex flex-wrap gap-3">
               <button type="button" onClick={conductDirector} className="rounded-full bg-purple-300 px-6 py-4 font-black text-black shadow-purple-glow">Conduct Runtime</button>
               <button type="button" onClick={() => patch({ emotion: 'chaos', momentum: 88, motionIntensity: 92 }, 'quick-preset')} className="rounded-full border border-white/10 px-6 py-4 font-black text-purple-100/75 hover:bg-white/[.06]">Chaos Preset</button>
@@ -173,11 +156,7 @@ export function CreatorMissionControl() {
           <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
             <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">Emotion Matrix</p>
             <div className="mt-4 grid gap-2 sm:grid-cols-5">
-              {emotions.map((emotion) => (
-                <button key={emotion} type="button" onClick={() => patch({ emotion }, 'emotion-matrix')} className="rounded-2xl border border-white/10 bg-white/[.04] px-3 py-3 text-sm font-black capitalize text-white/65 hover:bg-purple-200/10">
-                  {emotion}
-                </button>
-              ))}
+              {emotions.map((emotion) => <button key={emotion} type="button" onClick={() => patch({ emotion }, 'emotion-matrix')} className="rounded-2xl border border-white/10 bg-white/[.04] px-3 py-3 text-sm font-black capitalize text-white/65 hover:bg-purple-200/10">{emotion}</button>)}
             </div>
           </article>
 
@@ -190,31 +169,13 @@ export function CreatorMissionControl() {
 }
 
 function ControlPanel({ title, eyebrow, children }: { title: string; eyebrow: string; children: React.ReactNode }) {
-  return (
-    <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl">
-      <p className="text-xs font-black uppercase tracking-[.28em] text-white/40">{eyebrow}</p>
-      <h3 className="mt-2 text-2xl font-black tracking-[-.05em]">{title}</h3>
-      <div className="mt-4 grid gap-4">{children}</div>
-    </article>
-  );
+  return <article className="rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur-2xl"><p className="text-xs font-black uppercase tracking-[.28em] text-white/40">{eyebrow}</p><h3 className="mt-2 text-2xl font-black tracking-[-.05em]">{title}</h3><div className="mt-4 grid gap-4">{children}</div></article>;
 }
 
 function RangeControl(props: { label: string; value: number; onChange: (value: number) => void }) {
-  return (
-    <label className="grid gap-2 text-sm font-bold text-purple-100/70">
-      <span className="flex justify-between"><span>{props.label}</span><span>{props.value}%</span></span>
-      <input type="range" min="0" max="100" value={props.value} onChange={(event) => props.onChange(Number(event.target.value))} />
-    </label>
-  );
+  return <label className="grid gap-2 text-sm font-bold text-purple-100/70"><span className="flex justify-between"><span>{props.label}</span><span>{props.value}%</span></span><input type="range" min="0" max="100" value={props.value} onChange={(event) => props.onChange(Number(event.target.value))} /></label>;
 }
 
 function SelectControl(props: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
-  return (
-    <label className="grid gap-2 text-sm font-bold text-purple-100/70">
-      {props.label}
-      <select value={props.value} onChange={(event) => props.onChange(event.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300">
-        {props.options.map((option) => <option key={option}>{option}</option>)}
-      </select>
-    </label>
-  );
+  return <label className="grid gap-2 text-sm font-bold text-purple-100/70">{props.label}<select value={props.value} onChange={(event) => props.onChange(event.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-purple-50 outline-none focus:border-purple-300">{props.options.map((option) => <option key={option}>{option}</option>)}</select></label>;
 }
