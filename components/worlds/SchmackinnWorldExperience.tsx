@@ -3,6 +3,7 @@ import { bootRuntime } from '@/lib/harmonic-signal-bus';
 import { worldDefaults } from '@/lib/harmonic-engine';
 import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
 import { SeasonalWorldLayer } from '@/components/seasons/SeasonalWorldLayer';
+import { RuntimeVisualDriver } from '@/components/runtime/RuntimeVisualDriver';
 
 const runtime = bootRuntime(worldDefaults.schmackin);
 
@@ -33,6 +34,7 @@ export function SchmackinnWorldExperience() {
   return (
     <main className="schmackinn-world relative isolate min-h-screen overflow-hidden pb-28">
       <SeasonalWorldLayer world="schmackin" />
+      <RuntimeVisualDriver world="schmackin" />
       <div className="schmackinn-aurora absolute inset-0 -z-30" />
       <div className="restaurant-rain absolute inset-0 -z-20 opacity-50" />
       <div className="steam-cloud steam-one" />
