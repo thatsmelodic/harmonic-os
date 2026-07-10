@@ -1,10 +1,10 @@
-import { FriedEmWorldExperience } from '@/components/worlds/FriedEmWorldExperience';
+import { FriedEmParkExperience } from '@/components/worlds/FriedEmParkExperience';
 
 export const metadata = {
-  title: 'Fried Em | Harmonic OS',
-  description: 'An engine-powered basketball arena world for pressure, momentum, challenges, and cinematic replays.',
+  title: 'Fried Em Park | Harmonic OS',
+  description: 'Enter the living Fried Em blacktop and move between Center Court, Episode Wall, Cooked Board, Challenge Arena, and Film Room.',
 };
 
 export default function FriedEmWorldPage() {
-  return <FriedEmWorldExperience />;
+  return <FriedEmParkExperience />;
 }
