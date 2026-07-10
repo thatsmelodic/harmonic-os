@@ -12,13 +12,13 @@ export default function FriedEmEpisodesPage() {
       <div className="mx-auto max-w-6xl">
         <nav className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <Link href="/worlds/fried-em#episodes" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/70">← Fried Em Park</Link>
-          <Link href="/worlds/fried-em/players" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/70">Player Passports</Link>
+          <div className="flex flex-wrap gap-2"><Link href="/worlds/fried-em/heat" className="rounded-full border border-orange-300/20 bg-orange-400/10 px-4 py-3 text-sm font-black text-orange-100">My Heat</Link><Link href="/worlds/fried-em/players" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/70">Player Passports</Link></div>
         </nav>
 
         <header className="rounded-[2.8rem] border border-orange-300/15 bg-black/50 p-7 shadow-[0_0_80px_rgba(255,122,26,.16)] backdrop-blur-2xl sm:p-10">
           <p className="text-xs font-black uppercase tracking-[.34em] text-orange-200/45">Episode Engine</p>
           <h1 className="mt-4 text-6xl font-black tracking-[-.08em] sm:text-8xl">Episode Wall</h1>
-          <p className="mt-5 max-w-2xl text-base leading-8 text-white/55">Every run becomes part of the Fried Em timeline. Matchups, scores, players, heat, and signature moments all live here.</p>
+          <p className="mt-5 max-w-2xl text-base leading-8 text-white/55">Every run becomes part of the Fried Em timeline. Matchups, scores, players, Heat, and signature moments all live here.</p>
         </header>
 
         <section className="mt-6 grid gap-5 lg:grid-cols-3">
