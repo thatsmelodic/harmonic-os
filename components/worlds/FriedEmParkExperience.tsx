@@ -22,6 +22,12 @@ const rooms: Room[] = [
   { id: 'film', label: 'Film Room', icon: '🎞️', description: 'Breakdowns, scouting, slow motion, and game IQ.', className: styles.film },
 ];
 
+const roomRoutes: Partial<Record<RoomId, string>> = {
+  episodes: '/worlds/fried-em/episodes',
+  leaderboard: '/worlds/fried-em/players',
+  challenges: '/worlds/fried-em/challenges',
+};
+
 const roomContent: Record<RoomId, Array<{ eyebrow: string; title: string; body: string }>> = {
   park: [
     { eyebrow: 'Current Run', title: 'Melodic vs. The Homies', body: 'First to 21. Winner keeps court. Every possession feeds the live Cooked Meter.' },
@@ -61,6 +67,7 @@ export function FriedEmParkExperience() {
   const audioContextRef = useRef<AudioContext | null>(null);
 
   const activeRoom = useMemo(() => rooms.find((item) => item.id === room)!, [room]);
+  const activeRoute = roomRoutes[room];
 
   const playBounce = () => {
     if (!ambientOn || typeof window === 'undefined') return;
@@ -169,7 +176,7 @@ export function FriedEmParkExperience() {
             <h2 className={styles.roomTitle}>{activeRoom.icon} {activeRoom.label}</h2>
           </div>
           <div className={styles.controls}>
-            <button className={styles.primaryButton} onClick={() => setFullRoomOpen(true)}>Open Full Room</button>
+            {activeRoute ? <Link className={styles.primaryButton} href={activeRoute}>Enter Live System</Link> : <button className={styles.primaryButton} onClick={() => setFullRoomOpen(true)}>Open Full Room</button>}
             <button className={styles.secondaryButton} onClick={() => moveToRoom('park')}>Back to Center Court</button>
           </div>
         </div>
@@ -186,23 +193,14 @@ export function FriedEmParkExperience() {
       </section>
 
       {fullRoomOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${activeRoom.label} full room`}
-          style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'grid', placeItems: 'center', padding: '1rem', background: 'rgba(0,0,0,.84)', backdropFilter: 'blur(18px)' }}
-          onClick={() => setFullRoomOpen(false)}
-        >
-          <section
-            style={{ width: 'min(1050px, 100%)', maxHeight: '88vh', overflowY: 'auto', border: '1px solid rgba(255,140,60,.3)', borderRadius: '2.4rem', padding: 'clamp(1.25rem,4vw,3rem)', background: 'radial-gradient(circle at top,rgba(255,122,26,.16),transparent 30rem),#0b0301', boxShadow: '0 0 90px rgba(255,90,0,.2)' }}
-            onClick={(event) => event.stopPropagation()}
-          >
+        <div role="dialog" aria-modal="true" aria-label={`${activeRoom.label} full room`} style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'grid', placeItems: 'center', padding: '1rem', background: 'rgba(0,0,0,.84)', backdropFilter: 'blur(18px)' }} onClick={() => setFullRoomOpen(false)}>
+          <section style={{ width: 'min(1050px, 100%)', maxHeight: '88vh', overflowY: 'auto', border: '1px solid rgba(255,140,60,.3)', borderRadius: '2.4rem', padding: 'clamp(1.25rem,4vw,3rem)', background: 'radial-gradient(circle at top,rgba(255,122,26,.16),transparent 30rem),#0b0301', boxShadow: '0 0 90px rgba(255,90,0,.2)' }} onClick={(event) => event.stopPropagation()}>
             <div className={styles.roomHeader}>
               <div><p className={styles.eyebrow}>Full Room Loaded</p><h2 className={styles.roomTitle}>{activeRoom.icon} {activeRoom.label}</h2></div>
               <button className={styles.secondaryButton} onClick={() => setFullRoomOpen(false)}>Close ×</button>
             </div>
             <div className={styles.roomGrid}>
-              {roomContent[room].map((item) => <article key={item.title} className={styles.card}><p className={styles.eyebrow}>{item.eyebrow}</p><h3>{item.title}</h3><p>{item.body}</p><button className={styles.primaryButton} style={{ marginTop: '1rem' }}>{room === 'episodes' ? 'Watch' : room === 'leaderboard' ? 'View Profile' : room === 'challenges' ? 'Respond' : room === 'film' ? 'Break It Down' : 'Enter Activity'}</button></article>)}
+              {roomContent[room].map((item) => <article key={item.title} className={styles.card}><p className={styles.eyebrow}>{item.eyebrow}</p><h3>{item.title}</h3><p>{item.body}</p><button className={styles.primaryButton} style={{ marginTop: '1rem' }}>{room === 'film' ? 'Break It Down' : 'Enter Activity'}</button></article>)}
             </div>
           </section>
         </div>
