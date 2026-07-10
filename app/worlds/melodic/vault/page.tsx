@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 const tracks = [
-  { title: 'Lift U Up', type: 'R&B', mood: 'Healing', bpm: 80, status: 'Memory Saved', story: 'A late-night record about choosing elevation over collapse.' },
-  { title: 'Better Luck Nxt Time', type: 'R&B', mood: 'Distance', bpm: 76, status: 'Vault Ready', story: 'A reflection on timing, closure, and what could not be forced.' },
-  { title: 'Save The Apology', type: 'R&B', mood: 'Confession', bpm: 82, status: 'Writing Room', story: 'An apology that arrives after the damage already became memory.' },
-  { title: 'Barkin N Bitin', type: 'Trap', mood: 'Pressure', bpm: 170, status: 'High Energy', story: 'Aggression, confidence, and motion translated into rhythm.' },
-  { title: 'Big Guapo', type: 'Trap', mood: 'Motion', bpm: 146, status: 'Street Mode', story: 'A flex record built around momentum, presence, and hunger.' },
+  { slug: 'lift-u-up', title: 'Lift U Up', type: 'R&B', mood: 'Healing', bpm: 80, status: 'Memory Saved', story: 'A late-night record about choosing elevation over collapse.' },
+  { slug: 'better-luck-nxt-time', title: 'Better Luck Nxt Time', type: 'R&B', mood: 'Distance', bpm: 76, status: 'Vault Ready', story: 'A reflection on timing, closure, and what could not be forced.' },
+  { slug: 'save-the-apology', title: 'Save The Apology', type: 'R&B', mood: 'Confession', bpm: 82, status: 'Writing Room', story: 'An apology that arrives after the damage already became memory.' },
+  { slug: 'barkin-n-bitin', title: 'Barkin N Bitin', type: 'Trap', mood: 'Pressure', bpm: 170, status: 'High Energy', story: 'Aggression, confidence, and motion translated into rhythm.' },
+  { slug: 'big-guapo', title: 'Big Guapo', type: 'Trap', mood: 'Motion', bpm: 146, status: 'Street Mode', story: 'A flex record built around momentum, presence, and hunger.' },
 ];
 
 export default function MelodicVaultPage() {
@@ -21,12 +21,12 @@ export default function MelodicVaultPage() {
       <div className="melodic-aurora absolute inset-0 -z-20" />
       <div className="frequency-grid absolute inset-0 -z-10 opacity-40" />
       <div className="mx-auto max-w-7xl">
-        <nav className="mb-8 flex flex-wrap items-center justify-between gap-3"><Link href="/worlds/melodic" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/70">← Melodic Universe</Link><Link href="/beats" className="rounded-full border border-purple-200/20 bg-purple-300/10 px-4 py-3 text-sm font-black text-purple-100">Beat Store</Link></nav>
+        <nav className="mb-8 flex flex-wrap items-center justify-between gap-3"><Link href="/worlds/melodic" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/70">← Melodic Universe</Link><div className="flex flex-wrap gap-2"><Link href="/studio/melodic/upload" className="rounded-full bg-purple-300 px-4 py-3 text-sm font-black text-black">Upload Music</Link><Link href="/beats" className="rounded-full border border-purple-200/20 bg-purple-300/10 px-4 py-3 text-sm font-black text-purple-100">Beat Store</Link></div></nav>
 
         <header className="rounded-[2.8rem] border border-purple-200/15 bg-black/50 p-7 shadow-purple-glow backdrop-blur-2xl sm:p-10">
           <p className="text-xs font-black uppercase tracking-[.34em] text-purple-100/45">Music Vault</p>
           <h1 className="mt-4 text-6xl font-black tracking-[-.08em] sm:text-8xl">Every song remembers.</h1>
-          <p className="mt-5 max-w-3xl text-base leading-8 text-white/58">Browse Melodic’s catalog by frequency, mood, and memory. Every record can later connect to lyrics, visualizers, behind-the-song stories, beat licensing, and cross-world moments.</p>
+          <p className="mt-5 max-w-3xl text-base leading-8 text-white/58">Browse Melodic’s catalog by frequency, mood, and memory. Every record connects to its own story, Frequency DNA, lyrics, credits, visual identity, and related songs.</p>
           <div className="mt-6 flex flex-wrap gap-2">{(['All','R&B','Trap'] as const).map((item) => <button key={item} onClick={() => setFilter(item)} className={`rounded-full px-4 py-2 text-sm font-black ${filter === item ? 'bg-purple-300 text-black' : 'border border-white/10 bg-white/[.04] text-white/55'}`}>{item}</button>)}</div>
         </header>
 
@@ -39,7 +39,7 @@ export default function MelodicVaultPage() {
             <p className="mt-3 text-sm font-black text-purple-100/65">{active.type} · {active.mood} · {active.bpm} BPM</p>
             <div className="mt-6 grid aspect-square place-items-center rounded-[2rem] border border-white/10 bg-[radial-gradient(circle,rgba(183,108,255,.28),transparent_60%),rgba(255,255,255,.025)]"><div className="text-center"><div className="mx-auto h-28 w-28 rounded-full border border-purple-200/25 bg-purple-300/10 shadow-[0_0_60px_rgba(183,108,255,.35)]" /><p className="mt-5 font-mono text-xs uppercase tracking-[.2em] text-white/35">Visualizer awaiting audio</p></div></div>
             <p className="mt-6 text-sm leading-7 text-white/55">{active.story}</p>
-            <div className="mt-6 grid grid-cols-2 gap-3"><button className="rounded-full bg-purple-300 px-4 py-3 text-sm font-black text-black">Play Memory</button><button className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/65">Open Story</button></div>
+            <div className="mt-6 grid grid-cols-2 gap-3"><button className="rounded-full bg-purple-300 px-4 py-3 text-sm font-black text-black">Play Memory</button><Link href={`/worlds/melodic/songs/${active.slug}`} className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-center text-sm font-black text-white/65">Open Story</Link></div>
           </article>
         </section>
       </div>
