@@ -1,0 +1,384 @@
+.world {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: #fff7ed;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 122, 26, .2), transparent 30rem),
+    linear-gradient(180deg, #090301 0%, #130603 48%, #050201 100%);
+}
+
+.world::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .32;
+  background-image:
+    linear-gradient(rgba(255, 138, 61, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 138, 61, .06) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at center, black, transparent 82%);
+}
+
+.spawn {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: #030100;
+  transition: opacity .8s ease, visibility .8s ease;
+}
+
+.spawnHidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.spawnCard {
+  width: min(760px, 100%);
+  text-align: center;
+}
+
+.ball {
+  width: 112px;
+  height: 112px;
+  margin: 0 auto;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 4rem;
+  background: radial-gradient(circle at 35% 30%, #ffb067, #ff6b1a 55%, #7a1f00 100%);
+  box-shadow: 0 0 40px rgba(255, 107, 26, .65), 0 0 110px rgba(255, 82, 0, .28);
+  animation: bounce 1.2s ease-in-out infinite;
+}
+
+.eyebrow {
+  margin: 1.4rem 0 0;
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: rgba(255, 237, 213, .45);
+}
+
+.spawnTitle {
+  margin: .8rem 0 0;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: .88;
+  letter-spacing: -.08em;
+}
+
+.spawnCopy {
+  max-width: 620px;
+  margin: 1.5rem auto 0;
+  line-height: 1.8;
+  color: rgba(255,255,255,.55);
+}
+
+.enterButton,
+.primaryButton,
+.secondaryButton {
+  border: 0;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+
+.enterButton,
+.primaryButton {
+  background: #ff7a1a;
+  color: #100400;
+  box-shadow: 0 0 24px rgba(255, 122, 26, .72), 0 0 60px rgba(255, 84, 0, .25);
+}
+
+.enterButton {
+  margin-top: 2rem;
+  padding: 1rem 1.6rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  padding: .85rem 1.15rem;
+}
+
+.secondaryButton {
+  border: 1px solid rgba(255,255,255,.13);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.78);
+}
+
+.enterButton:hover,
+.primaryButton:hover,
+.secondaryButton:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem max(1.2rem, calc((100vw - 1180px) / 2));
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: rgba(8, 2, 0, .72);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-weight: 900;
+}
+
+.liveDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ff7a1a;
+  box-shadow: 0 0 20px rgba(255,122,26,.9);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.controlButton {
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 999px;
+  padding: .65rem .9rem;
+  color: rgba(255,255,255,.68);
+  background: rgba(255,255,255,.04);
+  cursor: pointer;
+}
+
+.park {
+  position: relative;
+  width: min(1180px, calc(100% - 2rem));
+  margin: 2rem auto 0;
+  min-height: 720px;
+  border: 1px solid rgba(255,154,79,.18);
+  border-radius: 3rem;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 122, 26, .22), transparent 24rem),
+    linear-gradient(180deg, rgba(255,255,255,.025), rgba(0,0,0,.48)),
+    #100502;
+  box-shadow: 0 30px 100px rgba(0,0,0,.58), inset 0 0 80px rgba(255,89,0,.05);
+}
+
+.skyGlow {
+  position: absolute;
+  left: 50%;
+  top: -18rem;
+  width: 42rem;
+  height: 42rem;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255,122,26,.28);
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+.court {
+  position: absolute;
+  left: 50%;
+  bottom: 3rem;
+  width: min(76%, 760px);
+  aspect-ratio: 1.65;
+  transform: translateX(-50%) perspective(850px) rotateX(58deg);
+  transform-origin: center bottom;
+  border: 4px solid rgba(255,208,172,.34);
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,.28) 49.5%, rgba(255,255,255,.28) 50.5%, transparent 50.5%),
+    radial-gradient(circle at center, transparent 0 16%, rgba(255,255,255,.25) 16.3% 17%, transparent 17.3%),
+    linear-gradient(135deg, #57200c, #2a0d05);
+  box-shadow: 0 0 70px rgba(255,100,20,.14);
+}
+
+.hoop {
+  position: absolute;
+  left: 50%;
+  bottom: 42%;
+  width: 150px;
+  height: 112px;
+  transform: translateX(-50%);
+}
+
+.backboard {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 74px;
+  border: 4px solid rgba(255,255,255,.45);
+  background: rgba(255,255,255,.055);
+  box-shadow: 0 0 32px rgba(255,122,26,.25);
+}
+
+.rim {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  width: 70px;
+  height: 18px;
+  transform: translateX(-50%);
+  border: 5px solid #ff6b1a;
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(255,92,0,.75);
+}
+
+.scoreboard {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 280px;
+  padding: 1rem 1.4rem;
+  border: 1px solid rgba(255,145,72,.22);
+  border-radius: 1.4rem;
+  text-align: center;
+  background: rgba(0,0,0,.72);
+  box-shadow: 0 0 42px rgba(255,107,26,.18);
+}
+
+.score {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: .5rem;
+  font-size: 2.4rem;
+  font-weight: 900;
+}
+
+.hotspot {
+  position: absolute;
+  z-index: 8;
+  width: 180px;
+  min-height: 128px;
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 1.4rem;
+  text-align: left;
+  color: #fff;
+  background: rgba(9,3,1,.72);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 42px rgba(0,0,0,.38);
+  cursor: pointer;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+
+.hotspot:hover,
+.hotspotActive {
+  transform: translateY(-7px) scale(1.03);
+  border-color: rgba(255,154,84,.5);
+  box-shadow: 0 0 32px rgba(255,110,26,.24), 0 18px 50px rgba(0,0,0,.5);
+}
+
+.hotspotIcon {
+  font-size: 1.7rem;
+}
+
+.hotspotTitle {
+  display: block;
+  margin-top: .6rem;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.hotspotCopy {
+  display: block;
+  margin-top: .35rem;
+  font-size: .75rem;
+  line-height: 1.5;
+  color: rgba(255,255,255,.42);
+}
+
+.episodes { left: 4%; top: 26%; }
+.leaderboard { right: 4%; top: 24%; }
+.challenges { left: 7%; bottom: 10%; }
+.film { right: 7%; bottom: 10%; }
+.parkSpot { left: 50%; top: 48%; transform: translate(-50%, -50%); }
+.parkSpot:hover,
+.parkSpot.hotspotActive { transform: translate(-50%, calc(-50% - 7px)) scale(1.03); }
+
+.roomPanel {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 1.4rem auto 4rem;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 2.4rem;
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+  background: rgba(7,2,0,.76);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 80px rgba(0,0,0,.4);
+}
+
+.roomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.roomTitle {
+  margin: .45rem 0 0;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  line-height: .92;
+  letter-spacing: -.07em;
+}
+
+.roomGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 1.6rem;
+  padding: 1.2rem;
+  background: rgba(255,255,255,.035);
+}
+
+.card h3 {
+  margin: .7rem 0 0;
+  font-size: 1.35rem;
+}
+
+.card p {
+  color: rgba(255,255,255,.48);
+  line-height: 1.7;
+}
+
+@media (max-width: 800px) {
+  .park { min-height: 980px; }
+  .court { width: 92%; bottom: 18%; }
+  .episodes { left: 5%; top: 18%; }
+  .leaderboard { right: 5%; top: 18%; }
+  .challenges { left: 5%; bottom: 5%; }
+  .film { right: 5%; bottom: 5%; }
+  .parkSpot { top: 48%; }
+  .hotspot { width: 42%; min-height: 120px; }
+  .roomGrid { grid-template-columns: 1fr; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(12deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: .5; transform: scale(.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
