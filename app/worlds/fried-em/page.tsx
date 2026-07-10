@@ -1,4 +1,5 @@
 import { FriedEmParkExperience } from '@/components/worlds/FriedEmParkExperience';
+import { WorldClimateLayer } from '@/components/worlds/WorldClimateLayer';
 
 export const metadata = {
   title: 'Fried Em Park | Harmonic OS',
@@ -6,5 +7,10 @@ export const metadata = {
 };
 
 export default function FriedEmWorldPage() {
-  return <FriedEmParkExperience />;
+  return (
+    <>
+      <FriedEmParkExperience />
+      <WorldClimateLayer />
+    </>
+  );
 }
