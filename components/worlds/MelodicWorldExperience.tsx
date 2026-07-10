@@ -18,6 +18,7 @@ const rooms = [
   { href: '/worlds/melodic/vault', icon: '🎵', label: 'Music Vault', description: 'Songs, moods, frequencies, stories, and releases.' },
   { href: '/worlds/melodic/writing-room', icon: '✍🏽', label: 'Writing Room', description: 'Draft hooks, verses, concepts, and memories.' },
   { href: '/worlds/melodic/memory-archive', icon: '💎', label: 'Memory Archive', description: 'A living timeline of songs, philosophy, and origin.' },
+  { href: '/studio/melodic/upload', icon: '⬆️', label: 'Upload Studio', description: 'Add songs or beats and generate their release structure.' },
   { href: '/beats', icon: '🎛️', label: 'Beat Laboratory', description: 'Production, licensing, stems, and sonic experiments.' },
 ];
 
@@ -36,7 +37,7 @@ export function MelodicWorldExperience({ visualState = melodicWorldVisualDefault
       <section className="harmonic-container py-8 sm:py-12">
         <nav className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <Link href="/" className="rounded-full border border-white/15 bg-white/[.05] px-4 py-3 text-sm font-black text-white/70 transition hover:bg-white/15">← Harmonic OS</Link>
-          <div className="flex flex-wrap gap-2"><Link href="/worlds/melodic/vault" className="rounded-full border border-purple-200/20 bg-purple-300/10 px-4 py-3 text-sm font-black text-purple-100">Music Vault</Link><Link href="/worlds/melodic/writing-room" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/65">Writing Room</Link><Link href="/worlds/melodic/memory-archive" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/65">Archive</Link></div>
+          <div className="flex flex-wrap gap-2"><Link href="/studio/melodic/upload" className="rounded-full bg-purple-300 px-4 py-3 text-sm font-black text-black">Upload Music</Link><Link href="/worlds/melodic/vault" className="rounded-full border border-purple-200/20 bg-purple-300/10 px-4 py-3 text-sm font-black text-purple-100">Music Vault</Link><Link href="/worlds/melodic/writing-room" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/65">Writing Room</Link><Link href="/worlds/melodic/memory-archive" className="rounded-full border border-white/10 bg-white/[.04] px-4 py-3 text-sm font-black text-white/65">Archive</Link></div>
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
@@ -44,7 +45,7 @@ export function MelodicWorldExperience({ visualState = melodicWorldVisualDefault
             <p className="text-xs font-black uppercase tracking-[.42em] text-purple-100/45">Melodic Frequency</p>
             <h1 className="mt-5 text-5xl font-black leading-none tracking-[-.09em] text-[#f8f0ff] sm:text-7xl lg:text-8xl">Compose the Memory.</h1>
             <p className="mt-6 max-w-2xl text-xl font-black leading-tight tracking-[-.04em] text-white/88 sm:text-3xl">This world does not just store music. It turns your life into sound, then turns the sound into an archive.</p>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-white/64 sm:text-lg">Enter the rooms where records are written, remembered, released, and connected to the rest of Harmonic OS.</p>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/64 sm:text-lg">Enter the rooms where records are written, uploaded, remembered, released, and connected to the rest of Harmonic OS.</p>
             <MelodicVisualizer settings={visualState.visualSettings} className="mt-8" label="Signal Visualizer" />
           </div>
 
@@ -58,7 +59,7 @@ export function MelodicWorldExperience({ visualState = melodicWorldVisualDefault
         </div>
       </section>
 
-      <section className="harmonic-container py-8"><div className="mb-5"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">World Rooms</p><h2 className="mt-3 text-3xl font-black tracking-[-.06em] sm:text-5xl">Choose where the memory goes next.</h2></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{rooms.map((room) => <Link key={room.href} href={room.href} className="group rounded-[2rem] border border-white/10 bg-white/[.05] p-5 backdrop-blur-xl transition hover:-translate-y-2 hover:border-purple-200/30"><span className="text-4xl">{room.icon}</span><h3 className="mt-5 text-2xl font-black tracking-[-.05em]">{room.label}</h3><p className="mt-3 text-sm leading-6 text-white/50">{room.description}</p><p className="mt-5 text-sm font-black text-purple-100">Enter Room →</p></Link>)}</div></section>
+      <section className="harmonic-container py-8"><div className="mb-5"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">World Rooms</p><h2 className="mt-3 text-3xl font-black tracking-[-.06em] sm:text-5xl">Choose where the memory goes next.</h2></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">{rooms.map((room) => <Link key={room.href} href={room.href} className="group rounded-[2rem] border border-white/10 bg-white/[.05] p-5 backdrop-blur-xl transition hover:-translate-y-2 hover:border-purple-200/30"><span className="text-4xl">{room.icon}</span><h3 className="mt-5 text-2xl font-black tracking-[-.05em]">{room.label}</h3><p className="mt-3 text-sm leading-6 text-white/50">{room.description}</p><p className="mt-5 text-sm font-black text-purple-100">Enter Room →</p></Link>)}</div></section>
 
       <section className="harmonic-container py-8"><div className="mb-5"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Music Vault</p><h2 className="mt-3 text-3xl font-black tracking-[-.06em] sm:text-5xl">Track nodes inside the system</h2></div><div className="grid gap-4 lg:grid-cols-5">{tracks.map((track, index) => <Link href="/worlds/melodic/vault" key={track.title} className="melodic-track-card rounded-[2rem] border border-white/10 bg-white/[.05] p-5 backdrop-blur-xl"><p className="font-mono text-xs text-purple-100/45">0{index + 1}</p><h3 className="mt-5 text-2xl font-black leading-none tracking-[-.05em]">{track.title}</h3><p className="mt-3 text-sm text-white/55">{track.type}</p><div className="mt-6 flex items-center justify-between gap-3"><span className="rounded-full bg-purple-200/10 px-3 py-1 font-mono text-xs text-purple-100/65">{track.bpm}</span><span className="text-right text-xs font-black text-white/40">{track.status}</span></div></Link>)}</div></section>
 
