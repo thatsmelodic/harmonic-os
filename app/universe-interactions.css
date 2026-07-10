@@ -1,0 +1,9 @@
+.fixed.inset-0.z-50 > div > .absolute {
+  pointer-events: none !important;
+}
+
+.fixed.inset-0.z-50 button {
+  position: relative !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+}
