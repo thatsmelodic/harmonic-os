@@ -1,62 +1,35 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-
-export type ClimateMode = 'off' | 'spring' | 'summer' | 'fall' | 'winter' | 'rain' | 'custom';
-
-export type ClimateSettings = {
-  mode: ClimateMode;
-  customVisualUrl: string;
-  particleSize: number;
-  density: number;
-  speed: number;
-  opacity: number;
-  wind: number;
-};
-
-export const friedEmClimateStorageKey = 'harmonic:climate:fried-em';
-
-export const defaultClimateSettings: ClimateSettings = {
-  mode: 'fall',
-  customVisualUrl: '',
-  particleSize: 42,
-  density: 24,
-  speed: 12,
-  opacity: 0.82,
-  wind: 18,
-};
-
-function readSettings(): ClimateSettings {
-  if (typeof window === 'undefined') return defaultClimateSettings;
-  try {
-    const saved = window.localStorage.getItem(friedEmClimateStorageKey);
-    return saved ? { ...defaultClimateSettings, ...JSON.parse(saved) } : defaultClimateSettings;
-  } catch {
-    return defaultClimateSettings;
-  }
-}
+import {
+  climateUpdateEvent,
+  defaultClimateSettings,
+  resolveWorldClimate,
+  type ClimateMode,
+  type ClimateSettings,
+} from '@/lib/world-climate';
 
 const builtInVisuals: Record<Exclude<ClimateMode, 'off' | 'custom'>, string> = {
   spring: '🌸',
-  summer: '☀️',
+  summer: '✨',
   fall: '🍂',
   winter: '❄️',
   rain: '💧',
 };
 
-export function WorldClimateLayer() {
+export function WorldClimateLayer({ worldId = 'fried-em' }: { worldId?: string }) {
   const [settings, setSettings] = useState<ClimateSettings>(defaultClimateSettings);
 
   useEffect(() => {
-    setSettings(readSettings());
-    const sync = () => setSettings(readSettings());
-    window.addEventListener('harmonic-climate-update', sync);
+    const sync = () => setSettings(resolveWorldClimate(worldId));
+    sync();
+    window.addEventListener(climateUpdateEvent, sync);
     window.addEventListener('storage', sync);
     return () => {
-      window.removeEventListener('harmonic-climate-update', sync);
+      window.removeEventListener(climateUpdateEvent, sync);
       window.removeEventListener('storage', sync);
     };
-  }, []);
+  }, [worldId]);
 
   const particles = useMemo(() => Array.from({ length: Math.max(0, Math.min(100, settings.density)) }, (_, index) => ({
     id: index,
@@ -74,8 +47,9 @@ export function WorldClimateLayer() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[45] overflow-hidden">
-      {settings.mode === 'summer' && <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_12%,rgba(255,181,76,.18),transparent_34rem)] mix-blend-screen" />}
-      {settings.mode === 'rain' && <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent,rgba(120,180,255,.06),transparent)]" />}
+      {settings.mode === 'summer' && <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_12%,rgba(255,181,76,.2),transparent_34rem)] mix-blend-screen" />}
+      {settings.mode === 'winter' && <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(145,190,255,.08),transparent_45%)]" />}
+      {settings.mode === 'rain' && <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent,rgba(120,180,255,.08),transparent)]" />}
       {particles.map((particle) => (
         <span
           key={particle.id}
@@ -85,7 +59,9 @@ export function WorldClimateLayer() {
             animationDelay: `${particle.delay}s`,
             animationDuration: `${particle.duration}s`,
             opacity: settings.opacity,
+            filter: settings.glow ? `drop-shadow(0 0 ${settings.glow}px rgba(255,255,255,.55))` : undefined,
             ['--harmonic-drift' as string]: `${particle.drift}px`,
+            ['--harmonic-rotation' as string]: `${settings.rotation}deg`,
             transform: `scale(${particle.scale})`,
           }}
         >
@@ -99,8 +75,8 @@ export function WorldClimateLayer() {
       <style jsx global>{`
         @keyframes harmonicWeatherFall {
           0% { transform: translate3d(0,-12vh,0) rotate(0deg); }
-          50% { transform: translate3d(var(--harmonic-drift),52vh,0) rotate(180deg); }
-          100% { transform: translate3d(calc(var(--harmonic-drift) * -0.5),112vh,0) rotate(360deg); }
+          50% { transform: translate3d(var(--harmonic-drift),52vh,0) rotate(calc(var(--harmonic-rotation) * .5)); }
+          100% { transform: translate3d(calc(var(--harmonic-drift) * -0.5),112vh,0) rotate(var(--harmonic-rotation)); }
         }
       `}</style>
     </div>
