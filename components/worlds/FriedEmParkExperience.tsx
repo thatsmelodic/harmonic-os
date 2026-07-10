@@ -143,6 +143,7 @@ export function FriedEmParkExperience() {
         <div className={styles.controls}>
           <button className={styles.controlButton} onClick={() => setAmbientOn((value) => !value)}>{ambientOn ? '🔊 Court FX On' : '🔇 Court FX Off'}</button>
           <button className={styles.controlButton} onClick={() => setNightMode((value) => !value)}>{nightMode ? '🌙 Night Run' : '☀️ Day Run'}</button>
+          <Link href="/worlds/fried-em/heat" className={styles.controlButton}>🔥 My Heat</Link>
           <Link href="/worlds/fried-em/seasons" className={styles.controlButton}>Seasons</Link>
           <Link href="/" className={styles.controlButton}>Universe Map</Link>
         </div>
@@ -150,42 +151,15 @@ export function FriedEmParkExperience() {
 
       <section className={styles.park} aria-label="Interactive Fried Em park">
         <div className={styles.skyGlow} />
-        <div className={styles.scoreboard}>
-          <p className={styles.eyebrow}>Game Point</p>
-          <div className={styles.score}><span>HOME 21</span><span>11 AWAY</span></div>
-          <p style={{ margin: '.6rem 0 0', fontSize: '.7rem', color: 'rgba(255,255,255,.4)' }}>Use ← → or A / D to move · Enter opens room</p>
-        </div>
+        <div className={styles.scoreboard}><p className={styles.eyebrow}>Game Point</p><div className={styles.score}><span>HOME 21</span><span>11 AWAY</span></div><p style={{ margin: '.6rem 0 0', fontSize: '.7rem', color: 'rgba(255,255,255,.4)' }}>Use ← → or A / D to move · Enter opens room</p></div>
         <div className={styles.hoop}><div className={styles.backboard} /><div className={styles.rim} /></div>
         <div className={styles.court} />
-
-        {rooms.map((item) => (
-          <button key={item.id} onClick={() => moveToRoom(item.id)} className={`${styles.hotspot} ${item.className} ${room === item.id ? styles.hotspotActive : ''}`} aria-pressed={room === item.id}>
-            <span className={styles.hotspotIcon}>{item.icon}</span>
-            <span className={styles.hotspotTitle}>{item.label}</span>
-            <span className={styles.hotspotCopy}>{item.description}</span>
-          </button>
-        ))}
+        {rooms.map((item) => <button key={item.id} onClick={() => moveToRoom(item.id)} className={`${styles.hotspot} ${item.className} ${room === item.id ? styles.hotspotActive : ''}`} aria-pressed={room === item.id}><span className={styles.hotspotIcon}>{item.icon}</span><span className={styles.hotspotTitle}>{item.label}</span><span className={styles.hotspotCopy}>{item.description}</span></button>)}
       </section>
 
-      <section id="fried-em-room-panel" className={styles.roomPanel}>
-        <div className={styles.roomHeader}>
-          <div><p className={styles.eyebrow}>Active Location</p><h2 className={styles.roomTitle}>{activeRoom.icon} {activeRoom.label}</h2></div>
-          <div className={styles.controls}>
-            <Link className={styles.primaryButton} href={activeRoute!}>Enter Live System</Link>
-            <button className={styles.secondaryButton} onClick={() => moveToRoom('park')}>Back to Center Court</button>
-          </div>
-        </div>
-        <div className={styles.roomGrid}>{roomContent[room].map((item) => <article key={item.title} className={styles.card}><p className={styles.eyebrow}>{item.eyebrow}</p><h3>{item.title}</h3><p>{item.body}</p></article>)}</div>
-      </section>
+      <section id="fried-em-room-panel" className={styles.roomPanel}><div className={styles.roomHeader}><div><p className={styles.eyebrow}>Active Location</p><h2 className={styles.roomTitle}>{activeRoom.icon} {activeRoom.label}</h2></div><div className={styles.controls}><Link className={styles.primaryButton} href={activeRoute!}>Enter Live System</Link><button className={styles.secondaryButton} onClick={() => moveToRoom('park')}>Back to Center Court</button></div></div><div className={styles.roomGrid}>{roomContent[room].map((item) => <article key={item.title} className={styles.card}><p className={styles.eyebrow}>{item.eyebrow}</p><h3>{item.title}</h3><p>{item.body}</p></article>)}</div></section>
 
-      {fullRoomOpen && (
-        <div role="dialog" aria-modal="true" aria-label={`${activeRoom.label} full room`} style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'grid', placeItems: 'center', padding: '1rem', background: 'rgba(0,0,0,.84)', backdropFilter: 'blur(18px)' }} onClick={() => setFullRoomOpen(false)}>
-          <section style={{ width: 'min(1050px, 100%)', maxHeight: '88vh', overflowY: 'auto', border: '1px solid rgba(255,140,60,.3)', borderRadius: '2.4rem', padding: 'clamp(1.25rem,4vw,3rem)', background: 'radial-gradient(circle at top,rgba(255,122,26,.16),transparent 30rem),#0b0301', boxShadow: '0 0 90px rgba(255,90,0,.2)' }} onClick={(event) => event.stopPropagation()}>
-            <div className={styles.roomHeader}><div><p className={styles.eyebrow}>Full Room Loaded</p><h2 className={styles.roomTitle}>{activeRoom.icon} {activeRoom.label}</h2></div><button className={styles.secondaryButton} onClick={() => setFullRoomOpen(false)}>Close ×</button></div>
-            <div className={styles.roomGrid}>{roomContent[room].map((item) => <article key={item.title} className={styles.card}><p className={styles.eyebrow}>{item.eyebrow}</p><h3>{item.title}</h3><p>{item.body}</p><Link href={activeRoute!} className={styles.primaryButton} style={{ marginTop: '1rem' }}>Enter Live System</Link></article>)}</div>
-          </section>
-        </div>
-      )}
+      {fullRoomOpen && <div role="dialog" aria-modal="true" aria-label={`${activeRoom.label} full room`} style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'grid', placeItems: 'center', padding: '1rem', background: 'rgba(0,0,0,.84)', backdropFilter: 'blur(18px)' }} onClick={() => setFullRoomOpen(false)}><section style={{ width: 'min(1050px, 100%)', maxHeight: '88vh', overflowY: 'auto', border: '1px solid rgba(255,140,60,.3)', borderRadius: '2.4rem', padding: 'clamp(1.25rem,4vw,3rem)', background: 'radial-gradient(circle at top,rgba(255,122,26,.16),transparent 30rem),#0b0301', boxShadow: '0 0 90px rgba(255,90,0,.2)' }} onClick={(event) => event.stopPropagation()}><div className={styles.roomHeader}><div><p className={styles.eyebrow}>Full Room Loaded</p><h2 className={styles.roomTitle}>{activeRoom.icon} {activeRoom.label}</h2></div><button className={styles.secondaryButton} onClick={() => setFullRoomOpen(false)}>Close ×</button></div><div className={styles.roomGrid}>{roomContent[room].map((item) => <article key={item.title} className={styles.card}><p className={styles.eyebrow}>{item.eyebrow}</p><h3>{item.title}</h3><p>{item.body}</p><Link href={activeRoute!} className={styles.primaryButton} style={{ marginTop: '1rem' }}>Enter Live System</Link></article>)}</div></section></div>}
     </main>
   );
 }
