@@ -4,10 +4,12 @@ import { HarmonicOSRuntime } from '@/components/runtime/HarmonicOSRuntime';
 import { AtmosphereProvider } from '@/components/atmosphere/AtmosphereProvider';
 import { GlobalAtmosphereLayer } from '@/components/atmosphere/GlobalAtmosphereLayer';
 import { WorldCustomizationProvider } from '@/components/studio/WorldCustomizationProvider';
+import { IdentityProvider } from '@/components/identity/IdentityProvider';
 import './globals.css';
 import './runtime-personality.css';
 import './universe-interactions.css';
 import './world-customization.css';
+import './identity-engine.css';
 
 export const metadata = {
   title: 'Harmonic OS',
@@ -19,12 +21,14 @@ export default function RootLayout(props: { children: ReactNode }) {
     <html lang="en">
       <body style={{ background: 'var(--world-background, #07050a)', color: 'var(--world-text, #fff)' }}>
         <WorldCustomizationProvider>
-          <SeasonProvider>
-            <AtmosphereProvider>
-              <GlobalAtmosphereLayer />
-              <HarmonicOSRuntime>{props.children}</HarmonicOSRuntime>
-            </AtmosphereProvider>
-          </SeasonProvider>
+          <IdentityProvider>
+            <SeasonProvider>
+              <AtmosphereProvider>
+                <GlobalAtmosphereLayer />
+                <HarmonicOSRuntime>{props.children}</HarmonicOSRuntime>
+              </AtmosphereProvider>
+            </SeasonProvider>
+          </IdentityProvider>
         </WorldCustomizationProvider>
       </body>
     </html>
