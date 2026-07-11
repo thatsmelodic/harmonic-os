@@ -11,6 +11,10 @@ export type HarmonicGarment = {
   material: string;
   detail: string;
   lyric: string;
+  edition: string;
+  fit: string;
+  construction: string[];
+  experience: string[];
 };
 
 export type HarmonicCollection = {
@@ -29,11 +33,75 @@ export type HarmonicCollection = {
 };
 
 export const beigeGarments: HarmonicGarment[] = [
-  { slug: 'quiet-luxury-pullover', name: 'Quiet Luxury Pullover', type: 'Heavyweight Hoodie', color: 'Warm Beige', price: 118, status: 'preview', symbol: '∞', material: '460 GSM brushed cotton', detail: 'Raised tonal embroidery, custom interlocked-heart hardware, and a calm oversized drape.', lyric: 'Lift yourself without losing your softness.' },
-  { slug: 'frequency-zip', name: 'Frequency Zip', type: 'Luxury Zip Hoodie', color: 'Stone Cream', price: 128, status: 'preview', symbol: '♬', material: '420 GSM cotton fleece', detail: 'Two-way custom zipper, tonal stitched melody, satin-lined hood, and sculpted cuffs.', lyric: 'The melody lives between every opening and closing.' },
-  { slug: 'becoming-tee', name: 'Becoming Tee', type: 'Premium Tee', color: 'Soft Sand', price: 58, status: 'preview', symbol: '2', material: '280 GSM combed cotton', detail: 'Structured neckline, relaxed body, puff-embroidered chest mark, and hidden interior quote.', lyric: 'Becoming is still a frequency.' },
-  { slug: 'legacy-pant', name: 'Legacy Pant', type: 'Relaxed Sweatpant', color: 'Walnut Beige', price: 96, status: 'preview', symbol: '÷', material: '440 GSM cotton fleece', detail: 'Deep taper, tonal side melody, custom drawcord tips, and stitched archive coordinates.', lyric: 'What carried you becomes part of what you carry.' },
+  {
+    slug: 'quiet-luxury-pullover',
+    name: 'Quiet Luxury Pullover',
+    type: 'Heavyweight Hoodie',
+    color: 'Warm Beige',
+    price: 175,
+    status: 'preview',
+    symbol: '∞',
+    material: '500 GSM custom-milled brushed cotton',
+    detail: 'A sculpted heavyweight silhouette with raised tonal embroidery, custom interlocked-heart hardware, and a soft architectural drape.',
+    lyric: 'Lift yourself without losing your softness.',
+    edition: 'Chapter I numbered edition',
+    fit: 'Relaxed luxury fit · structured shoulder · cropped-clean hem',
+    construction: ['Double-layer hood', 'Tonal 3D embroidery', 'Custom heart hardware', 'Reinforced bound seams', 'Interior melody label'],
+    experience: ['Digital authenticity card', 'Lift U Up listening chapter', 'Collector packaging', 'Living Closet video eligibility'],
+  },
+  {
+    slug: 'frequency-zip',
+    name: 'Frequency Zip',
+    type: 'Luxury Zip Hoodie',
+    color: 'Stone Cream',
+    price: 195,
+    status: 'preview',
+    symbol: '♬',
+    material: '480 GSM custom cotton fleece with satin hood lining',
+    detail: 'The hero zip-up: custom two-way hardware, sculpted cuffs, tonal stitched melody, and a silhouette designed to feel composed from every angle.',
+    lyric: 'The melody lives between every opening and closing.',
+    edition: 'Chapter I hero garment',
+    fit: 'Relaxed unisex fit · controlled volume · premium stacked body',
+    construction: ['Custom two-way zipper', 'Satin-lined hood', 'Sculpted rib cuffs', 'Tonal back melody stitch', 'Hidden interior testimony pocket'],
+    experience: ['Numbered garment certificate', 'Exclusive song visual', 'Luxury magnetic packaging', 'Early archive access'],
+  },
+  {
+    slug: 'becoming-tee',
+    name: 'Becoming Tee',
+    type: 'Premium Tee',
+    color: 'Soft Sand',
+    price: 78,
+    status: 'preview',
+    symbol: '2',
+    material: '300 GSM compact combed cotton',
+    detail: 'A dense, structured tee with a precise neckline, relaxed body, puff-embroidered chest mark, and a hidden interior quote.',
+    lyric: 'Becoming is still a frequency.',
+    edition: 'Chapter I foundation piece',
+    fit: 'Boxy premium fit · dropped shoulder · balanced length',
+    construction: ['Dense compact jersey', 'Puff embroidered mark', 'Reinforced collar', 'Hidden interior quote', 'Archive hem label'],
+    experience: ['Digital garment story', 'Collection soundtrack access', 'Collector packaging', 'Living Closet video eligibility'],
+  },
+  {
+    slug: 'legacy-pant',
+    name: 'Legacy Pant',
+    type: 'Relaxed Sweatpant',
+    color: 'Walnut Beige',
+    price: 145,
+    status: 'preview',
+    symbol: '÷',
+    material: '480 GSM cotton fleece',
+    detail: 'A composed relaxed pant with a deep taper, tonal side melody, custom drawcord tips, and stitched archive coordinates.',
+    lyric: 'What carried you becomes part of what you carry.',
+    edition: 'Chapter I companion piece',
+    fit: 'Relaxed thigh · controlled stack · articulated taper',
+    construction: ['Custom metal drawcord tips', 'Tonal side embroidery', 'Deep reinforced pockets', 'Archive coordinate stitch', 'Structured waistband'],
+    experience: ['Digital authenticity card', 'Collection soundtrack access', 'Collector packaging', 'Living Closet video eligibility'],
+  },
 ];
+
+export function getBeigeGarment(slug: string) {
+  return beigeGarments.find((garment) => garment.slug === slug);
+}
 
 export const collections: HarmonicCollection[] = [
   {
@@ -85,7 +153,7 @@ export const fashionRooms = [
   { href: '/worlds/two-harmonic/stitch-lab', icon: '🪡', title: 'Stitch Lab', copy: 'Build garments, placements, quotes, colors, trims, and stitched meaning.' },
   { href: '/worlds/two-harmonic/melody-sync', icon: '🎵', title: 'Melody Sync', copy: 'Connect songs, visuals, and release dates to the garments they inspired.' },
   { href: '/worlds/two-harmonic/archive', icon: '🗄️', title: 'Fashion Archive', copy: 'Preserve samples, campaigns, unreleased concepts, and the story behind each era.' },
-  { href: '/worlds/two-harmonic/closet', icon: '🪞', title: 'Harmonic Closet', copy: 'Save owned pieces, build fits, and see how your wardrobe carries your frequency.' },
+  { href: '/worlds/two-harmonic/closet', icon: '🎥', title: 'Living Closet', copy: 'Watch community videos of real people wearing 2 Harmonic and adding their own memory to the garment.' },
   { href: '/studio/two-harmonic', icon: '⚙️', title: 'Fashion House Studio', copy: 'Manage collections, products, music sync, campaigns, inventory, and release states.' },
 ];
 
