@@ -6,6 +6,8 @@
   --world-surface: #160d20;
   --world-text: #ffffff;
   --world-muted: #a1a1aa;
+  --world-border: #3f3f46;
+  --world-glow: #a855f7;
 }
 
 body {
@@ -14,6 +16,7 @@ body {
   transition: background-color .45s ease, color .3s ease;
 }
 
+.world-customizable,
 .schmackinn-world,
 .fried-em-world,
 .melodic-world,
@@ -24,15 +27,19 @@ body {
   color: var(--world-text);
 }
 
+.world-customizable .glass-panel,
+.world-customizable .schmackinn-panel,
 .schmackinn-world .glass-panel,
 .fried-em-world .glass-panel,
 .melodic-world .glass-panel,
 .two-harmonic-world .glass-panel,
 [data-world-shell] .glass-panel {
   background: color-mix(in srgb, var(--world-surface) 82%, transparent);
-  border-color: color-mix(in srgb, var(--world-primary) 18%, transparent);
+  border-color: color-mix(in srgb, var(--world-border) 78%, transparent);
 }
 
+.world-customizable a:focus-visible,
+.world-customizable button:focus-visible,
 .schmackinn-world a:focus-visible,
 .schmackinn-world button:focus-visible,
 .fried-em-world a:focus-visible,
@@ -48,7 +55,7 @@ body {
 .world-primary-action {
   background: var(--world-primary) !important;
   color: var(--world-background) !important;
-  box-shadow: 0 0 32px color-mix(in srgb, var(--world-primary) 35%, transparent);
+  box-shadow: 0 0 32px color-mix(in srgb, var(--world-glow) 35%, transparent);
 }
 
 .world-secondary-action {
@@ -57,6 +64,10 @@ body {
   color: var(--world-text) !important;
 }
 
+.world-primary-text { color: var(--world-primary) !important; }
+.world-secondary-text { color: var(--world-secondary) !important; }
 .world-accent-text { color: var(--world-accent) !important; }
 .world-muted-text { color: var(--world-muted) !important; }
 .world-surface { background: var(--world-surface) !important; }
+.world-border { border-color: var(--world-border) !important; }
+.world-glow { box-shadow: 0 0 70px color-mix(in srgb, var(--world-glow) 40%, transparent) !important; }
