@@ -1,0 +1,62 @@
+:root {
+  --world-primary: #a855f7;
+  --world-secondary: #22d3ee;
+  --world-accent: #f59e0b;
+  --world-background: #07050a;
+  --world-surface: #160d20;
+  --world-text: #ffffff;
+  --world-muted: #a1a1aa;
+}
+
+body {
+  background-color: var(--world-background);
+  color: var(--world-text);
+  transition: background-color .45s ease, color .3s ease;
+}
+
+.schmackinn-world,
+.fried-em-world,
+.melodic-world,
+.two-harmonic-world,
+[data-world-shell] {
+  --tw-ring-color: color-mix(in srgb, var(--world-primary) 45%, transparent);
+  background-color: var(--world-background);
+  color: var(--world-text);
+}
+
+.schmackinn-world .glass-panel,
+.fried-em-world .glass-panel,
+.melodic-world .glass-panel,
+.two-harmonic-world .glass-panel,
+[data-world-shell] .glass-panel {
+  background: color-mix(in srgb, var(--world-surface) 82%, transparent);
+  border-color: color-mix(in srgb, var(--world-primary) 18%, transparent);
+}
+
+.schmackinn-world a:focus-visible,
+.schmackinn-world button:focus-visible,
+.fried-em-world a:focus-visible,
+.fried-em-world button:focus-visible,
+.melodic-world a:focus-visible,
+.melodic-world button:focus-visible,
+.two-harmonic-world a:focus-visible,
+.two-harmonic-world button:focus-visible {
+  outline: 2px solid var(--world-accent);
+  outline-offset: 3px;
+}
+
+.world-primary-action {
+  background: var(--world-primary) !important;
+  color: var(--world-background) !important;
+  box-shadow: 0 0 32px color-mix(in srgb, var(--world-primary) 35%, transparent);
+}
+
+.world-secondary-action {
+  border-color: color-mix(in srgb, var(--world-secondary) 35%, transparent) !important;
+  background: color-mix(in srgb, var(--world-secondary) 12%, transparent) !important;
+  color: var(--world-text) !important;
+}
+
+.world-accent-text { color: var(--world-accent) !important; }
+.world-muted-text { color: var(--world-muted) !important; }
+.world-surface { background: var(--world-surface) !important; }
