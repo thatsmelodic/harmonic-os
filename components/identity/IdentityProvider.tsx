@@ -26,6 +26,11 @@ function detectWorld(pathname: string): IdentityWorld {
   return 'home';
 }
 
+function detectCollection(pathname: string) {
+  if (pathname.includes('/worlds/two-harmonic') || pathname.includes('/worlds/2-harmonic')) return 'beige-frequency';
+  return undefined;
+}
+
 export function IdentityProvider({ children }: { children: ReactNode }) {
   const [activeWorld, setActiveWorld] = useState<IdentityWorld>('home');
   const [activeCollection, setActiveCollection] = useState<string | undefined>();
@@ -40,7 +45,12 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
         if (parsed.activeCollection) setActiveCollection(parsed.activeCollection);
       } catch { /* keep defaults */ }
     }
-    const syncPath = () => setActiveWorld(detectWorld(window.location.pathname));
+    const syncPath = () => {
+      const pathname = window.location.pathname;
+      setActiveWorld(detectWorld(pathname));
+      const routedCollection = detectCollection(pathname);
+      if (routedCollection) setActiveCollection(routedCollection);
+    };
     syncPath();
     window.addEventListener('popstate', syncPath);
     const observer = new MutationObserver(syncPath);
