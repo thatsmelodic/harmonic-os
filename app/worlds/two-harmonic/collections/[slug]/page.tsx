@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { use, useMemo, useState } from 'react';
 import { getBeigeGarment } from '@/data/two-harmonic-universe';
 import { GarmentReveal, LuxuryFashionHouseExperience } from '@/components/two-harmonic/LuxuryFashionHouseExperience';
+import { LuxuryCommerceExperience } from '@/components/two-harmonic/LuxuryCommerceExperience';
 
 const sizes = ['S', 'M', 'L', 'XL'];
 const views = ['Front', 'Back', 'Hardware', 'Stitching'] as const;
@@ -60,7 +61,7 @@ export default function TwoHarmonicGarmentPage({ params }: { params: Promise<{ s
             <div className="mt-7 rounded-[1.8rem] border border-[#d8c7aa]/16 bg-black/20 p-5">
               <p className="text-xs font-black uppercase tracking-[.2em] text-[#a9967a]">Select Size</p>
               <div className="mt-4 grid grid-cols-4 gap-2">{sizes.map((item) => <button key={item} onClick={() => setSize(item)} className={`rounded-xl border px-3 py-3 text-sm font-black ${size === item ? 'border-[#f5efe4] bg-[#f5efe4] text-[#241b14]' : 'border-[#d8c7aa]/20 bg-white/[.025] text-[#d8c7aa]'}`}>{item}</button>)}</div>
-              <p className="mt-3 text-xs leading-5 text-[#8f7b62]">Selected: {size} · Fit guidance will be connected to Studio before checkout goes live.</p>
+              <p className="mt-3 text-xs leading-5 text-[#8f7b62]">Selected: {size} · Fit guidance and size-specific inventory are active in the private preview.</p>
             </div>
 
             <div className="mt-5 grid grid-cols-3 gap-2">{(['craft','melody','ownership'] as const).map((item) => <button key={item} onClick={() => setChapter(item)} className={`rounded-xl border px-3 py-3 text-xs font-black uppercase tracking-[.12em] ${chapter === item ? 'border-[#d8c7aa] bg-[#d8c7aa]/12 text-[#f5efe4]' : 'border-[#d8c7aa]/15 text-[#9e8b70]'}`}>{item}</button>)}</div>
@@ -71,11 +72,7 @@ export default function TwoHarmonicGarmentPage({ params }: { params: Promise<{ s
               {chapter === 'ownership' && <><p className="text-xs font-black uppercase tracking-[.2em] text-[#a9967a]">Ownership Experience</p><h2 className="mt-3 text-2xl font-black">The garment is only the first chapter.</h2><div className="mt-4 grid gap-2">{garment.experience.map((item) => <div key={item} className="flex items-center gap-3 text-sm text-[#d8c7aa]"><span>∞</span><span>{item}</span></div>)}</div><p className="mt-5 text-xs leading-6 text-[#8f7b62]">Living Closet means approved videos of real people wearing 2 Harmonic—not a digital inventory or outfit builder.</p></>}
             </div>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button className="rounded-full bg-[#f5efe4] px-5 py-4 text-sm font-black text-[#241b14]">Join Private Access</button>
-              <button className="rounded-full border border-[#d8c7aa]/25 bg-[#d8c7aa]/8 px-5 py-4 text-sm font-black text-[#f5efe4]">Save This Piece</button>
-            </div>
-            <p className="mt-4 text-center text-xs leading-5 text-[#806f59]">Preview experience only. Payments, inventory, shipping, and reservations will be activated during production commerce wiring.</p>
+            <LuxuryCommerceExperience garmentSlug={garment.slug} garmentName={garment.name} price={garment.price} selectedSize={size} sizes={sizes} />
           </aside>
         </section>
 
