@@ -28,48 +28,49 @@ export default function MelodySyncPage() {
 
   return (
     <main className="two-harmonic-world relative min-h-screen overflow-hidden px-4 py-8 pb-28 sm:px-6" data-world-shell>
-      <div className="absolute inset-0 -z-30 transition-all duration-700" style={{ background: `radial-gradient(circle at center,rgba(245,239,228,${intensity / 160}),transparent 30rem),radial-gradient(circle at 75% 30%,rgba(111,90,69,.24),transparent 25rem),linear-gradient(145deg,#0c0907,#231a13 55%,#090706)` }} />
+      <div className="absolute inset-0 -z-30 transition-all duration-700" style={{ background: `radial-gradient(circle at 70% 36%,rgba(168,85,247,${intensity / 220}),transparent 28rem),radial-gradient(circle at 28% 20%,rgba(216,199,170,${intensity / 300}),transparent 30rem),linear-gradient(145deg,#09070b,#1d1322 52%,#0c0907)` }} />
       <div className="absolute inset-0 -z-20 opacity-30" style={{ backgroundImage: 'repeating-linear-gradient(90deg,transparent 0 44px,rgba(216,199,170,.05) 45px 46px)' }} />
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">{['♪','♬','∞','2','♩','÷'].map((symbol, index) => <span key={symbol} className="absolute transition-all duration-700" style={{ left: `${12 + index * 14}%`, top: `${18 + (index % 3) * 24}%`, fontSize: `${28 + activeIndex * 6}px`, opacity: isPlaying ? .08 + activeIndex * .025 : .03, transform: `translateY(${isPlaying ? -activeIndex * (8 + index) : 0}px)` }}>{symbol}</span>)}</div>
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">{['♪','♬','∞','2','♩','÷'].map((symbol, index) => <span key={symbol} className="absolute transition-all duration-700" style={{ left: `${12 + index * 14}%`, top: `${18 + (index % 3) * 24}%`, fontSize: `${28 + activeIndex * 6}px`, color: index % 2 ? '#d8c7aa' : '#c084fc', opacity: isPlaying ? .08 + activeIndex * .025 : .03, transform: `translateY(${isPlaying ? -activeIndex * (8 + index) : 0}px)` }}>{symbol}</span>)}</div>
 
       <div className="mx-auto max-w-7xl">
         <nav className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <Link href="/worlds/two-harmonic/collections" className="rounded-full border border-[#d8c7aa]/20 bg-black/25 px-4 py-3 text-sm font-black text-[#d8c7aa]">← Beige Frequency</Link>
-          <Link href="/worlds/two-harmonic" className="rounded-full border border-[#d8c7aa]/20 bg-[#d8c7aa]/8 px-4 py-3 text-sm font-black text-[#f5efe4]">Fashion House</Link>
+          <div className="flex items-center gap-3"><img src="/identity/two-harmonic-mark-gold.svg" alt="Beige Frequency" className="h-10 w-8 object-contain" /><Link href="/worlds/two-harmonic" className="rounded-full border border-[#d8c7aa]/20 bg-[#d8c7aa]/8 px-4 py-3 text-sm font-black text-[#f5efe4]">Fashion House</Link></div>
         </nav>
 
         <header className="rounded-[3rem] border border-[#8c785f] bg-black/35 p-7 backdrop-blur-2xl sm:p-11">
-          <p className="text-xs font-black uppercase tracking-[.38em] text-[#b9a78c]">Melody Sync Chamber</p>
-          <h1 className="mt-4 text-6xl font-black tracking-[-.09em] text-[#f5efe4] sm:text-8xl"><WorldCopy world="two-harmonic" field="melodyTitle" fallback="Hear what the garment remembers." /></h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-[#c8b99f]"><WorldCopy world="two-harmonic" field="melodyDescription" fallback="Music is not background decoration in 2 Harmonic. It is the emotional blueprint that decides the collection's pace, lighting, movement, language, and release." /></p>
+          <div className="grid gap-7 lg:grid-cols-[1fr_320px] lg:items-center">
+            <div><p className="text-xs font-black uppercase tracking-[.38em] text-[#b9a78c]">Melody Sync Chamber</p><h1 className="mt-4 text-6xl font-black tracking-[-.09em] text-[#f5efe4] sm:text-8xl"><WorldCopy world="two-harmonic" field="melodyTitle" fallback="Hear what the garment remembers." /></h1><p className="mt-5 max-w-3xl text-lg leading-8 text-[#c8b99f]"><WorldCopy world="two-harmonic" field="melodyDescription" fallback="Music is not background decoration in 2 Harmonic. It is the emotional blueprint that decides the collection's pace, lighting, movement, language, and release." /></p></div>
+            <div className="rounded-[2.4rem] border border-purple-300/20 bg-purple-500/5 p-5 text-center shadow-[0_0_70px_rgba(168,85,247,.18)]"><img src="/identity/melody-cup-neon.svg" alt="Pour Your Frequency" className="mx-auto h-52 w-full object-contain" /><p className="mt-3 text-xs font-black uppercase tracking-[.32em] text-purple-200">Pour Your Frequency</p></div>
+          </div>
         </header>
 
         <section className="mt-6 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
           <aside className="h-fit rounded-[2.5rem] border border-[#8c785f]/70 bg-black/35 p-5 backdrop-blur-xl lg:sticky lg:top-5">
             <p className="text-xs font-black uppercase tracking-[.24em] text-[#a9967a]">Choose Garment</p>
-            <div className="mt-4 grid gap-3">{beigeGarments.map((item, index) => <button key={item.slug} onClick={() => { setGarmentIndex(index); setActiveIndex(0); setIsPlaying(false); }} className={`rounded-[1.7rem] border p-4 text-left ${garmentIndex === index ? 'border-[#f5efe4] bg-[#d8c7aa]/12' : 'border-white/8 bg-white/[.025]'}`}><p className="text-[10px] font-black uppercase tracking-[.16em] text-[#a9967a]">{item.type}</p><div className="mt-2 flex items-center justify-between gap-4"><h2 className="text-lg font-black text-[#f5efe4]">{item.name}</h2><span className="text-2xl">{item.symbol}</span></div></button>)}</div>
+            <div className="mt-4 grid gap-3">{beigeGarments.map((item, index) => <button key={item.slug} onClick={() => { setGarmentIndex(index); setActiveIndex(0); setIsPlaying(false); }} className={`rounded-[1.7rem] border p-4 text-left ${garmentIndex === index ? 'border-[#f5efe4] bg-[#d8c7aa]/12' : 'border-white/8 bg-white/[.025]'}`}><p className="text-[10px] font-black uppercase tracking-[.16em] text-[#a9967a]">{item.type}</p><div className="mt-2 flex items-center justify-between gap-4"><h2 className="text-lg font-black text-[#f5efe4]">{item.name}</h2><img src="/identity/two-harmonic-mark-gold.svg" alt="" className="h-10 w-8 object-contain opacity-80" /></div></button>)}</div>
             <div className="mt-5 rounded-[1.8rem] border border-[#d8c7aa]/15 bg-[#d8c7aa]/6 p-5"><p className="text-xs font-black uppercase tracking-[.18em] text-[#a9967a]">Stitched Line</p><p className="mt-3 text-xl font-black leading-8 text-[#f5efe4]">“{garment.lyric}”</p></div>
           </aside>
 
-          <article className="overflow-hidden rounded-[3rem] border border-[#8c785f] bg-black/40 shadow-[0_0_100px_rgba(216,199,170,.1)] backdrop-blur-2xl">
+          <article className="overflow-hidden rounded-[3rem] border border-[#8c785f] bg-black/40 shadow-[0_0_100px_rgba(168,85,247,.14)] backdrop-blur-2xl">
             <div className="relative grid min-h-[650px] place-items-center overflow-hidden p-8 text-center">
-              <div className="absolute inset-0 transition-all duration-700" style={{ background: `radial-gradient(circle,rgba(245,239,228,${.08 + activeIndex * .035}),transparent ${20 + activeIndex * 3}rem),linear-gradient(to bottom,rgba(111,90,69,${.06 + activeIndex * .03}),transparent)` }} />
+              <div className="absolute inset-0 transition-all duration-700" style={{ background: `radial-gradient(circle,rgba(168,85,247,${.08 + activeIndex * .035}),transparent ${20 + activeIndex * 3}rem),linear-gradient(to bottom,rgba(216,199,170,${.06 + activeIndex * .03}),transparent)` }} />
               <div className="relative z-10 max-w-3xl">
                 <p className="text-xs font-black uppercase tracking-[.3em] text-[#b9a78c]">Lift U Up · Movement {activeIndex + 1}/{beats.length}</p>
-                <div className={`mx-auto mt-8 grid h-72 w-72 place-items-center rounded-[4rem] border border-[#d8c7aa]/25 bg-[#d8c7aa]/8 text-[10rem] text-[#f5efe4] transition-all duration-700 ${isPlaying ? 'scale-105' : ''}`} style={{ boxShadow: `0 0 ${40 + activeIndex * 18}px rgba(245,239,228,${.05 + activeIndex * .025})` }}>{garment.symbol}</div>
+                <div className={`mx-auto mt-8 grid h-72 w-72 place-items-center rounded-[4rem] border border-purple-300/25 bg-purple-500/5 transition-all duration-700 ${isPlaying ? 'scale-105' : ''}`} style={{ boxShadow: `0 0 ${40 + activeIndex * 18}px rgba(168,85,247,${.08 + activeIndex * .03})` }}><img src={activeIndex >= 2 ? '/identity/melody-cup-neon.svg' : '/identity/two-harmonic-mark-gold.svg'} alt="Frequency visual" className="h-56 w-56 object-contain" /></div>
                 <h2 className="mt-7 text-5xl font-black tracking-[-.07em] text-[#f5efe4] sm:text-7xl">{beat.label}</h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-8 text-[#c8b99f]">{beat.note}</p>
 
-                <div className="mx-auto mt-8 flex max-w-2xl gap-2">{beats.map((_, index) => <div key={index} className="h-2 flex-1 rounded-full transition-all" style={{ background: index <= activeIndex ? '#f5efe4' : 'rgba(255,255,255,.1)' }} />)}</div>
+                <div className="mx-auto mt-8 flex max-w-2xl gap-2">{beats.map((_, index) => <div key={index} className="h-2 flex-1 rounded-full transition-all" style={{ background: index <= activeIndex ? (index >= 2 ? '#c084fc' : '#f5efe4') : 'rgba(255,255,255,.1)' }} />)}</div>
 
                 <div className="mt-8 flex flex-wrap justify-center gap-3">
                   {activeIndex > 0 && <button onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} className="rounded-full border border-[#d8c7aa]/20 bg-black/20 px-6 py-4 text-sm font-black text-[#d8c7aa]">Previous Movement</button>}
-                  {activeIndex < beats.length - 1 ? <button onClick={advance} className="rounded-full bg-[#f5efe4] px-7 py-4 text-sm font-black text-[#241b14]">{isPlaying ? 'Continue the Song →' : 'Begin Lift U Up →'}</button> : <Link href="/worlds/two-harmonic/collections" className="rounded-full bg-[#f5efe4] px-7 py-4 text-sm font-black text-[#241b14]">Enter the Collection</Link>}
+                  {activeIndex < beats.length - 1 ? <button onClick={advance} className="rounded-full bg-[#f5efe4] px-7 py-4 text-sm font-black text-[#241b14]">{isPlaying ? 'Continue the Song →' : 'Begin Lift U Up →'}</button> : <Link href="/worlds/two-harmonic/collections" className="rounded-full bg-purple-300 px-7 py-4 text-sm font-black text-[#160b1d]">Enter the Collection</Link>}
                 </div>
               </div>
             </div>
 
-            <div className="grid gap-3 border-t border-[#8c785f]/45 p-6 sm:grid-cols-3"><div className="rounded-2xl border border-[#d8c7aa]/15 bg-black/20 p-4"><p className="text-xs uppercase tracking-[.16em] text-[#a9967a]">Song</p><p className="mt-2 text-xl font-black text-[#f5efe4]">Lift U Up</p></div><div className="rounded-2xl border border-[#d8c7aa]/15 bg-black/20 p-4"><p className="text-xs uppercase tracking-[.16em] text-[#a9967a]">Mood Key</p><p className="mt-2 text-xl font-black text-[#f5efe4]">Calm Confidence</p></div><div className="rounded-2xl border border-[#d8c7aa]/15 bg-black/20 p-4"><p className="text-xs uppercase tracking-[.16em] text-[#a9967a]">Collection</p><p className="mt-2 text-xl font-black text-[#f5efe4]">Beige Frequency</p></div></div>
+            <div className="grid gap-3 border-t border-[#8c785f]/45 p-6 sm:grid-cols-3"><div className="rounded-2xl border border-[#d8c7aa]/15 bg-black/20 p-4"><p className="text-xs uppercase tracking-[.16em] text-[#a9967a]">Song</p><p className="mt-2 text-xl font-black text-[#f5efe4]">Lift U Up</p></div><div className="rounded-2xl border border-purple-300/15 bg-purple-500/5 p-4"><p className="text-xs uppercase tracking-[.16em] text-purple-200/70">Mood Key</p><p className="mt-2 text-xl font-black text-[#f5efe4]">Calm Confidence</p></div><div className="rounded-2xl border border-[#d8c7aa]/15 bg-black/20 p-4"><p className="text-xs uppercase tracking-[.16em] text-[#a9967a]">Collection</p><p className="mt-2 text-xl font-black text-[#f5efe4]">Beige Frequency</p></div></div>
           </article>
         </section>
       </div>
