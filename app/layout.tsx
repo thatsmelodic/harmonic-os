@@ -7,6 +7,7 @@ import { WorldCustomizationProvider } from '@/components/studio/WorldCustomizati
 import './globals.css';
 import './runtime-personality.css';
 import './universe-interactions.css';
+import './world-customization.css';
 
 export const metadata = {
   title: 'Harmonic OS',
