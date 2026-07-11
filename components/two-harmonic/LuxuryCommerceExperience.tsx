@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { loadTwoHarmonicCommerceSettings, type TwoHarmonicCommerceSettings } from '@/lib/two-harmonic-commerce';
 
 type Inventory = Record<string, number>;
+type ReservationResult = { id?: string; status?: string; expiresAt?: string; unitPrice?: number };
 
 type Props = {
   garmentSlug: string;
@@ -26,8 +27,10 @@ export function LuxuryCommerceExperience({ garmentSlug, garmentName, price, sele
   const [accessOpen, setAccessOpen] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [reserved, setReserved] = useState(false);
+  const [reservation, setReservation] = useState<ReservationResult | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const sync = () => {
@@ -42,7 +45,11 @@ export function LuxuryCommerceExperience({ garmentSlug, garmentName, price, sele
   }, [garmentSlug]);
 
   useEffect(() => {
-    setHasAccess(Boolean(window.localStorage.getItem(ACCESS_KEY)));
+    const access = window.localStorage.getItem(ACCESS_KEY);
+    setHasAccess(Boolean(access));
+    if (access) {
+      try { setEmail(JSON.parse(access).email ?? ''); } catch { /* ignore malformed preview data */ }
+    }
     const savedPieces = JSON.parse(window.localStorage.getItem(SAVED_KEY) || '[]') as string[];
     setSaved(savedPieces.includes(garmentSlug));
   }, [garmentSlug]);
@@ -57,7 +64,7 @@ export function LuxuryCommerceExperience({ garmentSlug, garmentName, price, sele
 
   function joinAccess() {
     if (!email.trim() || !email.includes('@')) return;
-    window.localStorage.setItem(ACCESS_KEY, JSON.stringify({ email: email.trim(), joinedAt: new Date().toISOString() }));
+    window.localStorage.setItem(ACCESS_KEY, JSON.stringify({ email: email.trim().toLowerCase(), joinedAt: new Date().toISOString() }));
     setHasAccess(true);
     setAccessOpen(false);
   }
@@ -69,18 +76,49 @@ export function LuxuryCommerceExperience({ garmentSlug, garmentName, price, sele
     setSaved(next.includes(garmentSlug));
   }
 
-  function reserve() {
-    if (!reservationsEnabled) return;
+  async function reserve() {
+    setError('');
+    if (!reservationsEnabled || stock <= 0 || submitting) return;
     if (accessRequired && !hasAccess) {
       setAccessOpen(true);
       return;
     }
-    if (stock <= 0) return;
-    const bag = JSON.parse(window.localStorage.getItem(BAG_KEY) || '[]') as Array<Record<string, unknown>>;
-    bag.push({ garmentSlug, garmentName, selectedSize, price: livePrice, collection: studio?.collectionName ?? 'Beige Frequency', reservedAt: new Date().toISOString() });
-    window.localStorage.setItem(BAG_KEY, JSON.stringify(bag));
-    setInventory((current) => ({ ...current, [selectedSize]: Math.max(0, stock - 1) }));
-    setReserved(true);
+    if (!email || !email.includes('@')) {
+      setAccessOpen(true);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/two-harmonic/reservations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ garmentSlug, size: selectedSize, email }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'Reservation could not be completed.');
+
+      const nextReservation = payload.reservation as ReservationResult;
+      setReservation(nextReservation);
+      setInventory((current) => ({ ...current, [selectedSize]: Math.max(0, (current[selectedSize] ?? 0) - 1) }));
+
+      const bag = JSON.parse(window.localStorage.getItem(BAG_KEY) || '[]') as Array<Record<string, unknown>>;
+      bag.push({
+        reservationId: nextReservation.id,
+        garmentSlug,
+        garmentName,
+        selectedSize,
+        price: nextReservation.unitPrice ?? livePrice,
+        collection: studio?.collectionName ?? 'Beige Frequency',
+        expiresAt: nextReservation.expiresAt,
+        reservedAt: new Date().toISOString(),
+      });
+      window.localStorage.setItem(BAG_KEY, JSON.stringify(bag));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Reservation failed. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function toggleAudio() {
@@ -103,14 +141,14 @@ export function LuxuryCommerceExperience({ garmentSlug, garmentName, price, sele
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-black uppercase tracking-[.2em] text-[#a9967a]">{studio?.dropStatus?.replaceAll('-', ' ') ?? 'Private Commerce'}</p>
-            <p className="mt-2 text-sm font-black text-[#f5efe4]">{stockLabel}</p>
+            <p className="mt-2 text-sm font-black text-[#f5efe4]">{reservation ? 'Cloud reservation secured' : stockLabel}</p>
           </div>
-          <span className="rounded-full border border-[#d8c7aa]/20 px-3 py-1 text-xs font-black text-[#d8c7aa]">{selectedSize} · ${livePrice}</span>
+          <span className="rounded-full border border-[#d8c7aa]/20 px-3 py-1 text-xs font-black text-[#d8c7aa]">{selectedSize} · ${reservation?.unitPrice ?? livePrice}</span>
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <button onClick={reserve} disabled={stock <= 0 || !reservationsEnabled} className="rounded-full bg-[#f5efe4] px-5 py-4 text-sm font-black text-[#241b14] disabled:cursor-not-allowed disabled:opacity-40">
-            {reserved ? 'Reserved in Private Bag ✓' : accessRequired && !hasAccess ? 'Unlock Private Access' : `Reserve for $${livePrice}`}
+          <button onClick={reserve} disabled={stock <= 0 || !reservationsEnabled || submitting || Boolean(reservation)} className="rounded-full bg-[#f5efe4] px-5 py-4 text-sm font-black text-[#241b14] disabled:cursor-not-allowed disabled:opacity-40">
+            {reservation ? 'Reserved in Private Bag ✓' : submitting ? 'Securing Your Piece…' : accessRequired && !hasAccess ? 'Unlock Private Access' : `Reserve for $${livePrice}`}
           </button>
           <button onClick={toggleSaved} className="rounded-full border border-[#d8c7aa]/25 bg-[#d8c7aa]/8 px-5 py-4 text-sm font-black text-[#f5efe4]">
             {saved ? 'Saved to Archive ✓' : 'Save This Piece'}
@@ -126,7 +164,9 @@ export function LuxuryCommerceExperience({ garmentSlug, garmentName, price, sele
           </button>
         </div>
 
-        <p className="mt-4 text-center text-xs leading-5 text-[#806f59]">Studio controls now determine pricing, stock, audio, reservation access, and release state. Live payments, taxes, shipping rates, and fulfillment remain disabled until the production provider is connected.</p>
+        {reservation?.expiresAt && <p className="mt-4 text-center text-xs font-black text-[#e7cf9d]">Held until {new Date(reservation.expiresAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}. Checkout activates next.</p>}
+        {error && <p className="mt-4 rounded-2xl border border-red-300/20 bg-red-400/10 px-4 py-3 text-center text-xs font-black text-red-100">{error}</p>}
+        <p className="mt-4 text-center text-xs leading-5 text-[#806f59]">Reservations now use the production cloud inventory lock. Payments, taxes, shipping rates, and fulfillment activate when Stripe credentials are connected.</p>
       </div>
 
       {accessOpen && (
