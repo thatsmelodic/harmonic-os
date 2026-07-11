@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { SeasonProvider } from '@/components/seasons/SeasonProvider';
 import { HarmonicOSRuntime } from '@/components/runtime/HarmonicOSRuntime';
+import { AtmosphereProvider } from '@/components/atmosphere/AtmosphereProvider';
+import { GlobalAtmosphereLayer } from '@/components/atmosphere/GlobalAtmosphereLayer';
 import './globals.css';
 import './runtime-personality.css';
 import './universe-interactions.css';
@@ -15,7 +17,10 @@ export default function RootLayout(props: { children: ReactNode }) {
     <html lang="en">
       <body>
         <SeasonProvider>
-          <HarmonicOSRuntime>{props.children}</HarmonicOSRuntime>
+          <AtmosphereProvider>
+            <GlobalAtmosphereLayer />
+            <HarmonicOSRuntime>{props.children}</HarmonicOSRuntime>
+          </AtmosphereProvider>
         </SeasonProvider>
       </body>
     </html>
