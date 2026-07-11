@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { beigeGarments } from '@/data/two-harmonic-universe';
 import { WorldCopy } from '@/components/studio/WorldCopy';
+import { MelodyVisualizer } from '@/components/two-harmonic/MelodyVisualizer';
+import { LuxuryFashionHouseExperience } from '@/components/two-harmonic/LuxuryFashionHouseExperience';
 
 const beats = [
   { label: 'Silence', note: 'The room clears so the garment can speak first.' },
@@ -28,6 +30,7 @@ export default function MelodySyncPage() {
 
   return (
     <main className="two-harmonic-world relative min-h-screen overflow-hidden px-4 py-8 pb-28 sm:px-6" data-world-shell>
+      <LuxuryFashionHouseExperience />
       <div className="absolute inset-0 -z-30 transition-all duration-700" style={{ background: `radial-gradient(circle at 70% 36%,rgba(168,85,247,${intensity / 220}),transparent 28rem),radial-gradient(circle at 28% 20%,rgba(216,199,170,${intensity / 300}),transparent 30rem),linear-gradient(145deg,#09070b,#1d1322 52%,#0c0907)` }} />
       <div className="absolute inset-0 -z-20 opacity-30" style={{ backgroundImage: 'repeating-linear-gradient(90deg,transparent 0 44px,rgba(216,199,170,.05) 45px 46px)' }} />
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">{['♪','♬','∞','2','♩','÷'].map((symbol, index) => <span key={symbol} className="absolute transition-all duration-700" style={{ left: `${12 + index * 14}%`, top: `${18 + (index % 3) * 24}%`, fontSize: `${28 + activeIndex * 6}px`, color: index % 2 ? '#d8c7aa' : '#c084fc', opacity: isPlaying ? .08 + activeIndex * .025 : .03, transform: `translateY(${isPlaying ? -activeIndex * (8 + index) : 0}px)` }}>{symbol}</span>)}</div>
@@ -57,7 +60,7 @@ export default function MelodySyncPage() {
               <div className="absolute inset-0 transition-all duration-700" style={{ background: `radial-gradient(circle,rgba(168,85,247,${.08 + activeIndex * .035}),transparent ${20 + activeIndex * 3}rem),linear-gradient(to bottom,rgba(216,199,170,${.06 + activeIndex * .03}),transparent)` }} />
               <div className="relative z-10 max-w-3xl">
                 <p className="text-xs font-black uppercase tracking-[.3em] text-[#b9a78c]">Lift U Up · Movement {activeIndex + 1}/{beats.length}</p>
-                <div className={`mx-auto mt-8 grid h-72 w-72 place-items-center rounded-[4rem] border border-purple-300/25 bg-purple-500/5 transition-all duration-700 ${isPlaying ? 'scale-105' : ''}`} style={{ boxShadow: `0 0 ${40 + activeIndex * 18}px rgba(168,85,247,${.08 + activeIndex * .03})` }}><img src={activeIndex >= 2 ? '/identity/melody-cup-neon.svg' : '/identity/two-harmonic-mark-gold.svg'} alt="Frequency visual" className="h-56 w-56 object-contain" /></div>
+                <div className="mt-8"><MelodyVisualizer playing={isPlaying} intensity={intensity} label={garment.name} /></div>
                 <h2 className="mt-7 text-5xl font-black tracking-[-.07em] text-[#f5efe4] sm:text-7xl">{beat.label}</h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-8 text-[#c8b99f]">{beat.note}</p>
 
