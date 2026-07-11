@@ -50,9 +50,9 @@ export const identityRegistry: Record<IdentityWorld, WorldIdentity> = {
     mark: { label: 'Schmackinn Frequency Mark', symbol: '🍽️', glow: '#d8b4fe', motion: 'drift', metallic: 'none', scale: 1 },
   },
   'two-harmonic': {
-    world: 'two-harmonic', name: '2 Harmonic', primary: '#d7c3a3', secondary: '#f3eadb', accent: '#b08d57', ambient: '#0c0906',
-    particleFamily: ['thread', 'fabric fibers', 'music notes', 'luxury dust'], typography: 'luxury',
-    mark: { label: 'Beige Frequency Mark', symbol: '∞', glow: '#d8bd8a', motion: 'float', metallic: 'gold', scale: 1.12 },
+    world: 'two-harmonic', name: '2 Harmonic', primary: '#36b2cb', secondary: '#f3fbff', accent: '#9ee9f5', ambient: '#050b0d',
+    particleFamily: ['thread', 'fabric fibers', 'music notes', 'frequency dust'], typography: 'luxury',
+    mark: { label: '2 Harmonic Frequency Mark', symbol: '∞', imageUrl: '/identity/two-harmonic-mark-blue.svg', glow: '#36b2cb', motion: 'float', metallic: 'pearl', scale: 1.12 },
   },
 };
 
@@ -60,7 +60,7 @@ export const collectionIdentityOverrides: Record<string, IdentityOverride> = {
   'beige-frequency': {
     primary: '#d7c3a3', secondary: '#f5ead8', accent: '#ad8a56', ambient: '#100c08',
     particleFamily: ['thread', 'linen fibers', 'music notes', 'champagne dust'], typography: 'luxury',
-    mark: { label: 'Beige Frequency Collection Mark', symbol: '∞', glow: '#e7cf9d', metallic: 'gold', motion: 'float', scale: 1.2 },
+    mark: { label: 'Beige Frequency Collection Mark', symbol: '∞', imageUrl: '/identity/two-harmonic-mark-gold.svg', glow: '#e7cf9d', metallic: 'gold', motion: 'float', scale: 1.2 },
   },
 };
 
