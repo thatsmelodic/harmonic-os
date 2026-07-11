@@ -24,10 +24,17 @@ const sharedCopy = [
 const worldCopy: Partial<Record<WorldKey, string[][]>> = {
   schmackinn: [
     ['systemsTitle', 'World Systems Title'],
+    ['mapEyebrow', 'Flavor City Map Eyebrow'],
     ['mapTitle', 'Flavor City Map Title'],
     ['mapDescription', 'Flavor City Map Description'],
     ['communityTitle', 'Callout Community Title'],
+    ['communityDescription', 'Callout Community Description'],
     ['archiveTitle', 'Food Memories Title'],
+    ['archiveDescription', 'Food Memories Description'],
+    ['flavorLabTitle', 'Flavor Lab Title'],
+    ['flavorLabDescription', 'Flavor Lab Description'],
+    ['restaurantCta', 'Restaurant Entry Button'],
+    ['firstBiteTitle', 'First-Bite Title'],
     ['studioTitle', 'Creator Automation Title'],
   ],
   melodic: [['archiveTitle', 'Memory Archive Title'], ['studioTitle', 'Upload Studio Title'], ['communityTitle', 'Listener Community Title']],
