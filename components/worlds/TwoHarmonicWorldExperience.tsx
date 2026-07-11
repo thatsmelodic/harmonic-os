@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { WorldCopy } from '@/components/studio/WorldCopy';
 import { FrequencyMark } from '@/components/identity/FrequencyMark';
+import { LuxuryFashionHouseExperience } from '@/components/two-harmonic/LuxuryFashionHouseExperience';
 import { collections, fashionRooms, stitchedPrinciples } from '@/data/two-harmonic-universe';
 
 const statusLabel = {
@@ -15,6 +16,7 @@ const statusLabel = {
 export function TwoHarmonicWorldExperience() {
   return (
     <main className="two-harmonic-world relative isolate min-h-screen overflow-hidden px-4 py-8 pb-28 sm:px-6" data-world-shell>
+      <LuxuryFashionHouseExperience />
       <div className="absolute inset-0 -z-30" style={{ background: 'radial-gradient(circle at 18% 14%, color-mix(in srgb,var(--identity-primary) 24%,transparent), transparent 28rem),radial-gradient(circle at 82% 35%,color-mix(in srgb,var(--identity-secondary) 14%,transparent),transparent 30rem),linear-gradient(145deg,var(--identity-ambient),color-mix(in srgb,var(--world-surface) 72%,var(--identity-ambient)))' }} />
       <div className="absolute inset-0 -z-20 opacity-25" style={{ backgroundImage: 'linear-gradient(90deg,transparent 49%,color-mix(in srgb,var(--identity-primary) 14%,transparent) 50%,transparent 51%),linear-gradient(transparent 49%,color-mix(in srgb,var(--identity-secondary) 10%,transparent) 50%,transparent 51%)', backgroundSize: '72px 72px' }} />
       <div className="absolute left-[8%] top-28 -z-10 text-8xl opacity-10">🧵</div>
