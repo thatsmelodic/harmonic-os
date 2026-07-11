@@ -5,6 +5,7 @@ import { WorldCopy } from '@/components/studio/WorldCopy';
 import { FrequencyMark } from '@/components/identity/FrequencyMark';
 import { LuxuryFashionHouseExperience } from '@/components/two-harmonic/LuxuryFashionHouseExperience';
 import { collections, fashionRooms, stitchedPrinciples } from '@/data/two-harmonic-universe';
+import type { TwoHarmonicCollection } from '@/lib/supabase/two-harmonic-server';
 
 const statusLabel = {
   concept: 'CONCEPT',
@@ -13,7 +14,31 @@ const statusLabel = {
   released: 'RELEASED',
 } as const;
 
-export function TwoHarmonicWorldExperience() {
+const liveStatusLabel = {
+  'private-preview': 'PRIVATE PREVIEW',
+  'coming-soon': 'COMING SOON',
+  live: 'LIVE',
+  archived: 'ARCHIVED',
+} as const;
+
+type Props = {
+  liveCollections?: TwoHarmonicCollection[];
+  catalogConfigured?: boolean;
+  catalogError?: string | null;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(cents / 100);
+}
+
+export function TwoHarmonicWorldExperience({ liveCollections = [], catalogConfigured = false, catalogError = null }: Props) {
+  const hasLiveCatalog = liveCollections.length > 0;
+  const liveGarmentCount = liveCollections.reduce((total, collection) => total + collection.two_harmonic_garments.length, 0);
+
   return (
     <main className="two-harmonic-world relative isolate min-h-screen overflow-hidden px-4 py-8 pb-28 sm:px-6" data-world-shell>
       <LuxuryFashionHouseExperience />
@@ -47,11 +72,11 @@ export function TwoHarmonicWorldExperience() {
           </div>
 
           <aside className="relative overflow-hidden rounded-[3rem] border p-6 sm:p-8" style={{ borderColor: 'var(--world-border)', background: 'linear-gradient(145deg,color-mix(in srgb,var(--world-surface) 92%,transparent),color-mix(in srgb,var(--identity-primary) 10%,var(--identity-ambient)))', boxShadow: '0 0 90px color-mix(in srgb,var(--identity-mark-glow) 22%,transparent)' }}>
-            <div className="flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.3em]" style={{ color: 'var(--world-muted)' }}>Now Tailoring</p><span className="rounded-full border px-3 py-1 font-mono text-xs" style={{ borderColor: 'var(--world-border)', color: 'var(--identity-accent)' }}>LIVING DROP</span></div>
+            <div className="flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.3em]" style={{ color: 'var(--world-muted)' }}>Now Tailoring</p><span className="rounded-full border px-3 py-1 font-mono text-xs" style={{ borderColor: 'var(--world-border)', color: 'var(--identity-accent)' }}>{hasLiveCatalog ? 'DATABASE LIVE' : 'LIVING DROP'}</span></div>
             <div className="mt-8 grid min-h-[360px] place-items-center rounded-[2.4rem] border" style={{ borderColor: 'var(--world-border)', background: 'radial-gradient(circle,color-mix(in srgb,var(--identity-primary) 24%,transparent),transparent 58%)' }}>
-              <div className="text-center"><FrequencyMark className="mx-auto" /><h2 className="mt-6 text-4xl font-black tracking-[-.07em]">Lift U Up</h2><p className="mt-2 text-sm font-black uppercase tracking-[.2em]" style={{ color: 'var(--identity-accent)' }}>Song + Collection Sync</p></div>
+              <div className="text-center"><FrequencyMark className="mx-auto" /><h2 className="mt-6 text-4xl font-black tracking-[-.07em]">{hasLiveCatalog ? liveCollections[0].name : 'Lift U Up'}</h2><p className="mt-2 text-sm font-black uppercase tracking-[.2em]" style={{ color: 'var(--identity-accent)' }}>{hasLiveCatalog ? liveStatusLabel[liveCollections[0].status] : 'Song + Collection Sync'}</p></div>
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-3">{[['Garments','04'],['Chapter','01'],['State','Production']].map(([label,value]) => <div key={label} className="rounded-2xl border p-4" style={{ borderColor: 'var(--world-border)', background: 'color-mix(in srgb,var(--world-surface) 75%,transparent)' }}><p className="text-[10px] font-black uppercase tracking-[.16em]" style={{ color: 'var(--world-muted)' }}>{label}</p><p className="mt-2 text-xl font-black">{value}</p></div>)}</div>
+            <div className="mt-4 grid grid-cols-3 gap-3">{[['Garments',hasLiveCatalog ? String(liveGarmentCount).padStart(2, '0') : '04'],['Chapter','01'],['State',hasLiveCatalog ? 'Cloud' : 'Production']].map(([label,value]) => <div key={label} className="rounded-2xl border p-4" style={{ borderColor: 'var(--world-border)', background: 'color-mix(in srgb,var(--world-surface) 75%,transparent)' }}><p className="text-[10px] font-black uppercase tracking-[.16em]" style={{ color: 'var(--world-muted)' }}>{label}</p><p className="mt-2 text-xl font-black">{value}</p></div>)}</div>
           </aside>
         </section>
 
@@ -62,8 +87,21 @@ export function TwoHarmonicWorldExperience() {
         </section>
 
         <section className="py-8">
-          <p className="text-xs font-black uppercase tracking-[.32em]" style={{ color: 'var(--world-muted)' }}>Active Collections</p>
-          <div className="mt-5 grid gap-5 lg:grid-cols-3">{collections.map((collection, index) => <article key={collection.slug} className="overflow-hidden rounded-[2.3rem] border" style={{ borderColor: 'var(--world-border)', background: 'color-mix(in srgb,var(--world-surface) 86%,transparent)' }}><div className="grid aspect-[4/3] place-items-center" style={{ background: `radial-gradient(circle,${collection.palette[1]}55,transparent 58%),linear-gradient(145deg,${collection.palette[0]},${collection.palette[2]})` }}>{index === 0 ? <img src="/identity/two-harmonic-mark-gold.svg" alt="Beige Frequency" className="h-44 w-36 object-contain" /> : <span className="text-8xl text-white">{collection.symbol}</span>}</div><div className="p-6"><div className="flex items-center justify-between gap-3"><p className="text-xs font-black uppercase tracking-[.18em]" style={{ color: 'var(--identity-accent)' }}>{collection.chapter}</p><span className="rounded-full border px-3 py-1 text-[10px] font-black" style={{ borderColor: 'var(--world-border)' }}>{statusLabel[collection.status]}</span></div><h3 className="mt-3 text-3xl font-black tracking-[-.06em]">{collection.name}</h3><p className="mt-3 text-sm leading-7" style={{ color: 'var(--world-muted)' }}>{collection.story}</p><div className="mt-5 flex items-center justify-between"><p className="text-sm font-black">{collection.garments} garments</p><Link href={`/worlds/two-harmonic/collections/${collection.slug}`} className="text-sm font-black" style={{ color: 'var(--identity-accent)' }}>Open Chapter →</Link></div></div></article>)}</div>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div><p className="text-xs font-black uppercase tracking-[.32em]" style={{ color: 'var(--world-muted)' }}>Active Collections</p><h2 className="mt-3 text-4xl font-black tracking-[-.07em] sm:text-6xl">The collection is alive.</h2></div>
+            <span className="rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[.18em]" style={{ borderColor: 'var(--world-border)', color: catalogError ? '#fca5a5' : 'var(--identity-accent)' }}>{catalogError ? 'Cloud connection needs attention' : hasLiveCatalog ? 'Synced with Supabase' : catalogConfigured ? 'No live collection yet' : 'Preview data'}</span>
+          </div>
+
+          {hasLiveCatalog ? (
+            <div className="mt-6 grid gap-5 lg:grid-cols-2">
+              {liveCollections.map((collection) => {
+                const available = collection.two_harmonic_garments.reduce((total, garment) => total + garment.two_harmonic_inventory.reduce((sum, item) => sum + Math.max(0, item.quantity - item.reserved), 0), 0);
+                return <article key={collection.slug} className="overflow-hidden rounded-[2.3rem] border" style={{ borderColor: 'var(--world-border)', background: 'color-mix(in srgb,var(--world-surface) 86%,transparent)' }}><div className="grid aspect-[16/7] place-items-center" style={{ background: 'radial-gradient(circle,color-mix(in srgb,var(--identity-primary) 28%,transparent),transparent 58%),linear-gradient(145deg,#d8c7aa,#17120d)' }}><img src="/identity/two-harmonic-mark-gold.svg" alt="2 Harmonic collection mark" className="h-40 w-32 object-contain" /></div><div className="p-6"><div className="flex flex-wrap items-center justify-between gap-3"><p className="text-xs font-black uppercase tracking-[.18em]" style={{ color: 'var(--identity-accent)' }}>Cloud Collection</p><span className="rounded-full border px-3 py-1 text-[10px] font-black" style={{ borderColor: 'var(--world-border)' }}>{liveStatusLabel[collection.status]}</span></div><h3 className="mt-3 text-3xl font-black tracking-[-.06em]">{collection.name}</h3><p className="mt-3 text-sm leading-7" style={{ color: 'var(--world-muted)' }}>{collection.private_access_description || collection.private_access_label}</p><div className="mt-5 grid gap-3 sm:grid-cols-2">{collection.two_harmonic_garments.map((garment) => <Link key={garment.slug} href={`/worlds/two-harmonic/collections/${collection.slug}`} className="rounded-2xl border p-4 transition hover:-translate-y-1" style={{ borderColor: 'var(--world-border)', background: 'color-mix(in srgb,var(--identity-ambient) 55%,transparent)' }}><div className="flex items-start justify-between gap-3"><div><h4 className="font-black">{garment.name}</h4><p className="mt-1 text-sm" style={{ color: 'var(--world-muted)' }}>{money(garment.price_cents)}</p></div><span className="text-xs font-black" style={{ color: 'var(--identity-accent)' }}>{garment.reservations_enabled ? 'RESERVE' : 'PREVIEW'}</span></div><div className="mt-3 flex flex-wrap gap-2">{garment.two_harmonic_inventory.map((item) => <span key={item.size} className="rounded-full border px-2 py-1 text-[10px] font-black" style={{ borderColor: 'var(--world-border)' }}>{item.size} · {Math.max(0, item.quantity - item.reserved)}</span>)}</div></Link>)}</div><div className="mt-5 flex items-center justify-between"><p className="text-sm font-black">{available} pieces available</p><Link href={`/worlds/two-harmonic/collections/${collection.slug}`} className="text-sm font-black" style={{ color: 'var(--identity-accent)' }}>Open Chapter →</Link></div></div></article>;
+              })}
+            </div>
+          ) : (
+            <div className="mt-5 grid gap-5 lg:grid-cols-3">{collections.map((collection, index) => <article key={collection.slug} className="overflow-hidden rounded-[2.3rem] border" style={{ borderColor: 'var(--world-border)', background: 'color-mix(in srgb,var(--world-surface) 86%,transparent)' }}><div className="grid aspect-[4/3] place-items-center" style={{ background: `radial-gradient(circle,${collection.palette[1]}55,transparent 58%),linear-gradient(145deg,${collection.palette[0]},${collection.palette[2]})` }}>{index === 0 ? <img src="/identity/two-harmonic-mark-gold.svg" alt="Beige Frequency" className="h-44 w-36 object-contain" /> : <span className="text-8xl text-white">{collection.symbol}</span>}</div><div className="p-6"><div className="flex items-center justify-between gap-3"><p className="text-xs font-black uppercase tracking-[.18em]" style={{ color: 'var(--identity-accent)' }}>{collection.chapter}</p><span className="rounded-full border px-3 py-1 text-[10px] font-black" style={{ borderColor: 'var(--world-border)' }}>{statusLabel[collection.status]}</span></div><h3 className="mt-3 text-3xl font-black tracking-[-.06em]">{collection.name}</h3><p className="mt-3 text-sm leading-7" style={{ color: 'var(--world-muted)' }}>{collection.story}</p><div className="mt-5 flex items-center justify-between"><p className="text-sm font-black">{collection.garments} garments</p><Link href={`/worlds/two-harmonic/collections/${collection.slug}`} className="text-sm font-black" style={{ color: 'var(--identity-accent)' }}>Open Chapter →</Link></div></div></article>)}</div>
+          )}
         </section>
 
         <section className="py-8">
