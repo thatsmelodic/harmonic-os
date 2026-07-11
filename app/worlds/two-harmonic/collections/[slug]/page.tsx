@@ -1,21 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { use, useState } from 'react';
+import { use, useMemo, useState } from 'react';
 import { getBeigeGarment } from '@/data/two-harmonic-universe';
+import { GarmentReveal, LuxuryFashionHouseExperience } from '@/components/two-harmonic/LuxuryFashionHouseExperience';
 
 const sizes = ['S', 'M', 'L', 'XL'];
+const views = ['Front', 'Back', 'Hardware', 'Stitching'] as const;
 
 export default function TwoHarmonicGarmentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const garment = getBeigeGarment(slug);
   const [size, setSize] = useState('M');
   const [chapter, setChapter] = useState<'craft' | 'melody' | 'ownership'>('craft');
+  const [view, setView] = useState<(typeof views)[number]>('Front');
+  const [playing, setPlaying] = useState(false);
+  const bars = useMemo(() => Array.from({ length: 18 }, (_, index) => 18 + ((index * 17) % 54)), []);
 
   if (!garment) return <main className="min-h-screen bg-black p-10 text-white">Garment not found.</main>;
 
   return (
     <main className="two-harmonic-world relative min-h-screen overflow-hidden px-4 py-8 pb-28 text-[#f5efe4] sm:px-6" data-world-shell>
+      <LuxuryFashionHouseExperience />
       <div className="absolute inset-0 -z-30" style={{ background: 'radial-gradient(circle at 72% 20%,rgba(245,239,228,.16),transparent 28rem),radial-gradient(circle at 16% 62%,rgba(111,90,69,.24),transparent 30rem),linear-gradient(145deg,#0c0907,#211912 52%,#0b0806)' }} />
       <div className="absolute inset-0 -z-20 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(216,199,170,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(216,199,170,.08) 1px,transparent 1px)', backgroundSize: '88px 88px' }} />
 
@@ -27,13 +33,20 @@ export default function TwoHarmonicGarmentPage({ params }: { params: Promise<{ s
 
         <section className="grid gap-6 lg:grid-cols-[1.08fr_.92fr]">
           <div className="relative min-h-[720px] overflow-hidden rounded-[3.4rem] border border-[#d8c7aa]/25 bg-[linear-gradient(145deg,rgba(48,38,29,.94),rgba(13,10,8,.98))] shadow-[0_0_120px_rgba(216,199,170,.12)]">
-            <div className="absolute inset-0" style={{ background: 'radial-gradient(circle,rgba(245,239,228,.17),transparent 26rem)' }} />
+            <div className={`absolute inset-0 transition duration-700 ${playing ? 'scale-110 opacity-100' : 'scale-100 opacity-75'}`} style={{ background: 'radial-gradient(circle,rgba(245,239,228,.17),transparent 26rem)' }} />
             <div className="absolute left-7 top-7 rounded-full border border-[#d8c7aa]/20 bg-black/25 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-[#d8c7aa]">{garment.edition}</div>
+            <div className="absolute right-7 top-7 flex flex-wrap justify-end gap-2">{views.map((item) => <button key={item} onClick={() => setView(item)} className={`rounded-full border px-3 py-2 text-[10px] font-black uppercase tracking-[.15em] transition ${view === item ? 'border-[#f5efe4] bg-[#f5efe4] text-[#241b14]' : 'border-[#d8c7aa]/18 bg-black/25 text-[#a9967a]'}`}>{item}</button>)}</div>
             <div className="relative z-10 grid min-h-[720px] place-items-center p-8 text-center">
               <div>
-                <div className="mx-auto grid h-80 w-80 place-items-center rounded-[5rem] border border-[#e4d6c0]/25 bg-[#d8c7aa]/8 text-[12rem] shadow-[0_0_100px_rgba(245,239,228,.08)]">{garment.symbol}</div>
-                <p className="mt-8 text-xs font-black uppercase tracking-[.28em] text-[#b9a78c]">{garment.color} · {garment.type}</p>
-                <p className="mt-3 text-sm text-[#8f7b62]">Move slowly. Luxury lives in the details.</p>
+                <GarmentReveal symbol={garment.symbol} name={garment.name} mark={view === 'Front'} />
+                <p className="mt-8 text-xs font-black uppercase tracking-[.28em] text-[#b9a78c]">{view} Inspection · {garment.color}</p>
+                <h2 className="mt-3 text-4xl font-black tracking-[-.06em]">{view === 'Hardware' ? 'Custom metalwork, made to be touched.' : view === 'Stitching' ? 'Every seam resolves like a chord.' : `${garment.type} · composed from every angle.`}</h2>
+                <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-[#8f7b62]">Move slowly. Luxury lives in the details, the silence between movements, and the way every element holds up under inspection.</p>
+
+                <div className="mx-auto mt-8 flex h-16 max-w-md items-end justify-center gap-1 rounded-full border border-[#d8c7aa]/14 bg-black/20 px-6 py-3">
+                  {bars.map((height, index) => <span key={index} className="w-1 rounded-full bg-[#e7cf9d] transition-all duration-500" style={{ height: playing ? `${height}%` : `${Math.max(10, height * .28)}%`, opacity: playing ? .35 + (index % 4) * .15 : .18, transitionDelay: `${index * 22}ms` }} />)}
+                </div>
+                <button onClick={() => setPlaying((value) => !value)} className="mt-4 rounded-full border border-[#d8c7aa]/25 bg-[#d8c7aa]/8 px-6 py-3 text-xs font-black uppercase tracking-[.2em] text-[#f5efe4]">{playing ? 'Pause Garment Frequency' : 'Play Garment Frequency'}</button>
               </div>
             </div>
           </div>
