@@ -61,7 +61,7 @@ const roomContent: Record<RoomId, Array<{ eyebrow: string; title: string; body: 
 const roomOrder: RoomId[] = ['episodes', 'leaderboard', 'park', 'challenges', 'film'];
 
 export function FriedEmParkExperience() {
-  const [entered, setEntered] = useState(false);
+  const [entered, setEntered] = useState(true);
   const [room, setRoom] = useState<RoomId>('park');
   const [ambientOn, setAmbientOn] = useState(true);
   const [nightMode, setNightMode] = useState(true);
