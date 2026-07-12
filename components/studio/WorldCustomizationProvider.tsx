@@ -12,7 +12,7 @@ export type WorldCustomization = { primary:string; secondary:string; accent:stri
 export type WorldVersion = { id:number; world:string; version:number; label:string; settings:WorldCustomization; created_at:string; };
 type Store = Record<WorldKey,WorldCustomization>;
 type CloudStatus = 'loading'|'ready'|'local'|'dirty'|'saving'|'draft-saved'|'published'|'error';
-type ContextValue = { settings:Store; activeWorld:WorldKey; cloudStatus:CloudStatus; lastSavedAt:number|null; versions:WorldVersion[]; updateWorld:(world:WorldKey,patch:Partial<WorldCustomization>)=>void; updateLabel:(world:WorldKey,key:string,value:string)=>void; addMedia:(world:WorldKey,asset:Omit<WorldMediaAsset,'id'>)=>void; updateMedia:(world:WorldKey,id:string,patch:Partial<WorldMediaAsset>)=>void; removeMedia:(world:WorldKey,id:string)=>void; duplicateMedia:(world:WorldKey,id:string)=>void; saveDraft:(world:WorldKey,secret:string)=>Promise<boolean>; publishWorld:(world:WorldKey,secret:string,label?:string)=>Promise<boolean>; loadVersions:(world:WorldKey)=>Promise<void>; restoreVersion:(world:WorldKey,versionId:number,secret:string)=>Promise<boolean>; copyToAll:(world:WorldKey)=>void; resetWorld:(world:WorldKey)=>void; };
+type ContextValue = { settings:Store; activeWorld:WorldKey; cloudStatus:CloudStatus; lastSavedAt:number|null; versions:WorldVersion[]; updateWorld:(world:WorldKey,patch:Partial<WorldCustomization>)=>void; updateLabel:(world:WorldKey,key:string,value:string)=>void; addMedia:(world:WorldKey,asset:Omit<WorldMediaAsset,'id'>)=>void; updateMedia:(world:WorldKey,id:string,patch:Partial<WorldMediaAsset>)=>void; removeMedia:(world:WorldKey,id:string)=>void; duplicateMedia:(world:WorldKey,id:string)=>void; saveDraft:(world:WorldKey,secret:string)=>Promise<boolean>; saveWorldToCloud:(world:WorldKey,secret:string)=>Promise<boolean>; publishWorld:(world:WorldKey,secret:string,label?:string)=>Promise<boolean>; loadVersions:(world:WorldKey)=>Promise<void>; restoreVersion:(world:WorldKey,versionId:number,secret:string)=>Promise<boolean>; copyToAll:(world:WorldKey)=>void; resetWorld:(world:WorldKey)=>void; };
 
 const base=(v:Omit<WorldCustomization,'media'>):WorldCustomization=>({...v,media:[]});
 const defaults:Store={
@@ -36,6 +36,7 @@ export function WorldCustomizationProvider({children}:{children:ReactNode}) {
  useEffect(()=>{const active=settings[activeWorld]||settings.global;const root=document.documentElement;(['primary','secondary','accent','background','surface','text','muted','border','glow'] as const).forEach(k=>root.style.setProperty(`--world-${k}`,active[k]));root.dataset.world=activeWorld},[settings,activeWorld]);
  const mutate=(fn:(current:Store)=>Store)=>{setSettings(fn);setCloudStatus('dirty')};
  async function request(world:WorldKey,secret:string,payload:Record<string,unknown>){setCloudStatus('saving');try{const r=await fetch('/api/world-design',{method:'PUT',headers:{'Content-Type':'application/json','x-harmonic-studio-key':secret},body:JSON.stringify({world,...payload})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Request failed');setLastSavedAt(Date.now());return data}catch{setCloudStatus('error');return null}}
+ const saveDraftAction=async(world:WorldKey,secret:string)=>{const data=await request(world,secret,{action:'save-draft',settings:settings[world]});if(data){setCloudStatus('draft-saved');return true}return false};
  const value=useMemo<ContextValue>(()=>({settings,activeWorld,cloudStatus,lastSavedAt,versions,
   updateWorld:(world,patch)=>mutate(c=>({...c,[world]:{...c[world],...patch}})),
   updateLabel:(world,key,label)=>mutate(c=>({...c,[world]:{...c[world],labels:{...c[world].labels,[key]:label}}})),
@@ -43,7 +44,8 @@ export function WorldCustomizationProvider({children}:{children:ReactNode}) {
   updateMedia:(world,id,patch)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.map(a=>a.id===id?{...a,...patch}:a)}})),
   removeMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.filter(a=>a.id!==id)}})),
   duplicateMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:[...c[world].media,...c[world].media.filter(a=>a.id===id).map(a=>({...a,id:crypto.randomUUID(),name:`${a.name} Copy`,x:Math.min(100,a.x+4),y:Math.min(100,a.y+4)}))]}})),
-  saveDraft:async(world,secret)=>{const data=await request(world,secret,{action:'save-draft',settings:settings[world]});if(data){setCloudStatus('draft-saved');return true}return false},
+  saveDraft:saveDraftAction,
+  saveWorldToCloud:saveDraftAction,
   publishWorld:async(world,secret,label)=>{const data=await request(world,secret,{action:'publish',settings:settings[world],label});if(data){setCloudStatus('published');return true}return false},
   loadVersions:async(world)=>{const data=await fetch(`/api/world-design?mode=draft&world=${encodeURIComponent(world)}`).then(r=>r.json());setVersions(data.versions||[])},
   restoreVersion:async(world,versionId,secret)=>{const data=await request(world,secret,{action:'restore',versionId});if(data?.settings){setSettings(c=>({...c,[world]:data.settings}));setCloudStatus('published');return true}return false},
