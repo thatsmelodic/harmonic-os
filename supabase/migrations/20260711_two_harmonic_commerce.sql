@@ -46,9 +46,11 @@ create table if not exists public.two_harmonic_private_access (
   collection_slug text not null references public.two_harmonic_collections(slug) on delete cascade,
   user_id uuid references auth.users(id) on delete set null,
   source text not null default 'fashion-house',
-  created_at timestamptz not null default now(),
-  unique (lower(email), collection_slug)
+  created_at timestamptz not null default now()
 );
+
+create unique index if not exists two_harmonic_private_access_email_collection_uidx
+  on public.two_harmonic_private_access (lower(email), collection_slug);
 
 create table if not exists public.two_harmonic_reservations (
   id uuid primary key default gen_random_uuid(),
