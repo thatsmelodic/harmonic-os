@@ -10,9 +10,10 @@ export type MotionPreset = 'none' | 'fade' | 'slide-up' | 'float' | 'pulse' | 's
 export type WorldMediaAsset = { id:string; name:string; url:string; kind:MediaKind; placement:MediaPlacement; section?:string; x:number; y:number; width:number; opacity:number; rotation:number; zIndex:number; loop:boolean; muted:boolean; fit:'cover'|'contain'; motion?:MotionPreset; duration?:number; delay?:number; };
 export type WorldCustomization = { primary:string; secondary:string; accent:string; background:string; surface:string; text:string; muted:string; border:string; glow:string; title?:string; subtitle?:string; labels:Record<string,string>; media:WorldMediaAsset[]; layoutPreset?:string; themePreset?:string; };
 export type WorldVersion = { id:number; world:string; version:number; label:string; settings:WorldCustomization; created_at:string; };
-type Store = Record<WorldKey,WorldCustomization>;
+export type WorldCustomizationStore = Record<WorldKey,WorldCustomization>;
+type Store = WorldCustomizationStore;
 type CloudStatus = 'loading'|'ready'|'local'|'dirty'|'saving'|'draft-saved'|'published'|'error';
-type ContextValue = { settings:Store; activeWorld:WorldKey; cloudStatus:CloudStatus; lastSavedAt:number|null; versions:WorldVersion[]; updateWorld:(world:WorldKey,patch:Partial<WorldCustomization>)=>void; updateLabel:(world:WorldKey,key:string,value:string)=>void; addMedia:(world:WorldKey,asset:Omit<WorldMediaAsset,'id'>)=>void; updateMedia:(world:WorldKey,id:string,patch:Partial<WorldMediaAsset>)=>void; removeMedia:(world:WorldKey,id:string)=>void; duplicateMedia:(world:WorldKey,id:string)=>void; saveDraft:(world:WorldKey,secret:string)=>Promise<boolean>; saveWorldToCloud:(world:WorldKey,secret:string)=>Promise<boolean>; publishWorld:(world:WorldKey,secret:string,label?:string)=>Promise<boolean>; loadVersions:(world:WorldKey)=>Promise<void>; restoreVersion:(world:WorldKey,versionId:number,secret:string)=>Promise<boolean>; copyToAll:(world:WorldKey)=>void; resetWorld:(world:WorldKey)=>void; };
+type ContextValue = { settings:Store; activeWorld:WorldKey; cloudStatus:CloudStatus; lastSavedAt:number|null; versions:WorldVersion[]; updateWorld:(world:WorldKey,patch:Partial<WorldCustomization>)=>void; updateLabel:(world:WorldKey,key:string,value:string)=>void; addMedia:(world:WorldKey,asset:Omit<WorldMediaAsset,'id'>)=>void; updateMedia:(world:WorldKey,id:string,patch:Partial<WorldMediaAsset>)=>void; removeMedia:(world:WorldKey,id:string)=>void; duplicateMedia:(world:WorldKey,id:string)=>void; replaceSettings:(settings:Store)=>void; saveDraft:(world:WorldKey,secret:string)=>Promise<boolean>; saveWorldToCloud:(world:WorldKey,secret:string)=>Promise<boolean>; publishWorld:(world:WorldKey,secret:string,label?:string)=>Promise<boolean>; loadVersions:(world:WorldKey)=>Promise<void>; restoreVersion:(world:WorldKey,versionId:number,secret:string)=>Promise<boolean>; copyToAll:(world:WorldKey)=>void; resetWorld:(world:WorldKey)=>void; };
 
 const base=(v:Omit<WorldCustomization,'media'>):WorldCustomization=>({...v,media:[]});
 const defaults:Store={
@@ -44,6 +45,7 @@ export function WorldCustomizationProvider({children}:{children:ReactNode}) {
   updateMedia:(world,id,patch)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.map(a=>a.id===id?{...a,...patch}:a)}})),
   removeMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.filter(a=>a.id!==id)}})),
   duplicateMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:[...c[world].media,...c[world].media.filter(a=>a.id===id).map(a=>({...a,id:crypto.randomUUID(),name:`${a.name} Copy`,x:Math.min(100,a.x+4),y:Math.min(100,a.y+4)}))]}})),
+  replaceSettings:(next)=>mutate(()=>next),
   saveDraft:saveDraftAction,
   saveWorldToCloud:saveDraftAction,
   publishWorld:async(world,secret,label)=>{const data=await request(world,secret,{action:'publish',settings:settings[world],label});if(data){setCloudStatus('published');return true}return false},
