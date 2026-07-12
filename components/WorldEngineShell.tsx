@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { FrequencyDock } from '@/components/FrequencyDock';
 import type { HarmonicWorldConfig } from '@/data/world-engine';
 
-export function WorldEngineShell({ world }: { world: HarmonicWorldConfig }) {
+export function WorldEngineShell({ world, previewMode = false }: { world: HarmonicWorldConfig; previewMode?: boolean }) {
   return (
     <main className="min-h-screen px-6 py-8 pb-28" style={{ ['--world-primary' as string]: world.primary, ['--world-secondary' as string]: world.secondary, ['--world-accent' as string]: world.accent }}>
-      <FrequencyDock />
+      {!previewMode && <FrequencyDock />}
       <section className="harmonic-container grid gap-5 py-8">
         <article className="overflow-hidden rounded-[3.4rem] border border-white/10 p-5 shadow-purple-glow backdrop-blur-2xl sm:p-8" style={{ background: `radial-gradient(circle at 18% 8%, ${world.primary}55, transparent 34%), radial-gradient(circle at 82% 2%, ${world.secondary}42, transparent 35%), linear-gradient(135deg, rgba(255,255,255,.06), rgba(0,0,0,.55))` }}>
           <div className="flex flex-wrap items-start justify-between gap-5">
@@ -17,8 +17,10 @@ export function WorldEngineShell({ world }: { world: HarmonicWorldConfig }) {
               <p className="mt-3 max-w-5xl text-sm leading-7 text-white/45">{world.philosophy}</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/worlds" className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white/75 hover:bg-white/[.06]">Universe Map</Link>
-              <Link href="/creator-studio-v3" className="rounded-full px-5 py-3 text-sm font-black text-black shadow-purple-glow" style={{ background: world.accent }}>Studio</Link>
+              {previewMode ? <span className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white/55">Preview mode</span> : <>
+                <Link href="/worlds" className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white/75 hover:bg-white/[.06]">Universe Map</Link>
+                <Link href="/studio/design" className="rounded-full px-5 py-3 text-sm font-black text-black shadow-purple-glow" style={{ background: world.accent }}>Open Creator Studio</Link>
+              </>}
             </div>
           </div>
           <div className="mt-8 grid gap-3 md:grid-cols-3">

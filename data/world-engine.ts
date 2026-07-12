@@ -1,4 +1,4 @@
-export type HarmonicWorldSlug = 'melodic' | 'fried-em' | 'schmackin' | 'two-harmonic' | 'business';
+export type HarmonicWorldSlug = 'melodic' | 'fried-em' | 'schmackin' | '2-harmonic' | 'business';
 
 export type HarmonicWorldRoom = {
   id: string;
@@ -103,7 +103,7 @@ export const harmonicWorlds: HarmonicWorldConfig[] = [
     ],
   },
   {
-    slug: 'two-harmonic',
+    slug: '2-harmonic',
     name: '2 Harmonic',
     eyebrow: 'Fashion Frequency',
     handle: '@2harmonic',
@@ -155,5 +155,6 @@ export const harmonicWorlds: HarmonicWorldConfig[] = [
 ];
 
 export function getWorldBySlug(slug: string) {
-  return harmonicWorlds.find((world) => world.slug === slug);
+  const aliases: Record<string, HarmonicWorldSlug> = { 'two-harmonic': '2-harmonic', harmonic: '2-harmonic', schmackinn: 'schmackin' };
+  return harmonicWorlds.find((world) => world.slug === (aliases[slug] ?? slug));
 }

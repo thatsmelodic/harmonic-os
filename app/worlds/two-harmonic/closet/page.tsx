@@ -35,7 +35,7 @@ export default function LivingClosetPage() {
             <div>
               <p className="text-xs font-black uppercase tracking-[.38em] text-[#b9a78c]">The Living Closet</p>
               <h1 className="mt-4 max-w-5xl text-6xl font-black leading-[.88] tracking-[-.09em] sm:text-8xl">The clothes move because the people do.</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-[#c8b99f]">Only approved videos of real people wearing 2 Harmonic live here. No follower counts. No digital inventory. Every clip becomes another memory stitched into the garment's history.</p>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-[#c8b99f]">Only approved videos of real people wearing 2 Harmonic live here. No follower counts. No digital inventory. Every clip becomes another memory stitched into the garment&apos;s history.</p>
             </div>
             <div className="rounded-[2rem] border border-[#d8c7aa]/18 bg-[#d8c7aa]/7 p-5 lg:max-w-xs">
               <img src="/identity/two-harmonic-mark-gold.svg" alt="2 Harmonic Living Closet" className="mx-auto h-24 w-20 object-contain" />

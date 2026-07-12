@@ -36,7 +36,7 @@ const workspaceMap: Record<HarmonicWorldId, string[]> = {
 
 const worldLinks: Record<HarmonicWorldId, string> = {
   melodic: '/worlds/melodic',
-  harmonic: '/worlds/harmonic',
+  harmonic: '/worlds/2-harmonic',
   'fried-em': '/worlds/fried-em',
   schmackin: '/worlds/schmackin',
 };
