@@ -4,6 +4,7 @@ import { HarmonicOSRuntime } from '@/components/runtime/HarmonicOSRuntime';
 import { AtmosphereProvider } from '@/components/atmosphere/AtmosphereProvider';
 import { GlobalAtmosphereLayer } from '@/components/atmosphere/GlobalAtmosphereLayer';
 import { WorldCustomizationProvider } from '@/components/studio/WorldCustomizationProvider';
+import { WorldMediaLayer } from '@/components/worlds/WorldMediaLayer';
 import { IdentityProvider } from '@/components/identity/IdentityProvider';
 import './globals.css';
 import './runtime-personality.css';
@@ -21,11 +22,14 @@ export default function RootLayout(props: { children: ReactNode }) {
     <html lang="en">
       <body style={{ background: 'var(--world-background, #07050a)', color: 'var(--world-text, #fff)' }}>
         <WorldCustomizationProvider>
+          <WorldMediaLayer />
           <IdentityProvider>
             <SeasonProvider>
               <AtmosphereProvider>
                 <GlobalAtmosphereLayer />
-                <HarmonicOSRuntime>{props.children}</HarmonicOSRuntime>
+                <div className="relative z-[2]">
+                  <HarmonicOSRuntime>{props.children}</HarmonicOSRuntime>
+                </div>
               </AtmosphereProvider>
             </SeasonProvider>
           </IdentityProvider>
