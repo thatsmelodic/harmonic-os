@@ -122,8 +122,8 @@ export const universePresets: Record<HarmonicWorldSlug, WorldVisualPreset> = {
     heroScale: 102,
     introCopy: 'Pull into the district. Follow the sauce glow and find out what is really Schmackin.',
   },
-  'two-harmonic': {
-    slug: 'two-harmonic',
+  '2-harmonic': {
+    slug: '2-harmonic',
     primary: '#111111',
     secondary: '#d8c7a3',
     accent: '#d9273e',

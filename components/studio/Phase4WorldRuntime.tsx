@@ -86,7 +86,7 @@ export function Phase4WorldRuntime({ world, secret }: { world:WorldKey; secret:s
   </div>;
 }
 
-function previewRoute(world:WorldKey){ return world==='melodic'?'/worlds/melodic':world==='fried-em'?'/worlds/fried-em':world==='schmackinn'?'/worlds/schmackinn':world==='two-harmonic'?'/worlds/harmonic':'/'; }
+function previewRoute(world:WorldKey){ return world==='melodic'?'/worlds/melodic':world==='fried-em'?'/worlds/fried-em':world==='schmackinn'?'/worlds/schmackinn':world==='two-harmonic'?'/worlds/2-harmonic':'/'; }
 function Panel({title,note,children}:{title:string;note:string;children:React.ReactNode}){return <section className="rounded-[2rem] border border-white/10 bg-white/[.025] p-5"><h3 className="text-2xl font-black">{title}</h3><p className="mt-2 mb-5 text-sm leading-6 text-white/40">{note}</p>{children}</section>}
 function Num({label,value,onChange}:{label:string;value:number;onChange:(value:number)=>void}){return <label className="rounded-2xl border border-white/10 p-3"><span className="text-[.65rem] font-black uppercase tracking-widest text-white/35">{label}</span><input type="number" value={value} onChange={(e)=>onChange(Number(e.target.value))} className="mt-2 w-full bg-transparent"/></label>}
 function ChoiceGrid({label,value,options,onChange}:{label:string;value:string;options:string[];onChange:(value:string)=>void}){return <div className="mb-5"><p className="mb-2 text-xs font-black uppercase tracking-widest text-white/35">{label}</p><div className="flex flex-wrap gap-2">{options.map((option)=><button key={option} onClick={()=>onChange(option)} className={`rounded-full px-4 py-2 text-sm font-black ${value===option?'bg-white text-black':'border border-white/10'}`}>{option}</button>)}</div></div>}

@@ -92,7 +92,7 @@ export function FriedEmWorldExperience() {
           </div>
 
           <aside className="scoreboard rounded-[2.5rem] border border-orange-200/15 bg-black/55 p-6 shadow-[0_0_60px_rgba(255,122,26,.20)] backdrop-blur-2xl sm:p-8">
-            <div className="mb-6 flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Tonight's Run</p><span className="rounded-full border border-orange-200/20 px-3 py-1 font-mono text-xs text-orange-200/60">GAME POINT</span></div>
+            <div className="mb-6 flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Tonight&apos;s Run</p><span className="rounded-full border border-orange-200/20 px-3 py-1 font-mono text-xs text-orange-200/60">GAME POINT</span></div>
             <div className="rounded-[2rem] border border-orange-200/10 bg-[radial-gradient(circle,rgba(255,122,26,.22),rgba(0,0,0,.38)_62%)] p-5">
               <div className="grid grid-cols-2 gap-4 text-center">
                 <Score label="HOME" value="21" active />

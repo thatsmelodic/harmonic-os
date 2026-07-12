@@ -6,7 +6,7 @@ import { useWorldCustomization, type WorldKey, type WorldMediaAsset } from '@/co
 const worlds: Array<{ key: WorldKey; label: string; path: string }> = [
   { key: 'home', label: 'Homepage', path: '/' },
   { key: 'melodic', label: 'Melodic', path: '/worlds/melodic' },
-  { key: 'two-harmonic', label: '2 Harmonic', path: '/worlds/harmonic' },
+  { key: 'two-harmonic', label: '2 Harmonic', path: '/worlds/2-harmonic' },
   { key: 'fried-em', label: 'Fried Em', path: '/worlds/fried-em' },
   { key: 'schmackinn', label: 'Schmackinn', path: '/worlds/schmackinn' },
   { key: 'global', label: 'Global System', path: '/' },

@@ -28,7 +28,7 @@ const worlds: Record<WorldId, { label: string; icon: string; href: string; accen
   melodic: { label: 'Melodic', icon: '♪', href: '/worlds/melodic', accent: '#c084fc' },
   'fried-em': { label: 'Fried Em', icon: '🏀', href: '/worlds/fried-em', accent: '#ff7a1a' },
   schmackinn: { label: 'Schmackinn', icon: '🍔', href: '/worlds/schmackinn', accent: '#ff4d8d' },
-  harmonic: { label: '2 Harmonic', icon: '👕', href: '/worlds/harmonic', accent: '#22d3ee' },
+  harmonic: { label: '2 Harmonic', icon: '👕', href: '/worlds/2-harmonic', accent: '#22d3ee' },
   business: { label: 'Business', icon: '📈', href: '/worlds/business', accent: '#60a5fa' },
 };
 
@@ -36,7 +36,7 @@ function inferWorld(pathname: string): WorldId {
   if (pathname.startsWith('/worlds/melodic') || pathname.startsWith('/studio/melodic')) return 'melodic';
   if (pathname.startsWith('/worlds/fried-em') || pathname.startsWith('/studio/fried-em')) return 'fried-em';
   if (pathname.startsWith('/worlds/schmackinn') || pathname.startsWith('/studio/schmackinn')) return 'schmackinn';
-  if (pathname.startsWith('/worlds/harmonic') || pathname.startsWith('/shop')) return 'harmonic';
+  if (pathname.startsWith('/worlds/2-harmonic') || pathname.startsWith('/worlds/two-harmonic') || pathname.startsWith('/worlds/harmonic') || pathname.startsWith('/shop')) return 'harmonic';
   if (pathname.startsWith('/worlds/business') || pathname.startsWith('/investor')) return 'business';
   return 'os';
 }

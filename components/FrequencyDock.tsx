@@ -23,7 +23,7 @@ const groups: DockGroup[] = [
     items: [
       { label: 'World Directory', href: '/universe', note: 'See every frequency in one place.' },
       { label: 'Melodic', href: '/worlds/melodic', note: 'Music and creator identity.' },
-      { label: '2 Harmonic', href: '/worlds/harmonic', note: 'Fashion world and brand experience.' },
+      { label: '2 Harmonic', href: '/worlds/2-harmonic', note: 'Fashion world and brand experience.' },
       { label: 'Fried Em', href: '/worlds/fried-em', note: 'Basketball world and episodes.' },
       { label: 'Schmackinn', href: '/worlds/schmackinn', note: 'Food, reviews, and culture.' },
       { label: 'Business', href: '/worlds/business', note: 'Founder and business frequency.' },
@@ -49,7 +49,7 @@ const groups: DockGroup[] = [
     items: [
       { label: 'Community Hub', href: '/community', note: 'All world communities, conversations, and activity.' },
       { label: 'Melodic Community', href: '/worlds/melodic#community', note: 'Songs, reactions, listening rooms, and creator conversation.' },
-      { label: '2 Harmonic Community', href: '/worlds/harmonic#community', note: 'Fits, closet stories, drop discussion, and wearer interaction.' },
+      { label: '2 Harmonic Community', href: '/worlds/2-harmonic#community', note: 'Fits, closet stories, drop discussion, and wearer interaction.' },
       { label: 'Fried Em Community', href: '/worlds/fried-em#community', note: 'Game reactions, player talk, challenges, and court conversation.' },
       { label: 'Schmackinn Community', href: '/community/schmackinn', note: 'Reviews, recommendations, comments, and Flavor Scout activity.' },
       { label: 'Business Community', href: '/worlds/business#community', note: 'Founder discussion, collaboration, strategy, and opportunity.' },
