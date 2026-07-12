@@ -136,6 +136,13 @@ alter table public.two_harmonic_private_access enable row level security;
 alter table public.two_harmonic_reservations enable row level security;
 alter table public.two_harmonic_closet_videos enable row level security;
 
+drop policy if exists "Public reads active collections" on public.two_harmonic_collections;
+drop policy if exists "Public reads released garments" on public.two_harmonic_garments;
+drop policy if exists "Public reads inventory availability" on public.two_harmonic_inventory;
+drop policy if exists "Public reads approved closet videos" on public.two_harmonic_closet_videos;
+drop policy if exists "Users submit closet videos" on public.two_harmonic_closet_videos;
+drop policy if exists "Users read own reservations" on public.two_harmonic_reservations;
+
 create policy "Public reads active collections" on public.two_harmonic_collections for select using (status <> 'archived');
 create policy "Public reads released garments" on public.two_harmonic_garments for select using (true);
 create policy "Public reads inventory availability" on public.two_harmonic_inventory for select using (true);
