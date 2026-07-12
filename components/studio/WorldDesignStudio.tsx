@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useWorldCustomization, type WorldKey, type WorldMediaAsset } from '@/components/studio/WorldCustomizationProvider';
 
 const worlds: Array<{ key: WorldKey; label: string; description: string; preview: string }> = [
@@ -32,20 +32,38 @@ const sections: Array<{key:Section;label:string;description:string}> = [
 ];
 
 const blankAsset: Omit<WorldMediaAsset,'id'> = { name:'New Layer',url:'',kind:'image',placement:'floating',x:50,y:50,width:28,opacity:100,rotation:0,zIndex:1,loop:true,muted:true,fit:'contain' };
+const SECRET_KEY = 'harmonic-studio-secret-session';
 
 export function WorldDesignStudio() {
-  const { settings,updateWorld,updateLabel,addMedia,updateMedia,removeMedia,saveWorldToCloud,copyToAll,resetWorld,cloudStatus } = useWorldCustomization();
+  const router = useRouter();
+  const { settings,updateWorld,updateLabel,addMedia,updateMedia,removeMedia,saveWorldToCloud,copyToAll,resetWorld,cloudStatus,lastSavedAt } = useWorldCustomization();
   const [world,setWorld] = useState<WorldKey>('schmackinn');
   const [section,setSection] = useState<Section>('identity');
   const [secret,setSecret] = useState('');
   const [draft,setDraft] = useState(blankAsset);
   const [uploading,setUploading] = useState(false);
+  const [saving,setSaving] = useState(false);
   const active = settings[world];
   const worldInfo = useMemo(() => worlds.find((item) => item.key === world)!,[world]);
   const extraCopy = worldCopy[world] ?? [];
 
+  useEffect(() => { setSecret(window.sessionStorage.getItem(SECRET_KEY) || ''); }, []);
+  useEffect(() => { if (secret) window.sessionStorage.setItem(SECRET_KEY, secret); }, [secret]);
+
+  async function save() {
+    if (!secret) { setSection('publishing'); alert('Enter your Studio Secret once, then tap Save Changes again.'); return; }
+    setSaving(true);
+    const ok = await saveWorldToCloud(world,secret);
+    setSaving(false);
+    alert(ok ? `${worldInfo.label} saved and published live.` : 'Save failed. Confirm the Studio Secret matches the STUDIO_SECRET in Vercel.');
+  }
+
+  function openPreview() {
+    router.push(worldInfo.preview);
+  }
+
   async function upload(file: File) {
-    if (!secret) return alert('Enter the Studio Secret in Publishing first.');
+    if (!secret) { setSection('publishing'); return alert('Enter the Studio Secret first.'); }
     setUploading(true);
     try {
       const form = new FormData(); form.append('file',file); form.append('world',world);
@@ -57,11 +75,11 @@ export function WorldDesignStudio() {
     finally { setUploading(false); }
   }
 
-  return <div className="mx-auto max-w-7xl pb-28 text-white">
+  return <div className="mx-auto max-w-7xl pb-44 text-white">
     <header className="rounded-[2.5rem] border border-white/10 bg-black/45 p-6 backdrop-blur-2xl sm:p-9">
       <p className="text-xs font-black uppercase tracking-[.34em] text-white/35">Design Department · Phase 3</p>
       <h1 className="mt-3 text-5xl font-black tracking-[-.07em] sm:text-7xl">World Design & Copy</h1>
-      <p className="mt-4 max-w-3xl text-base leading-8 text-white/55">Compose every world without code. Replace logos, backgrounds, bubbles, images, GIFs, and loop videos; place them anywhere; tune their size, position, opacity, rotation, layer order, and copy; then sync the experience to Supabase.</p>
+      <p className="mt-4 max-w-3xl text-base leading-8 text-white/55">Compose every world without code, then save it live to Supabase.</p>
     </header>
 
     <div className="mt-6 grid gap-5 lg:grid-cols-[280px_1fr]">
@@ -71,19 +89,21 @@ export function WorldDesignStudio() {
       </aside>
 
       <section className="rounded-[2.4rem] border border-white/10 bg-black/45 p-5 backdrop-blur-2xl sm:p-7">
-        <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.24em] text-white/35">Editing</p><h2 className="mt-2 text-4xl font-black tracking-[-.06em]">{worldInfo.label}</h2></div><Link href={worldInfo.preview} className="rounded-full border border-white/10 bg-white/[.05] px-4 py-3 text-xs font-black">Open Live Preview ↗</Link></div>
+        <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.24em] text-white/35">Editing</p><h2 className="mt-2 text-4xl font-black tracking-[-.06em]">{worldInfo.label}</h2></div><button type="button" onClick={openPreview} className="rounded-full border border-white/10 bg-white/[.05] px-4 py-3 text-xs font-black">Open Live Preview ↗</button></div>
         <nav className="mt-6 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{sections.map((item)=><button key={item.key} onClick={()=>setSection(item.key)} className={`rounded-2xl border p-4 text-left ${section===item.key?'border-white/30 bg-white text-black':'border-white/10 bg-white/[.035] text-white'}`}><p className="font-black">{item.label}</p><p className={`mt-1 text-xs leading-5 ${section===item.key?'text-black/55':'text-white/35'}`}>{item.description}</p></button>)}</nav>
 
         {section==='identity' && <div className="mt-7 grid gap-4 sm:grid-cols-2"><Field label="World Title" value={active.title??''} onChange={(value)=>updateWorld(world,{title:value})}/><Field label="World Description" value={active.subtitle??''} onChange={(value)=>updateWorld(world,{subtitle:value})} multiline/><Preview active={active} worldInfo={worldInfo}/></div>}
         {section==='palette' && <div className="mt-7"><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{([['primary','Primary Actions'],['secondary','Secondary Actions'],['accent','Accent / Highlights'],['background','World Background'],['surface','Panels / Cards'],['text','Main Text'],['muted','Muted Text'],['border','Borders / Dividers'],['glow','Glow / Energy']] as const).map(([key,label])=><ColorField key={key} label={label} value={active[key]} onChange={(value)=>updateWorld(world,{[key]:value})}/>)}</div></div>}
-        {section==='media' && <div className="mt-7 grid gap-6">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[.025] p-5"><SectionHeading title="Add Any Visual" note="Upload from your device or paste a hosted image, GIF, SVG, or MP4/WebM URL."/><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><Field label="Layer Name" value={draft.name} onChange={(value)=>setDraft({...draft,name:value})}/><Field label="Asset URL" value={draft.url} onChange={(value)=>setDraft({...draft,url:value})}/><label className="rounded-2xl border border-white/10 bg-black/25 p-4"><span className="text-xs font-black uppercase tracking-[.16em] text-white/35">Upload File</span><input type="file" accept="image/*,video/*" disabled={uploading} onChange={(event)=>event.target.files?.[0]&&upload(event.target.files[0])} className="mt-3 block w-full text-sm"/><span className="mt-2 block text-xs text-white/35">{uploading?'Uploading…':'Images, GIFs, SVG, MP4, WebM · max 50 MB'}</span></label><Select label="Type" value={draft.kind} options={['image','video']} onChange={(value)=>setDraft({...draft,kind:value as WorldMediaAsset['kind']})}/><Select label="Placement" value={draft.placement} options={['background','hero','logo','floating','section']} onChange={(value)=>setDraft({...draft,placement:value as WorldMediaAsset['placement']})}/><Select label="Fit" value={draft.fit} options={['contain','cover']} onChange={(value)=>setDraft({...draft,fit:value as WorldMediaAsset['fit']})}/></div><div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5"><NumberField label="X Position %" value={draft.x} onChange={(x)=>setDraft({...draft,x})}/><NumberField label="Y Position %" value={draft.y} onChange={(y)=>setDraft({...draft,y})}/><NumberField label="Width %" value={draft.width} onChange={(width)=>setDraft({...draft,width})}/><NumberField label="Opacity %" value={draft.opacity} onChange={(opacity)=>setDraft({...draft,opacity})}/><NumberField label="Layer Order" value={draft.zIndex} onChange={(zIndex)=>setDraft({...draft,zIndex})}/></div><button disabled={!draft.url} onClick={()=>{addMedia(world,draft);setDraft(blankAsset);}} className="mt-5 rounded-full bg-white px-5 py-4 text-sm font-black text-black disabled:opacity-30">Add Layer to {worldInfo.label}</button></div>
-          <div><SectionHeading title="Active Layers" note="Every item remains editable and can be replaced without touching code."/><div className="grid gap-4">{active.media.length===0?<Info title="No custom media yet" text="Add a logo, background, bubble, image, GIF, or looping video above."/>:active.media.map((asset)=><MediaEditor key={asset.id} asset={asset} onChange={(patch)=>updateMedia(world,asset.id,patch)} onRemove={()=>removeMedia(world,asset.id)}/>)}</div></div>
-        </div>}
+        {section==='media' && <div className="mt-7 grid gap-6"><div className="rounded-[2rem] border border-white/10 bg-white/[.025] p-5"><SectionHeading title="Add Any Visual" note="Upload from your device or paste a hosted image, GIF, SVG, MP4, or WebM URL."/><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><Field label="Layer Name" value={draft.name} onChange={(value)=>setDraft({...draft,name:value})}/><Field label="Asset URL" value={draft.url} onChange={(value)=>setDraft({...draft,url:value})}/><label className="rounded-2xl border border-white/10 bg-black/25 p-4"><span className="text-xs font-black uppercase tracking-[.16em] text-white/35">Upload File</span><input type="file" accept="image/*,video/*" disabled={uploading} onChange={(event)=>event.target.files?.[0]&&upload(event.target.files[0])} className="mt-3 block w-full text-sm"/><span className="mt-2 block text-xs text-white/35">{uploading?'Uploading…':'Images, GIFs, SVG, MP4, WebM · max 50 MB'}</span></label><Select label="Type" value={draft.kind} options={['image','video']} onChange={(value)=>setDraft({...draft,kind:value as WorldMediaAsset['kind']})}/><Select label="Placement" value={draft.placement} options={['background','hero','logo','floating','section']} onChange={(value)=>setDraft({...draft,placement:value as WorldMediaAsset['placement']})}/><Select label="Fit" value={draft.fit} options={['contain','cover']} onChange={(value)=>setDraft({...draft,fit:value as WorldMediaAsset['fit']})}/></div><div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5"><NumberField label="X Position %" value={draft.x} onChange={(x)=>setDraft({...draft,x})}/><NumberField label="Y Position %" value={draft.y} onChange={(y)=>setDraft({...draft,y})}/><NumberField label="Width %" value={draft.width} onChange={(width)=>setDraft({...draft,width})}/><NumberField label="Opacity %" value={draft.opacity} onChange={(opacity)=>setDraft({...draft,opacity})}/><NumberField label="Layer Order" value={draft.zIndex} onChange={(zIndex)=>setDraft({...draft,zIndex})}/></div><button disabled={!draft.url} onClick={()=>{addMedia(world,draft);setDraft(blankAsset);}} className="mt-5 rounded-full bg-white px-5 py-4 text-sm font-black text-black disabled:opacity-30">Add Layer to {worldInfo.label}</button></div><div><SectionHeading title="Active Layers" note="Every item remains editable and replaceable."/><div className="grid gap-4">{active.media.length===0?<Info title="No custom media yet" text="Add a logo, background, bubble, image, GIF, or looping video above."/>:active.media.map((asset)=><MediaEditor key={asset.id} asset={asset} onChange={(patch)=>updateMedia(world,asset.id,patch)} onRemove={()=>removeMedia(world,asset.id)}/>)}</div></div></div>}
         {section==='page-copy' && <div className="mt-7"><SectionHeading title="Main World" note="Core language used at the entrance of this world."/><div className="grid gap-4 sm:grid-cols-2">{sharedCopy.slice(0,3).map(([key,label])=><Field key={key} label={label} value={key==='title'?active.title??'':key==='subtitle'?active.subtitle??'':active.labels[key]??''} onChange={(value)=>key==='title'?updateWorld(world,{title:value}):key==='subtitle'?updateWorld(world,{subtitle:value}):updateLabel(world,key,value)} multiline={key==='subtitle'}/>)}</div>{extraCopy.length>0&&<><SectionHeading title={`${worldInfo.label} Sections`} note="Copy stays grouped with the feature it controls."/><div className="grid gap-4 sm:grid-cols-2">{extraCopy.map(([key,label])=><Field key={key} label={label} value={active.labels[key]??''} onChange={(value)=>updateLabel(world,key,value)} multiline={key.toLowerCase().includes('description')}/>)}</div></>}</div>}
         {section==='actions' && <div className="mt-7"><SectionHeading title="Calls to Action" note="Button wording and navigation language only."/><div className="grid gap-4 sm:grid-cols-2">{sharedCopy.slice(3).map(([key,label])=><Field key={key} label={label} value={active.labels[key]??''} onChange={(value)=>updateLabel(world,key,value)}/>)}</div></div>}
-        {section==='publishing' && <div className="mt-7"><div className="grid gap-4 lg:grid-cols-3"><Info title="Local Auto-Save" text="Every change is saved immediately on this device."/><Info title="Supabase Cloud Sync" text="Publish the full design and media layer map so every visitor sees the same world."/><Info title={`Cloud: ${cloudStatus}`} text="Use the same STUDIO_SECRET configured in Vercel. It is never stored by this screen."/></div><div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto]"><Field label="Studio Secret" value={secret} onChange={setSecret}/><button onClick={async()=>{const ok=await saveWorldToCloud(world,secret);alert(ok?'World synced to Supabase.':'Cloud sync failed. Check the secret and migration.');}} className="rounded-full bg-purple-200 px-6 py-4 text-sm font-black text-black">Sync {worldInfo.label} Live</button></div><div className="mt-5 flex flex-wrap gap-3"><button onClick={()=>copyToAll(world)} className="rounded-full bg-white px-5 py-4 text-sm font-black text-black">Apply Design to All Worlds</button><button onClick={()=>resetWorld(world)} className="rounded-full border border-red-300/20 bg-red-400/10 px-5 py-4 text-sm font-black text-red-100">Reset {worldInfo.label}</button></div></div>}
+        {section==='publishing' && <div className="mt-7"><div className="grid gap-4 lg:grid-cols-3"><Info title="Unsaved Changes" text="Edits stay local until you press Save Changes."/><Info title="Supabase Cloud Save" text="Saving publishes the complete design so every device sees it."/><Info title={`Status: ${cloudStatus}`} text={lastSavedAt?`Last saved ${new Date(lastSavedAt).toLocaleTimeString()}.`:'No cloud save completed this session.'}/></div><div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto]"><Field label="Studio Secret" value={secret} onChange={setSecret}/><button onClick={save} disabled={saving} className="rounded-full bg-purple-200 px-6 py-4 text-sm font-black text-black disabled:opacity-50">{saving?'Saving…':`Save ${worldInfo.label} Changes`}</button></div><div className="mt-5 flex flex-wrap gap-3"><button onClick={()=>copyToAll(world)} className="rounded-full bg-white px-5 py-4 text-sm font-black text-black">Apply Design to All Worlds</button><button onClick={()=>resetWorld(world)} className="rounded-full border border-red-300/20 bg-red-400/10 px-5 py-4 text-sm font-black text-red-100">Reset {worldInfo.label}</button></div></div>}
       </section>
+    </div>
+
+    <div className="fixed inset-x-3 bottom-24 z-[840] mx-auto flex max-w-3xl items-center justify-between gap-3 rounded-[1.6rem] border border-white/15 bg-black/90 p-3 shadow-[0_0_50px_rgba(168,85,247,.3)] backdrop-blur-2xl sm:bottom-5">
+      <div className="min-w-0"><p className="truncate text-sm font-black">{worldInfo.label}</p><p className="text-xs text-white/45">{cloudStatus==='dirty'?'Changes not saved':cloudStatus==='saving'?'Saving to Supabase…':cloudStatus==='saved'?'Saved live':cloudStatus==='error'?'Save failed':'Ready'}</p></div>
+      <div className="flex shrink-0 gap-2"><button onClick={openPreview} className="rounded-full border border-white/15 px-4 py-3 text-xs font-black">Preview</button><button onClick={save} disabled={saving} className="rounded-full bg-purple-200 px-5 py-3 text-xs font-black text-black disabled:opacity-50">{saving?'Saving…':'Save Changes'}</button></div>
     </div>
   </div>;
 }
