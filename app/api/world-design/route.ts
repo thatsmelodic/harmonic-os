@@ -6,26 +6,63 @@ function authorized(request: Request) {
   return Boolean(expected && request.headers.get('x-harmonic-studio-key') === expected);
 }
 
-export async function GET() {
+type DesignRow = {
+  world: string;
+  settings?: unknown;
+  draft_settings?: unknown;
+  live_settings?: unknown;
+  status?: string;
+  version?: number;
+  published_at?: string | null;
+};
+
+export async function GET(request: Request) {
   try {
-    const rows = await supabaseRest<Array<{ world:string; settings:unknown; live_settings?:unknown }>>({
-      path:'world_builder_designs',
-      query:'select=world,settings,live_settings',
-    });
-    return NextResponse.json({ designs:Object.fromEntries(rows.map((row)=>[row.world,row.live_settings ?? row.settings])) });
+    const url = new URL(request.url);
+    const mode = url.searchParams.get('mode') === 'draft' ? 'draft' : 'live';
+    const world = url.searchParams.get('world');
+    const query = world
+      ? `select=world,settings,draft_settings,live_settings,status,version,published_at&world=eq.${encodeURIComponent(world)}`
+      : 'select=world,settings,draft_settings,live_settings,status,version,published_at';
+    const rows = await supabaseRest<DesignRow[]>({ path: 'world_builder_designs', query });
+    const designs = Object.fromEntries(rows.map((row) => [row.world, mode === 'draft' ? (row.draft_settings ?? row.live_settings ?? row.settings ?? {}) : (row.live_settings ?? row.settings ?? {})]));
+    let versions: unknown[] = [];
+    if (world) versions = await supabaseRest<unknown[]>({ path: 'world_builder_versions', query: `select=id,world,version,label,settings,created_at&world=eq.${encodeURIComponent(world)}&order=created_at.desc&limit=20` });
+    return NextResponse.json({ designs, records: rows, versions });
   } catch (error) {
-    return NextResponse.json({ designs:{}, error:error instanceof Error?error.message:'Unable to load designs' }, { status:200 });
+    return NextResponse.json({ designs: {}, records: [], versions: [], error: error instanceof Error ? error.message : 'Unable to load designs' }, { status: 200 });
   }
 }
 
 export async function PUT(request: Request) {
-  if (!authorized(request)) return NextResponse.json({ error:'Unauthorized' }, { status:401 });
-  const body = await request.json() as { world?:string; settings?:unknown };
-  if (!body.world || !body.settings) return NextResponse.json({ error:'world and settings are required' }, { status:400 });
-  const now = new Date().toISOString();
-  await supabaseRest({
-    path:'world_builder_designs', method:'POST', query:'on_conflict=world', prefer:'resolution=merge-duplicates,return=minimal',
-    body:{ world:body.world, settings:body.settings, draft_settings:body.settings, live_settings:body.settings, status:'live', published_at:now, updated_at:now },
-  });
-  return NextResponse.json({ ok:true });
+  if (!authorized(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const body = await request.json() as { action?: string; world?: string; settings?: unknown; versionId?: number; label?: string };
+  if (!body.world) return NextResponse.json({ error: 'world is required' }, { status: 400 });
+  const action = body.action || 'save-draft';
+  const existing = (await supabaseRest<DesignRow[]>({ path: 'world_builder_designs', query: `select=world,settings,draft_settings,live_settings,status,version,published_at&world=eq.${encodeURIComponent(body.world)}&limit=1` }))[0];
+
+  if (action === 'save-draft') {
+    if (!body.settings) return NextResponse.json({ error: 'settings are required' }, { status: 400 });
+    await supabaseRest({ path: 'world_builder_designs', method: 'POST', query: 'on_conflict=world', prefer: 'resolution=merge-duplicates,return=minimal', body: { world: body.world, settings: existing?.settings ?? body.settings, draft_settings: body.settings, live_settings: existing?.live_settings ?? existing?.settings ?? body.settings, status: 'draft', version: existing?.version ?? 0, updated_at: new Date().toISOString() } });
+    return NextResponse.json({ ok: true, status: 'draft-saved' });
+  }
+
+  if (action === 'publish') {
+    const draft = body.settings ?? existing?.draft_settings ?? existing?.live_settings ?? existing?.settings;
+    if (!draft) return NextResponse.json({ error: 'No draft exists to publish' }, { status: 400 });
+    const nextVersion = (existing?.version ?? 0) + 1;
+    await supabaseRest({ path: 'world_builder_versions', method: 'POST', prefer: 'return=minimal', body: { world: body.world, version: nextVersion, label: body.label || `Version ${nextVersion}`, settings: draft } });
+    await supabaseRest({ path: 'world_builder_designs', method: 'POST', query: 'on_conflict=world', prefer: 'resolution=merge-duplicates,return=minimal', body: { world: body.world, settings: draft, draft_settings: draft, live_settings: draft, status: 'live', version: nextVersion, published_at: new Date().toISOString(), updated_at: new Date().toISOString() } });
+    return NextResponse.json({ ok: true, status: 'published', version: nextVersion });
+  }
+
+  if (action === 'restore') {
+    if (!body.versionId) return NextResponse.json({ error: 'versionId is required' }, { status: 400 });
+    const version = (await supabaseRest<Array<{ settings: unknown; version: number }>>({ path: 'world_builder_versions', query: `select=settings,version&id=eq.${body.versionId}&world=eq.${encodeURIComponent(body.world)}&limit=1` }))[0];
+    if (!version) return NextResponse.json({ error: 'Version not found' }, { status: 404 });
+    await supabaseRest({ path: 'world_builder_designs', method: 'POST', query: 'on_conflict=world', prefer: 'resolution=merge-duplicates,return=minimal', body: { world: body.world, settings: version.settings, draft_settings: version.settings, live_settings: version.settings, status: 'live', version: version.version, published_at: new Date().toISOString(), updated_at: new Date().toISOString() } });
+    return NextResponse.json({ ok: true, status: 'restored', version: version.version, settings: version.settings });
+  }
+
+  return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
 }
