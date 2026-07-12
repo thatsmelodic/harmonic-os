@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useWorldCustomization, type WorldKey, type WorldMediaAsset } from '@/components/studio/WorldCustomizationProvider';
 
 const worlds: Array<{ key: WorldKey; label: string; description: string; preview: string }> = [
@@ -35,7 +34,6 @@ const blankAsset: Omit<WorldMediaAsset,'id'> = { name:'New Layer',url:'',kind:'i
 const SECRET_KEY = 'harmonic-studio-secret-session';
 
 export function WorldDesignStudio() {
-  const router = useRouter();
   const { settings,updateWorld,updateLabel,addMedia,updateMedia,removeMedia,saveWorldToCloud,copyToAll,resetWorld,cloudStatus,lastSavedAt } = useWorldCustomization();
   const [world,setWorld] = useState<WorldKey>('schmackinn');
   const [section,setSection] = useState<Section>('identity');
@@ -51,15 +49,16 @@ export function WorldDesignStudio() {
   useEffect(() => { if (secret) window.sessionStorage.setItem(SECRET_KEY, secret); }, [secret]);
 
   async function save() {
-    if (!secret) { setSection('publishing'); alert('Enter your Studio Secret once, then tap Save Changes again.'); return; }
+    if (!secret) { setSection('publishing'); alert('Enter your Studio Secret, then press Save Changes again.'); return; }
     setSaving(true);
     const ok = await saveWorldToCloud(world,secret);
     setSaving(false);
-    alert(ok ? `${worldInfo.label} saved and published live.` : 'Save failed. Confirm the Studio Secret matches the STUDIO_SECRET in Vercel.');
+    if (ok) alert(`${worldInfo.label} saved to Supabase and published live.`);
+    else alert('Save failed. Confirm the Studio Secret matches STUDIO_SECRET in Vercel, then try again.');
   }
 
   function openPreview() {
-    router.push(worldInfo.preview);
+    window.location.assign(`${worldInfo.preview}?worldPreview=${Date.now()}`);
   }
 
   async function upload(file: File) {
@@ -89,7 +88,10 @@ export function WorldDesignStudio() {
       </aside>
 
       <section className="rounded-[2.4rem] border border-white/10 bg-black/45 p-5 backdrop-blur-2xl sm:p-7">
-        <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[.24em] text-white/35">Editing</p><h2 className="mt-2 text-4xl font-black tracking-[-.06em]">{worldInfo.label}</h2></div><button type="button" onClick={openPreview} className="rounded-full border border-white/10 bg-white/[.05] px-4 py-3 text-xs font-black">Open Live Preview ↗</button></div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div><p className="text-xs font-black uppercase tracking-[.24em] text-white/35">Editing</p><h2 className="mt-2 text-4xl font-black tracking-[-.06em]">{worldInfo.label}</h2><p className="mt-2 text-xs font-bold text-white/45">{cloudStatus==='dirty'?'Unsaved changes':cloudStatus==='saving'?'Saving…':cloudStatus==='saved'?'Saved live':'Ready'}</p></div>
+          <div className="flex flex-wrap gap-2"><button type="button" onClick={openPreview} className="rounded-full border border-white/10 bg-white/[.05] px-4 py-3 text-xs font-black">Open Live Preview ↗</button><button type="button" onClick={save} disabled={saving} className="rounded-full bg-purple-200 px-5 py-3 text-xs font-black text-black disabled:opacity-50">{saving?'Saving…':'Save Changes'}</button></div>
+        </div>
         <nav className="mt-6 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{sections.map((item)=><button key={item.key} onClick={()=>setSection(item.key)} className={`rounded-2xl border p-4 text-left ${section===item.key?'border-white/30 bg-white text-black':'border-white/10 bg-white/[.035] text-white'}`}><p className="font-black">{item.label}</p><p className={`mt-1 text-xs leading-5 ${section===item.key?'text-black/55':'text-white/35'}`}>{item.description}</p></button>)}</nav>
 
         {section==='identity' && <div className="mt-7 grid gap-4 sm:grid-cols-2"><Field label="World Title" value={active.title??''} onChange={(value)=>updateWorld(world,{title:value})}/><Field label="World Description" value={active.subtitle??''} onChange={(value)=>updateWorld(world,{subtitle:value})} multiline/><Preview active={active} worldInfo={worldInfo}/></div>}
