@@ -74,7 +74,7 @@ export function WorldDesignStudio() {
     finally { setUploading(false); }
   }
 
-  return <div className="mx-auto max-w-7xl pb-44 text-white">
+  return <div className="mx-auto max-w-7xl pb-28 text-white">
     <header className="rounded-[2.5rem] border border-white/10 bg-black/45 p-6 backdrop-blur-2xl sm:p-9">
       <p className="text-xs font-black uppercase tracking-[.34em] text-white/35">Design Department · Phase 3</p>
       <h1 className="mt-3 text-5xl font-black tracking-[-.07em] sm:text-7xl">World Design & Copy</h1>
@@ -101,11 +101,6 @@ export function WorldDesignStudio() {
         {section==='actions' && <div className="mt-7"><SectionHeading title="Calls to Action" note="Button wording and navigation language only."/><div className="grid gap-4 sm:grid-cols-2">{sharedCopy.slice(3).map(([key,label])=><Field key={key} label={label} value={active.labels[key]??''} onChange={(value)=>updateLabel(world,key,value)}/>)}</div></div>}
         {section==='publishing' && <div className="mt-7"><div className="grid gap-4 lg:grid-cols-3"><Info title="Unsaved Changes" text="Edits stay local until you press Save Changes."/><Info title="Supabase Cloud Save" text="Saving publishes the complete design so every device sees it."/><Info title={`Status: ${cloudStatus}`} text={lastSavedAt?`Last saved ${new Date(lastSavedAt).toLocaleTimeString()}.`:'No cloud save completed this session.'}/></div><div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto]"><Field label="Studio Secret" value={secret} onChange={setSecret}/><button onClick={save} disabled={saving} className="rounded-full bg-purple-200 px-6 py-4 text-sm font-black text-black disabled:opacity-50">{saving?'Saving…':`Save ${worldInfo.label} Changes`}</button></div><div className="mt-5 flex flex-wrap gap-3"><button onClick={()=>copyToAll(world)} className="rounded-full bg-white px-5 py-4 text-sm font-black text-black">Apply Design to All Worlds</button><button onClick={()=>resetWorld(world)} className="rounded-full border border-red-300/20 bg-red-400/10 px-5 py-4 text-sm font-black text-red-100">Reset {worldInfo.label}</button></div></div>}
       </section>
-    </div>
-
-    <div className="fixed inset-x-3 bottom-24 z-[840] mx-auto flex max-w-3xl items-center justify-between gap-3 rounded-[1.6rem] border border-white/15 bg-black/90 p-3 shadow-[0_0_50px_rgba(168,85,247,.3)] backdrop-blur-2xl sm:bottom-5">
-      <div className="min-w-0"><p className="truncate text-sm font-black">{worldInfo.label}</p><p className="text-xs text-white/45">{cloudStatus==='dirty'?'Changes not saved':cloudStatus==='saving'?'Saving to Supabase…':cloudStatus==='saved'?'Saved live':cloudStatus==='error'?'Save failed':'Ready'}</p></div>
-      <div className="flex shrink-0 gap-2"><button onClick={openPreview} className="rounded-full border border-white/15 px-4 py-3 text-xs font-black">Preview</button><button onClick={save} disabled={saving} className="rounded-full bg-purple-200 px-5 py-3 text-xs font-black text-black disabled:opacity-50">{saving?'Saving…':'Save Changes'}</button></div>
     </div>
   </div>;
 }
