@@ -1,8 +1,8 @@
 import { UniverseExperience } from '@/components/universe/UniverseExperience';
 
 export const metadata = {
-  title: 'Harmonic OS | Choose Your Frequency',
-  description: 'Boot Harmonic OS through the cup and heart, explore every creator world, and choose your frequency.',
+  title: 'Harmonic OS | Enter the Frequency',
+  description: 'Enter a cinematic living universe where music, fashion, food, basketball, and business move as connected frequencies.',
 };
 
 export default function Home() {

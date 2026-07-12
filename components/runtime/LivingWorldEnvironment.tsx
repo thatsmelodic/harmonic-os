@@ -6,17 +6,20 @@ import './living-world-environment.css';
 
 type EnvironmentId = 'os' | 'melodic' | 'fried-em' | 'schmackinn' | 'two-harmonic' | 'business';
 
-const profiles: Record<EnvironmentId, {
+type EnvironmentProfile = {
   label: string;
   className: string;
   atmosphere: string;
-}> = {
-  os: { label: 'Harmonic sky', className: 'environment-os', atmosphere: 'stars' },
-  melodic: { label: 'Melodic night studio', className: 'environment-melodic', atmosphere: 'notes' },
-  'fried-em': { label: 'Fried Em dawn blacktop', className: 'environment-fried-em', atmosphere: 'dust' },
-  schmackinn: { label: 'Schmackinn rain district', className: 'environment-schmackinn', atmosphere: 'rain' },
-  'two-harmonic': { label: '2 Harmonic desert fashion house', className: 'environment-two-harmonic', atmosphere: 'petals' },
-  business: { label: 'Business skyline', className: 'environment-business', atmosphere: 'haze' },
+  scene: string;
+};
+
+const profiles: Record<EnvironmentId, EnvironmentProfile> = {
+  os: { label: 'Harmonic skyline', className: 'environment-os', atmosphere: 'stars', scene: '/environments/harmonic-skyline.svg' },
+  melodic: { label: 'Melodic studio city', className: 'environment-melodic', atmosphere: 'notes', scene: '/environments/melodic-studio-city.svg' },
+  'fried-em': { label: 'Fried Em dawn blacktop', className: 'environment-fried-em', atmosphere: 'dust', scene: '/environments/fried-em-blacktop.svg' },
+  schmackinn: { label: 'Schmackinn rain district', className: 'environment-schmackinn', atmosphere: 'rain', scene: '/environments/schmackinn-rain-district.svg' },
+  'two-harmonic': { label: '2 Harmonic desert fashion house', className: 'environment-two-harmonic', atmosphere: 'petals', scene: '/environments/two-harmonic-desert.svg' },
+  business: { label: 'Business glass district', className: 'environment-business', atmosphere: 'haze', scene: '/environments/business-glass-district.svg' },
 };
 
 function inferEnvironment(pathname: string): EnvironmentId {
@@ -36,6 +39,8 @@ export function LivingWorldEnvironment() {
 
   return (
     <div className={`living-world-environment ${profile.className}`} aria-label={profile.label} aria-hidden="true">
+      <div className="living-scene" style={{ backgroundImage: `url(${profile.scene})` }} />
+      <div className="living-scene-depth" />
       <div className="living-sky" />
       <div className="living-horizon" />
       <div className="living-light living-light-one" />
