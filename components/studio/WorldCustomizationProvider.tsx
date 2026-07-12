@@ -32,8 +32,9 @@ type WorldCustomization = {
 };
 
 type Store = Record<WorldKey, WorldCustomization>;
+type CloudStatus = 'loading' | 'ready' | 'local' | 'dirty' | 'saving' | 'saved' | 'error';
 type ContextValue = {
-  settings: Store; activeWorld: WorldKey; cloudStatus: 'loading' | 'ready' | 'local' | 'saving' | 'saved' | 'error';
+  settings: Store; activeWorld: WorldKey; cloudStatus: CloudStatus; lastSavedAt: number | null;
   updateWorld: (world: WorldKey, patch: Partial<WorldCustomization>) => void;
   updateLabel: (world: WorldKey, key: string, value: string) => void;
   addMedia: (world: WorldKey, asset: Omit<WorldMediaAsset, 'id'>) => void;
@@ -76,7 +77,8 @@ export function WorldCustomizationProvider({ children }: { children: ReactNode }
   const pathname = usePathname();
   const activeWorld = resolveWorld(pathname);
   const [settings, setSettings] = useState<Store>(defaults);
-  const [cloudStatus, setCloudStatus] = useState<ContextValue['cloudStatus']>('loading');
+  const [cloudStatus, setCloudStatus] = useState<CloudStatus>('loading');
+  const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
 
   useEffect(() => {
     const local = window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem('harmonic-world-customization-v2');
@@ -95,24 +97,36 @@ export function WorldCustomizationProvider({ children }: { children: ReactNode }
     root.dataset.world = activeWorld;
   }, [settings, activeWorld]);
 
+  const mutate = (recipe: (current: Store) => Store) => {
+    setSettings(recipe);
+    setCloudStatus('dirty');
+  };
+
   const value = useMemo<ContextValue>(() => ({
-    settings, activeWorld, cloudStatus,
-    updateWorld: (world, patch) => setSettings((current) => ({ ...current, [world]: { ...current[world], ...patch } })),
-    updateLabel: (world, key, label) => setSettings((current) => ({ ...current, [world]: { ...current[world], labels: { ...current[world].labels, [key]: label } } })),
-    addMedia: (world, asset) => setSettings((current) => ({ ...current, [world]: { ...current[world], media: [...current[world].media, { ...asset, id: crypto.randomUUID() }] } })),
-    updateMedia: (world, id, patch) => setSettings((current) => ({ ...current, [world]: { ...current[world], media: current[world].media.map((asset) => asset.id === id ? { ...asset, ...patch } : asset) } })),
-    removeMedia: (world, id) => setSettings((current) => ({ ...current, [world]: { ...current[world], media: current[world].media.filter((asset) => asset.id !== id) } })),
+    settings, activeWorld, cloudStatus, lastSavedAt,
+    updateWorld: (world, patch) => mutate((current) => ({ ...current, [world]: { ...current[world], ...patch } })),
+    updateLabel: (world, key, label) => mutate((current) => ({ ...current, [world]: { ...current[world], labels: { ...current[world].labels, [key]: label } } })),
+    addMedia: (world, asset) => mutate((current) => ({ ...current, [world]: { ...current[world], media: [...current[world].media, { ...asset, id: crypto.randomUUID() }] } })),
+    updateMedia: (world, id, patch) => mutate((current) => ({ ...current, [world]: { ...current[world], media: current[world].media.map((asset) => asset.id === id ? { ...asset, ...patch } : asset) } })),
+    removeMedia: (world, id) => mutate((current) => ({ ...current, [world]: { ...current[world], media: current[world].media.filter((asset) => asset.id !== id) } })),
     saveWorldToCloud: async (world, secret) => {
       setCloudStatus('saving');
       try {
         const response = await fetch('/api/world-design', { method:'PUT', headers:{ 'Content-Type':'application/json', 'x-harmonic-studio-key':secret }, body:JSON.stringify({ world, settings: settings[world] }) });
-        if (!response.ok) throw new Error('Save failed');
-        setCloudStatus('saved'); return true;
-      } catch { setCloudStatus('error'); return false; }
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || 'Save failed');
+        setLastSavedAt(Date.now());
+        setCloudStatus('saved');
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+        return true;
+      } catch {
+        setCloudStatus('error');
+        return false;
+      }
     },
-    copyToAll: (world) => setSettings((current) => Object.fromEntries(Object.keys(current).map((key) => [key, { ...current[world], labels:{...current[world].labels}, media:current[world].media.map((asset) => ({...asset,id:crypto.randomUUID()})) }])) as Store),
-    resetWorld: (world) => setSettings((current) => ({ ...current, [world]: defaults[world] })),
-  }), [settings, activeWorld, cloudStatus]);
+    copyToAll: (world) => mutate((current) => Object.fromEntries(Object.keys(current).map((key) => [key, { ...current[world], labels:{...current[world].labels}, media:current[world].media.map((asset) => ({...asset,id:crypto.randomUUID()})) }])) as Store),
+    resetWorld: (world) => mutate((current) => ({ ...current, [world]: defaults[world] })),
+  }), [settings, activeWorld, cloudStatus, lastSavedAt]);
 
   return <CustomizationContext.Provider value={value}>{children}</CustomizationContext.Provider>;
 }
