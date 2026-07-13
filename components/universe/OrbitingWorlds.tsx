@@ -11,6 +11,41 @@ type Props = {
   onSelect: (world: UniverseWorld) => void;
 };
 
+function WorldGlyph({ world }: { world: UniverseWorld }) {
+  if (world.id === 'schmackinn') {
+    return (
+      <span className={polish.garfieldMark} aria-hidden="true">
+        <span className={polish.catEarLeft} />
+        <span className={polish.catEarRight} />
+        <span className={polish.catEyeLeft} />
+        <span className={polish.catEyeRight} />
+        <span className={polish.catMuzzle} />
+      </span>
+    );
+  }
+
+  if (world.id === 'melodic') {
+    return <span className={polish.musicMark} aria-hidden="true">𝄞</span>;
+  }
+
+  if (world.id === 'fried-em') {
+    return (
+      <span className={polish.basketballMark} aria-hidden="true">
+        <i className={polish.ballSeamVertical} />
+        <i className={polish.ballSeamHorizontal} />
+        <i className={polish.ballSeamCurveA} />
+        <i className={polish.ballSeamCurveB} />
+      </span>
+    );
+  }
+
+  if (world.id === 'business') {
+    return <span className={polish.businessMark} aria-hidden="true">◆</span>;
+  }
+
+  return <span className={polish.fashionMark} aria-hidden="true">Ⅱ</span>;
+}
+
 export function OrbitingWorlds({ worlds, selectedWorld, onSelect }: Props) {
   return (
     <div className={styles.orbitPlane} aria-label="Orbiting Harmonic OS worlds">
@@ -27,10 +62,11 @@ export function OrbitingWorlds({ worlds, selectedWorld, onSelect }: Props) {
             onClick={() => onSelect(world)}
             type="button"
             aria-pressed={selected}
+            aria-label={`Select ${world.name}`}
           >
             <span className={polish.portalTrail} />
             <span className={styles.portalAtmosphere} />
-            <span className={styles.portalCore}>{world.glyph}</span>
+            <span className={`${styles.portalCore} ${polish.portalCoreIdentity}`}><WorldGlyph world={world} /></span>
             <span className={polish.portalIdentity} />
             {selected && <span className={polish.selectedHalo} />}
             <span className={styles.portalLabel}>{world.name}</span>
