@@ -3,6 +3,7 @@
 import type { CSSProperties } from 'react';
 import type { UniverseWorld } from './types';
 import styles from './UniverseExperience.module.css';
+import polish from './UniversePolish.module.css';
 
 type Props = {
   worlds: UniverseWorld[];
@@ -15,20 +16,27 @@ export function OrbitingWorlds({ worlds, selectedWorld, onSelect }: Props) {
     <div className={styles.orbitPlane} aria-label="Orbiting Harmonic OS worlds">
       <span className={styles.orbitRing} />
       <span className={`${styles.orbitRing} ${styles.orbitRingInner}`} />
-      {worlds.map((world) => (
-        <button
-          key={world.id}
-          className={`${styles.portal} ${selectedWorld?.id === world.id ? styles.portalSelected : ''}`}
-          style={{ '--portal-color': world.color, '--portal-accent': world.accent, '--portal-angle': `${world.orbit}deg`, '--portal-delay': world.delay } as CSSProperties}
-          onClick={() => onSelect(world)}
-          type="button"
-          aria-pressed={selectedWorld?.id === world.id}
-        >
-          <span className={styles.portalAtmosphere} />
-          <span className={styles.portalCore}>{world.glyph}</span>
-          <span className={styles.portalLabel}>{world.name}</span>
-        </button>
-      ))}
+      {worlds.map((world) => {
+        const worldClass = polish[`world-${world.id}` as keyof typeof polish] ?? '';
+        const selected = selectedWorld?.id === world.id;
+        return (
+          <button
+            key={world.id}
+            className={`${styles.portal} ${worldClass} ${selected ? styles.portalSelected : ''}`}
+            style={{ '--portal-color': world.color, '--portal-accent': world.accent, '--portal-angle': `${world.orbit}deg`, '--portal-delay': world.delay } as CSSProperties}
+            onClick={() => onSelect(world)}
+            type="button"
+            aria-pressed={selected}
+          >
+            <span className={polish.portalTrail} />
+            <span className={styles.portalAtmosphere} />
+            <span className={styles.portalCore}>{world.glyph}</span>
+            <span className={polish.portalIdentity} />
+            {selected && <span className={polish.selectedHalo} />}
+            <span className={styles.portalLabel}>{world.name}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
