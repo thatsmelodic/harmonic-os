@@ -1,4 +1,4 @@
 'use client';
 
-export { WebGLDistrictCanvasV2 as WebGLDistrictCanvas } from './WebGLDistrictCanvasV2';
-export type { WebGLDistrictCanvasProps } from './WebGLDistrictCanvasV2';
+export { WebGLDistrictCanvasV3 as WebGLDistrictCanvas } from './WebGLDistrictCanvasV3';
+export type { WebGLDistrictCanvasProps } from './WebGLDistrictCanvasV3';
