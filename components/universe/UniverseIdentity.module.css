@@ -1,0 +1,260 @@
+.galaxyBackdrop,
+.galaxyBand,
+.galaxyDust {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.galaxyBackdrop {
+  z-index: 0;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(100, 149, 237, .34), transparent 24rem),
+    radial-gradient(circle at 76% 28%, rgba(128, 66, 255, .28), transparent 28rem),
+    radial-gradient(circle at 52% 72%, rgba(22, 160, 180, .16), transparent 30rem),
+    linear-gradient(180deg, #030817 0%, #071126 44%, #02040d 100%);
+}
+
+.galaxyBackdrop::before {
+  content: '';
+  position: absolute;
+  inset: -18%;
+  background:
+    radial-gradient(ellipse at center, rgba(255,255,255,.82) 0 .7px, transparent 1.3px) 0 0 / 61px 61px,
+    radial-gradient(ellipse at center, rgba(143,191,255,.72) 0 .8px, transparent 1.5px) 12px 22px / 109px 109px,
+    radial-gradient(ellipse at center, rgba(255,220,248,.48) 0 .7px, transparent 1.4px) 36px 18px / 157px 157px;
+  opacity: .72;
+  animation: galaxyDrift 110s linear infinite;
+}
+
+.galaxyBand {
+  z-index: 1;
+  inset: -28% -18%;
+  background:
+    radial-gradient(ellipse at center, rgba(255,255,255,.36), rgba(122,164,255,.17) 18%, rgba(181,110,255,.12) 34%, transparent 63%);
+  filter: blur(18px) saturate(1.3);
+  opacity: .78;
+  transform: rotate(-18deg) scale(1.45, .48);
+  animation: galaxyBreathe 18s ease-in-out infinite;
+}
+
+.galaxyBand::after {
+  content: '';
+  position: absolute;
+  inset: 18% 4%;
+  background:
+    radial-gradient(circle at 18% 48%, rgba(255,255,255,.8) 0 1px, transparent 2px),
+    radial-gradient(circle at 43% 54%, rgba(255,214,244,.72) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 44%, rgba(177,211,255,.72) 0 1px, transparent 2px),
+    radial-gradient(circle at 87% 58%, rgba(255,255,255,.58) 0 1px, transparent 2px);
+  background-size: 33px 31px, 49px 47px, 71px 67px, 93px 89px;
+  opacity: .72;
+}
+
+.galaxyDust {
+  z-index: 2;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(76, 201, 240, .11), transparent 18rem),
+    radial-gradient(circle at 86% 68%, rgba(244, 114, 182, .12), transparent 22rem);
+  mix-blend-mode: screen;
+}
+
+.portalVisual {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  width: 5.4rem;
+  height: 5.4rem;
+  place-items: center;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translateY(-.15rem);
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--portal-color) 65%, transparent));
+}
+
+.twoHarmonicMini {
+  width: 4.6rem;
+  height: 4.6rem;
+  background: linear-gradient(135deg, #fff8dd, #d8b86f 42%, #513413 82%);
+  -webkit-mask: url('/identity/two-harmonic-mark-gold.svg') center / contain no-repeat;
+  mask: url('/identity/two-harmonic-mark-gold.svg') center / contain no-repeat;
+  animation: identityPulse 4.2s ease-in-out infinite;
+}
+
+.melodicSymbol {
+  color: #f5dcff;
+  font-family: Georgia, serif;
+  font-size: 3.8rem;
+  line-height: 1;
+  text-shadow: 0 0 10px #fff, 0 0 28px #a855f7, 0 0 52px #d946ef;
+  animation: melodicFloat 4s ease-in-out infinite;
+}
+
+.basketball {
+  position: relative;
+  width: 4.45rem;
+  height: 4.45rem;
+  overflow: hidden;
+  border: 2px solid rgba(20, 9, 2, .9);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 22%, #ffc274 0 8%, #f47c20 32%, #be3f08 76%, #4c1605 100%);
+  box-shadow: inset -12px -14px 19px rgba(0,0,0,.42), inset 7px 7px 12px rgba(255,255,255,.18), 0 0 28px #f97316;
+  animation: ballSpin 9s linear infinite;
+}
+
+.basketball::before,
+.basketball::after {
+  content: '';
+  position: absolute;
+  inset: -15%;
+  border: 3px solid #2b1008;
+  border-radius: 50%;
+}
+
+.basketball::before { transform: rotate(28deg) scaleX(.35); }
+.basketball::after { transform: rotate(-48deg) scaleY(.38); }
+
+.ballSeam {
+  position: absolute;
+  z-index: 2;
+  width: 112%;
+  height: 3px;
+  border-radius: 999px;
+  background: #2b1008;
+  transform: rotate(12deg);
+}
+
+.garfieldFrame {
+  display: grid;
+  width: 5.5rem;
+  height: 5.5rem;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 193, 92, .55);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,191,84,.22), rgba(32,12,1,.88) 72%);
+  box-shadow: inset 0 0 18px rgba(255,203,112,.18), 0 0 30px rgba(255,136,0,.48);
+}
+
+.garfieldImage {
+  width: 5.4rem;
+  height: 4.1rem;
+  object-fit: contain;
+  transform: translateY(.15rem);
+}
+
+.businessCore {
+  position: relative;
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border: 1px solid rgba(167, 255, 214, .58);
+  border-radius: 1.15rem;
+  background: linear-gradient(145deg, #102c24, #07110e 72%);
+  box-shadow: inset 0 0 18px rgba(16,185,129,.22), 0 0 30px rgba(16,185,129,.42);
+  transform: rotate(45deg);
+}
+
+.businessCore span {
+  color: #d7ffed;
+  font-size: 2.35rem;
+  font-weight: 950;
+  transform: rotate(-45deg);
+  text-shadow: 0 0 18px rgba(16,185,129,.8);
+}
+
+.runtimeShell {
+  position: absolute;
+  z-index: 8;
+  inset: 2%;
+  border: 1px solid color-mix(in srgb, var(--heart-primary) 40%, transparent);
+  border-radius: 50%;
+  box-shadow: inset 0 0 34px color-mix(in srgb, var(--heart-primary) 12%, transparent), 0 0 40px color-mix(in srgb, var(--heart-primary) 13%, transparent);
+  animation: runtimeRotate 26s linear infinite;
+  pointer-events: none;
+}
+
+.runtimeShell::before,
+.runtimeShell::after {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border: 1px dashed color-mix(in srgb, var(--heart-secondary) 32%, transparent);
+  border-radius: 50%;
+}
+
+.runtimeShell::after {
+  inset: 19%;
+  border-style: solid;
+  opacity: .48;
+}
+
+.runtimeLabel {
+  position: absolute;
+  z-index: 9;
+  top: 4%;
+  left: 50%;
+  border: 1px solid color-mix(in srgb, var(--heart-primary) 36%, rgba(255,255,255,.18));
+  border-radius: 999px;
+  background: rgba(3, 6, 14, .76);
+  padding: .46rem .85rem;
+  color: var(--heart-secondary);
+  font-size: .58rem;
+  font-weight: 950;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--heart-primary) 22%, transparent);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+
+.runtimeStatus {
+  position: absolute;
+  z-index: 9;
+  right: 6%;
+  bottom: 17%;
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  background: rgba(3,6,14,.7);
+  padding: .4rem .7rem;
+  color: rgba(255,255,255,.72);
+  font-size: .56rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.runtimeStatus i {
+  width: .48rem;
+  height: .48rem;
+  border-radius: 50%;
+  background: #72ffbb;
+  box-shadow: 0 0 12px #3eff9e;
+  animation: statusPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes galaxyDrift { to { transform: translate3d(-5%, -3%, 0) scale(1.08); } }
+@keyframes galaxyBreathe { 50% { opacity: .96; transform: rotate(-18deg) scale(1.55, .54); } }
+@keyframes identityPulse { 50% { filter: drop-shadow(0 0 20px #e8ca83); transform: scale(1.06); } }
+@keyframes melodicFloat { 50% { transform: translateY(-.4rem) rotate(4deg); } }
+@keyframes ballSpin { to { transform: rotate(360deg); } }
+@keyframes runtimeRotate { to { transform: rotate(360deg); } }
+@keyframes statusPulse { 50% { opacity: .45; transform: scale(.7); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .galaxyBackdrop::before,
+  .galaxyBand,
+  .twoHarmonicMini,
+  .melodicSymbol,
+  .basketball,
+  .runtimeShell,
+  .runtimeStatus i { animation: none !important; }
+}
