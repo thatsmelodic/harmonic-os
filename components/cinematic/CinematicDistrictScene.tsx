@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { districtOrder, districtScenes, type DistrictId } from '@/data/cinematic-districts';
+import { WebGLDistrictCanvas } from './WebGLDistrictCanvas';
 import styles from './CinematicDistrictScene.module.css';
 
 type Props = {
@@ -19,6 +20,7 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
   const [activeLandmark, setActiveLandmark] = useState(0);
   const [soundOn, setSoundOn] = useState(false);
   const [quality, setQuality] = useState<'cinematic' | 'performance'>('cinematic');
+  const [webglEnabled, setWebglEnabled] = useState(true);
   const audioRef = useRef<AudioContext | null>(null);
 
   const buildings = useMemo(() => Array.from({ length: compact ? 14 : 24 }, (_, index) => ({
@@ -31,6 +33,13 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
 
   useEffect(() => {
     const timer = window.setTimeout(() => setLoaded(true), 180);
+    try {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('webgl2') || canvas.getContext('webgl');
+      setWebglEnabled(Boolean(context));
+    } catch {
+      setWebglEnabled(false);
+    }
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -75,7 +84,7 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
 
   const selectLandmark = (index: number) => {
     setActiveLandmark(index);
-    playTone();
+    window.setTimeout(playTone, 20);
   };
 
   return (
@@ -93,46 +102,59 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
       } as React.CSSProperties}
       aria-label={`${scene.name} cinematic district`}
     >
-      <div className={styles.sky} />
+      {webglEnabled && (
+        <WebGLDistrictCanvas
+          district={district}
+          accent={scene.accent}
+          skyTop={scene.skyTop}
+          skyBottom={scene.skyBottom}
+          activeLandmark={activeLandmark}
+          quality={quality}
+        />
+      )}
+
+      <div className={styles.sky} style={{ opacity: webglEnabled ? 0.16 : 1 }} />
       <div className={styles.sun} />
-      <div className={styles.stars} />
+      <div className={styles.stars} style={{ opacity: webglEnabled ? 0.16 : undefined }} />
       <div className={styles.clouds}><span /><span /><span /></div>
-      <div className={styles.mountains}><span /><span /><span /></div>
-      <div className={styles.farCity} />
+      <div className={styles.mountains} style={{ opacity: webglEnabled ? 0.14 : undefined }}><span /><span /><span /></div>
+      <div className={styles.farCity} style={{ opacity: webglEnabled ? 0.12 : undefined }} />
 
-      <div className={styles.worldCamera}>
-        <div className={styles.groundGrid} />
-        <div className={styles.road}><span /><span /><span /></div>
-        <div className={styles.buildings}>
-          {buildings.map((building) => (
-            <span
-              key={building.index}
-              className={styles.building}
-              style={{
-                '--h': `${building.height}%`,
-                '--w': `${building.width}%`,
-                '--z': `${building.depth}px`,
-                '--x': `${building.offset}%`,
-                '--delay': `${building.index * -0.17}s`,
-              } as React.CSSProperties}
-            ><i /></span>
-          ))}
-        </div>
-
-        <div className={styles.heroLandmark}>
-          <div className={styles.landmarkCore}>
-            <span className={styles.landmarkGlow} />
-            <span className={styles.landmarkSign}>{scene.name}</span>
-            <span className={styles.landmarkPulse} />
+      {!webglEnabled && (
+        <div className={styles.worldCamera}>
+          <div className={styles.groundGrid} />
+          <div className={styles.road}><span /><span /><span /></div>
+          <div className={styles.buildings}>
+            {buildings.map((building) => (
+              <span
+                key={building.index}
+                className={styles.building}
+                style={{
+                  '--h': `${building.height}%`,
+                  '--w': `${building.width}%`,
+                  '--z': `${building.depth}px`,
+                  '--x': `${building.offset}%`,
+                  '--delay': `${building.index * -0.17}s`,
+                } as React.CSSProperties}
+              ><i /></span>
+            ))}
           </div>
-        </div>
 
-        {scene.architecture === 'court' && <div className={styles.courtSet}><span className={styles.backboard} /><span className={styles.rim} /><span className={styles.courtLines} /><span className={styles.ball} /></div>}
-        {scene.architecture === 'fashion' && <div className={styles.runwaySet}><span className={styles.runway} /><span className={styles.fabricOne} /><span className={styles.fabricTwo} /></div>}
-        {scene.architecture === 'food' && <div className={styles.foodSet}><span className={styles.restaurant} /><span className={styles.truck} /><span className={styles.steamOne} /><span className={styles.steamTwo} /></div>}
-        {scene.architecture === 'studio' && <div className={styles.studioSet}><span className={styles.speakerLeft} /><span className={styles.speakerRight} /><span className={styles.waveform} /></div>}
-        {scene.architecture === 'finance' && <div className={styles.financeSet}><span /><span /><span /></div>}
-      </div>
+          <div className={styles.heroLandmark}>
+            <div className={styles.landmarkCore}>
+              <span className={styles.landmarkGlow} />
+              <span className={styles.landmarkSign}>{scene.name}</span>
+              <span className={styles.landmarkPulse} />
+            </div>
+          </div>
+
+          {scene.architecture === 'court' && <div className={styles.courtSet}><span className={styles.backboard} /><span className={styles.rim} /><span className={styles.courtLines} /><span className={styles.ball} /></div>}
+          {scene.architecture === 'fashion' && <div className={styles.runwaySet}><span className={styles.runway} /><span className={styles.fabricOne} /><span className={styles.fabricTwo} /></div>}
+          {scene.architecture === 'food' && <div className={styles.foodSet}><span className={styles.restaurant} /><span className={styles.truck} /><span className={styles.steamOne} /><span className={styles.steamTwo} /></div>}
+          {scene.architecture === 'studio' && <div className={styles.studioSet}><span className={styles.speakerLeft} /><span className={styles.speakerRight} /><span className={styles.waveform} /></div>}
+          {scene.architecture === 'finance' && <div className={styles.financeSet}><span /><span /><span /></div>}
+        </div>
+      )}
 
       <div className={styles.rain} />
       <div className={styles.dust} />
@@ -145,6 +167,7 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
         <div className={styles.controls}>
           <button type="button" onClick={() => setSoundOn((value) => !value)}>{soundOn ? 'Sound on' : 'Sound off'}</button>
           <button type="button" onClick={() => setQuality((value) => value === 'cinematic' ? 'performance' : 'cinematic')}>{quality === 'cinematic' ? 'Cinematic' : 'Performance'}</button>
+          <button type="button" onClick={() => setWebglEnabled((value) => !value)}>{webglEnabled ? '3D on' : '3D off'}</button>
           <Link href="/worlds">City map</Link>
         </div>
       </header>
@@ -179,7 +202,7 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
         </nav>
       )}
 
-      <div className={styles.scrollCue}><span />Drag the camera · choose a landmark</div>
+      <div className={styles.scrollCue}><span />Move the camera · choose a landmark</div>
     </section>
   );
 }
