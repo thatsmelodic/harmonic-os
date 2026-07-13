@@ -22,45 +22,11 @@ type LandmarkExperience = {
 };
 
 const beigeDynastyExperiences: LandmarkExperience[] = [
-  {
-    chapter: 'The Royal Arrival',
-    product: 'Frequency Gate',
-    story: 'Two mirrored forms become one entrance. Cross the gate to enter the royal fashion civilization of 2 Harmonic.',
-    action: 'Enter the Dynasty',
-    href: '/worlds/two-harmonic/collections',
-  },
-  {
-    chapter: 'Chapter I · Ivory Frequency',
-    product: 'Ivory Frequency Zip',
-    story: 'Warm ivory, midnight contrast, royal structure, and a silhouette displayed like ceremonial armor.',
-    price: '$185',
-    action: 'Enter Ivory Garment Room',
-    href: '/worlds/two-harmonic/collections#ivory-frequency-zip',
-  },
-  {
-    chapter: 'Chapter I · Lavender Frequency',
-    product: 'Lavender Frequency Zip',
-    story: 'Beige stone surrounds a calm frequency expressed through lavender mist, reflection, water, and restrained light.',
-    price: '$195',
-    action: 'Enter Lavender Garment Room',
-    href: '/worlds/two-harmonic/collections#lavender-frequency-zip',
-  },
-  {
-    chapter: 'Chapter I · Foundation Piece',
-    product: 'Becoming Tee',
-    story: 'Unfinished stone transforms into a polished royal figure—the physical story of becoming.',
-    price: '$78',
-    action: 'Enter Becoming Courtyard',
-    href: '/worlds/two-harmonic/collections#becoming-tee',
-  },
-  {
-    chapter: 'Chapter I · Companion Piece',
-    product: 'Legacy Pant',
-    story: 'A ceremonial passage preserves every step, collection, and frequency that built the house.',
-    price: '$145',
-    action: 'Enter Legacy Passage',
-    href: '/worlds/two-harmonic/collections#legacy-pant',
-  },
+  { chapter: 'The Royal Arrival', product: 'Frequency Gate', story: 'Two mirrored forms become one entrance. Cross the gate to enter the royal fashion civilization of 2 Harmonic.', action: 'Enter the Dynasty', href: '/worlds/two-harmonic/collections' },
+  { chapter: 'Chapter I · Ivory Frequency', product: 'Ivory Frequency Zip', story: 'Warm ivory, midnight contrast, royal structure, and a silhouette displayed like ceremonial armor.', price: '$185', action: 'Enter Ivory Garment Room', href: '/worlds/two-harmonic/collections#ivory-frequency-zip' },
+  { chapter: 'Chapter I · Lavender Frequency', product: 'Lavender Frequency Zip', story: 'Beige stone surrounds a calm frequency expressed through lavender mist, reflection, water, and restrained light.', price: '$195', action: 'Enter Lavender Garment Room', href: '/worlds/two-harmonic/collections#lavender-frequency-zip' },
+  { chapter: 'Chapter I · Foundation Piece', product: 'Becoming Tee', story: 'Unfinished stone transforms into a polished royal figure—the physical story of becoming.', price: '$78', action: 'Enter Becoming Courtyard', href: '/worlds/two-harmonic/collections#becoming-tee' },
+  { chapter: 'Chapter I · Companion Piece', product: 'Legacy Pant', story: 'A ceremonial passage preserves every step, collection, and frequency that built the house.', price: '$145', action: 'Enter Legacy Passage', href: '/worlds/two-harmonic/collections#legacy-pant' },
 ];
 
 export function CinematicDistrictScene({ district = 'universe', compact = false, showDistrictRail = true }: Props) {
@@ -73,6 +39,7 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
   const [quality, setQuality] = useState<'cinematic' | 'performance'>('cinematic');
   const [webglEnabled, setWebglEnabled] = useState(true);
   const [dynastyEntered, setDynastyEntered] = useState(district !== 'two-harmonic');
+  const [showLandmarkPanel, setShowLandmarkPanel] = useState(false);
   const audioRef = useRef<AudioContext | null>(null);
 
   const buildings = useMemo(() => Array.from({ length: compact ? 14 : 24 }, (_, index) => ({
@@ -141,6 +108,7 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
 
   const selectLandmark = (index: number) => {
     setActiveLandmark(index);
+    if (district === 'two-harmonic') setShowLandmarkPanel(true);
     window.setTimeout(() => playTone(index), 20);
   };
 
@@ -177,12 +145,12 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
       <div className={styles.grain} />
 
       {district === 'two-harmonic' && !dynastyEntered && (
-        <div style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'grid', placeItems: 'center', background: 'radial-gradient(circle at 50% 52%, rgba(214,170,69,.18), rgba(20,14,10,.94) 62%)', backdropFilter: 'blur(5px)', transition: 'opacity .8s ease' }}>
+        <div style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'grid', placeItems: 'center', background: 'radial-gradient(circle at 50% 52%, rgba(214,170,69,.18), rgba(20,14,10,.94) 62%)', backdropFilter: 'blur(5px)', transition: 'opacity .8s ease', pointerEvents: 'auto' }}>
           <div style={{ textAlign: 'center', maxWidth: 650, padding: 32 }}>
             <p style={{ letterSpacing: '.38em', textTransform: 'uppercase', fontSize: 11, color: '#d6aa45' }}>2 Harmonic · Chapter I</p>
             <h2 style={{ margin: '10px 0', fontSize: 'clamp(44px,8vw,104px)', lineHeight: .86, color: '#eadfca' }}>The Beige Dynasty</h2>
             <p style={{ color: 'rgba(234,223,202,.78)', lineHeight: 1.6 }}>A royal fashion civilization built from desert camouflage, Egyptian monumentality, music, duality, and legacy.</p>
-            <button type="button" onClick={() => { setDynastyEntered(true); selectLandmark(0); }} style={{ marginTop: 22, border: '1px solid rgba(214,170,69,.8)', borderRadius: 999, padding: '13px 22px', background: '#d6aa45', color: '#15100b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.12em', cursor: 'pointer' }}>Open the Frequency Gate</button>
+            <button type="button" onClick={() => { setDynastyEntered(true); setShowLandmarkPanel(false); selectLandmark(0); }} style={{ marginTop: 22, border: '1px solid rgba(214,170,69,.8)', borderRadius: 999, padding: '13px 22px', background: '#d6aa45', color: '#15100b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.12em', cursor: 'pointer', position: 'relative', zIndex: 2 }}>Open the Frequency Gate</button>
           </div>
         </div>
       )}
@@ -209,14 +177,19 @@ export function CinematicDistrictScene({ district = 'universe', compact = false,
         <div className={styles.landmarkButtons}>{scene.landmarks.map((landmark, index) => <button key={landmark} type="button" onClick={() => selectLandmark(index)} className={index === activeLandmark ? styles.activeLandmark : ''}><span>{String(index + 1).padStart(2, '0')}</span>{landmark}</button>)}</div>
       </div>
 
-      {landmarkExperience && dynastyEntered && (
-        <aside style={{ position: 'absolute', zIndex: 18, right: 'clamp(20px,4vw,64px)', bottom: 'clamp(86px,12vh,150px)', width: 'min(360px,calc(100vw - 40px))', padding: 20, border: '1px solid rgba(214,170,69,.42)', borderRadius: 20, background: 'linear-gradient(145deg,rgba(18,14,10,.86),rgba(75,55,34,.68))', boxShadow: '0 28px 80px rgba(0,0,0,.34)', backdropFilter: 'blur(18px)' }}>
-          <p style={{ margin: 0, color: '#d6aa45', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase' }}>{landmarkExperience.chapter}</p>
+      {landmarkExperience && dynastyEntered && showLandmarkPanel && (
+        <aside style={{ position: 'absolute', zIndex: 40, right: 'clamp(16px,3vw,42px)', top: 'clamp(88px,11vh,118px)', width: 'min(340px,calc(100vw - 32px))', padding: 20, border: '1px solid rgba(214,170,69,.5)', borderRadius: 20, background: 'linear-gradient(145deg,rgba(18,14,10,.94),rgba(75,55,34,.86))', boxShadow: '0 28px 80px rgba(0,0,0,.46)', backdropFilter: 'blur(18px)', pointerEvents: 'auto' }}>
+          <button type="button" aria-label="Close landmark details" onClick={() => setShowLandmarkPanel(false)} style={{ position: 'absolute', top: 10, right: 10, width: 30, height: 30, borderRadius: '50%', border: '1px solid rgba(234,223,202,.3)', background: 'rgba(0,0,0,.28)', color: '#eadfca', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+          <p style={{ margin: 0, paddingRight: 34, color: '#d6aa45', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase' }}>{landmarkExperience.chapter}</p>
           <h3 style={{ margin: '8px 0 6px', color: '#eadfca', fontSize: 27 }}>{landmarkExperience.product}</h3>
           <p style={{ margin: 0, color: 'rgba(234,223,202,.72)', lineHeight: 1.5, fontSize: 13 }}>{landmarkExperience.story}</p>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 16 }}>
             {landmarkExperience.price && <strong style={{ color: '#f0cf91', fontSize: 18 }}>{landmarkExperience.price}</strong>}
-            <Link href={landmarkExperience.href} style={{ marginLeft: 'auto', padding: '11px 14px', borderRadius: 999, background: '#eadfca', color: '#21170e', fontWeight: 800, fontSize: 11, textTransform: 'uppercase', letterSpacing: '.08em' }}>{landmarkExperience.action}</Link>
+            {activeLandmark === 0 ? (
+              <button type="button" onClick={() => selectLandmark(1)} style={{ marginLeft: 'auto', padding: '11px 14px', border: 0, borderRadius: 999, background: '#eadfca', color: '#21170e', fontWeight: 800, fontSize: 11, textTransform: 'uppercase', letterSpacing: '.08em', cursor: 'pointer' }}>Enter the Dynasty</button>
+            ) : (
+              <Link href={landmarkExperience.href} onClick={() => setShowLandmarkPanel(false)} style={{ marginLeft: 'auto', padding: '11px 14px', borderRadius: 999, background: '#eadfca', color: '#21170e', fontWeight: 800, fontSize: 11, textTransform: 'uppercase', letterSpacing: '.08em' }}>{landmarkExperience.action}</Link>
+            )}
           </div>
         </aside>
       )}
