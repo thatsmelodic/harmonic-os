@@ -9,6 +9,7 @@ import { WorldSelectionPanel } from './WorldSelectionPanel';
 import { heartMaterialPresets, universeWorlds } from './universeData';
 import type { CameraState, HeartMaterial, UniverseWorld } from './types';
 import styles from './UniverseExperience.module.css';
+import polish from './UniversePolish.module.css';
 
 export function UniverseScene() {
   const [selectedWorld, setSelectedWorld] = useState<UniverseWorld | null>(universeWorlds[0]);
@@ -49,14 +50,18 @@ export function UniverseScene() {
     if (dragging) return;
     const bounds = event.currentTarget.getBoundingClientRect();
     setCamera({
-      x: ((event.clientX - bounds.left) / bounds.width - 0.5) * 18,
-      y: ((event.clientY - bounds.top) / bounds.height - 0.5) * -14,
+      x: ((event.clientX - bounds.left) / bounds.width - 0.5) * 24,
+      y: ((event.clientY - bounds.top) / bounds.height - 0.5) * -18,
       z: selectedWorld ? 18 : 0,
     });
   }
 
   return (
     <section className={styles.stage} style={cssVars} onPointerMove={updateCamera} aria-label="Interactive Harmonic OS universe">
+      <div className={polish.cosmicDepth} />
+      <div className={polish.cosmicDust} />
+      <div className={polish.cosmicLight} />
+
       <div className={styles.copyBlock}>
         <p className={styles.eyebrow}>Harmonic operating system</p>
         <h1>One Frequency.<br />Many Worlds.</h1>
