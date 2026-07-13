@@ -1,66 +1,184 @@
-import Link from 'next/link';
-import { bootRuntime } from '@/lib/harmonic-signal-bus';
-import { worldDefaults } from '@/lib/harmonic-engine';
-import { HarmonicEnginePreview } from '@/components/engine/HarmonicEnginePreview';
-import { SeasonalWorldLayer } from '@/components/seasons/SeasonalWorldLayer';
-import { RuntimeVisualDriver } from '@/components/runtime/RuntimeVisualDriver';
-import { LivingWorldOverlay } from '@/components/runtime/LivingWorldOverlay';
+'use client';
 
-const drops = [
-  { title: 'Acid Wash Base Tee', status: 'Foundation Drop', detail: 'Front mark, back connection marks, sleeve loop language.' },
-  { title: 'Pink Zip-Up Hoodie', status: 'Sample Vision', detail: 'Soft frequency, custom zipper pull, stitched identity.' },
-  { title: 'Gray Zip-Up Hoodie', status: 'Sample Vision', detail: 'Neutral canvas, teal accents, everyday balance.' },
-  { title: 'Melody Collection', status: 'Future Archive', detail: 'Quote-led garments where each piece carries a life frequency.' },
+import Link from 'next/link';
+import { useState } from 'react';
+
+const destinations = [
+  {
+    number: '01',
+    title: 'Atelier',
+    description: 'The creation process.',
+    image: 'linear-gradient(180deg,transparent 35%,rgba(8,5,2,.82)), url(https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=88)',
+  },
+  {
+    number: '02',
+    title: 'Collections',
+    description: 'Current and upcoming drops.',
+    image: 'linear-gradient(180deg,transparent 35%,rgba(8,5,2,.88)), url(https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=900&q=88)',
+  },
+  {
+    number: '03',
+    title: 'Campaign Hall',
+    description: 'Visual stories and films.',
+    image: 'linear-gradient(180deg,transparent 35%,rgba(8,5,2,.88)), url(https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=900&q=88)',
+  },
+  {
+    number: '04',
+    title: 'Frequency Vault',
+    description: 'The melodies behind the pieces.',
+    image: 'linear-gradient(180deg,transparent 35%,rgba(8,5,2,.92)), url(https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=88)',
+  },
+  {
+    number: '05',
+    title: 'The Journal',
+    description: 'Thoughts, updates, reflections.',
+    image: 'linear-gradient(180deg,transparent 35%,rgba(8,5,2,.86)), url(https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=900&q=88)',
+  },
 ];
 
-const process = ['Mood Board', 'Palette', 'Sample', 'Shoot', 'Drop', 'Archive'];
-const runtime = bootRuntime(worldDefaults.harmonic);
-
 export function HarmonicFashionWorldExperience() {
-  const state = runtime.state;
+  const [soundOn, setSoundOn] = useState(true);
+  const [active, setActive] = useState(0);
 
   return (
-    <main className="harmonic-fashion-world relative isolate min-h-screen overflow-hidden pb-28">
-      <SeasonalWorldLayer world="harmonic" />
-      <RuntimeVisualDriver world="harmonic" />
-      <LivingWorldOverlay world="harmonic" />
-      <div className="harmonic-fashion-aurora absolute inset-0 -z-30" />
-      <div className="frequency-grid absolute inset-0 -z-20 opacity-40" />
-      <div className="fashion-thread fashion-thread-one" />
-      <div className="fashion-thread fashion-thread-two" />
-      <div className="frequency-scan" />
+    <main className="relative min-h-screen overflow-hidden bg-[#100b06] text-[#f5eee2] selection:bg-[#caa56b]/40">
+      <div
+        className="fixed inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            'linear-gradient(90deg,rgba(7,4,2,.82) 0%,rgba(7,4,2,.35) 31%,rgba(7,4,2,.08) 58%,rgba(7,4,2,.42) 100%), linear-gradient(180deg,rgba(5,3,1,.56) 0%,transparent 28%,transparent 64%,rgba(6,4,2,.9) 100%), url(https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=2400&q=94)',
+        }}
+      />
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_52%_42%,rgba(255,220,160,.26),transparent_26%),radial-gradient(circle_at_70%_58%,rgba(202,165,107,.12),transparent_32%)]" />
+      <div className="pointer-events-none fixed inset-0 opacity-[.12] [background-image:url('data:image/svg+xml,%3Csvg_viewBox=%220_0_160_160%22_xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter_id=%22n%22%3E%3CfeTurbulence_type=%22fractalNoise%22_baseFrequency=%22.85%22_numOctaves=%223%22_stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect_width=%22100%25%22_height=%22100%25%22_filter=%22url(%23n)%22_opacity=%22.35%22/%3E%3C/svg%3E')]" />
 
-      <section className="harmonic-container py-8 sm:py-12">
-        <nav className="mb-8 flex items-center justify-between gap-4">
-          <Link href="/" className="rounded-full border border-white/15 bg-white/[.05] px-4 py-3 text-sm font-black text-white/70 transition hover:bg-white/15">← Harmonic OS</Link>
-          <p className="hidden font-mono text-xs uppercase tracking-[.32em] text-white/40 sm:block">22.2 FM / HARMONIC</p>
-        </nav>
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-[#0a0704]/45 backdrop-blur-xl">
+        <div className="mx-auto flex h-[78px] max-w-[1600px] items-center justify-between px-5 sm:px-8">
+          <Link href="/" className="flex items-center gap-4">
+            <BrandMark />
+            <div>
+              <p className="text-[9px] uppercase tracking-[.28em] text-white/65">Frequency 02</p>
+              <p className="font-serif text-[17px] tracking-[.05em]">2 HARMONIC</p>
+            </div>
+          </Link>
 
-        <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
-          <div className="glass-panel rounded-[2.5rem] p-6 sm:p-10">
-            <p className="text-xs font-black uppercase tracking-[.42em] text-[#f5dfb8]/55">Harmonic Frequency</p>
-            <h1 className="mt-5 text-5xl font-black leading-none tracking-[-.09em] text-[#fff8ea] sm:text-7xl lg:text-8xl">Stitch the Signal.</h1>
-            <p className="mt-6 max-w-2xl text-xl font-black leading-tight tracking-[-.04em] text-white/88 sm:text-3xl">Fashion is where the melody becomes physical — identity sewn into fabric, color, texture, and motion.</p>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-white/64 sm:text-lg">The Living World Engine now controls runway life, fabric behavior, lighting, camera pace, shopping energy, and cross-world drop ripples.</p>
-            <div className="mt-8 grid gap-3 sm:grid-cols-3"><Metric label="Fashion DNA" value={state.dna.fashion} /><Metric label="Business" value={state.dna.business} /><Metric label="Spirit" value={state.dna.spirituality} /></div>
+          <nav className="hidden items-center gap-10 text-[11px] uppercase tracking-[.08em] text-white/75 lg:flex">
+            {['Atelier', 'Collections', 'Campaign Hall', 'Frequency Vault', 'The Journal'].map((item, index) => (
+              <button key={item} onClick={() => setActive(index)} className="transition hover:text-[#e7c68e]">
+                {item}
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-4 text-[11px] uppercase tracking-[.1em]">
+            <button className="hidden items-center gap-2 border-r border-white/15 pr-5 sm:flex">
+              <BagIcon /> Closet
+            </button>
+            <span>02</span>
+            <button aria-label="Open menu" className="space-y-1.5">
+              <span className="block h-px w-5 bg-white/75" />
+              <span className="block h-px w-3.5 bg-white/75" />
+            </button>
           </div>
+        </div>
+      </header>
 
-          <aside className="glass-panel rounded-[2.5rem] p-6 sm:p-8">
-            <div className="mb-6 flex items-center justify-between"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Design Kernel</p><span className="rounded-full border border-[#f5dfb8]/20 px-3 py-1 font-mono text-xs text-[#f5dfb8]/60">LIVING</span></div>
-            <div className="relative mx-auto grid aspect-square max-w-md place-items-center rounded-[3rem] border border-[#f5dfb8]/10 bg-[radial-gradient(circle,rgba(245,223,184,.18),rgba(54,178,203,.08)_45%,rgba(0,0,0,.28)_70%)]"><div className="fabric-card fabric-card-a" /><div className="fabric-card fabric-card-b" /><div className="relative rounded-[2.5rem] border border-white/15 bg-black/35 px-8 py-8 text-center backdrop-blur-xl"><p className="font-mono text-xs text-white/45">NOW TUNING</p><p className="mt-2 text-4xl font-black tracking-[-.07em] text-[#fff8ea]">Harmonic</p><p className="mt-2 font-mono text-xs text-[#f5dfb8]/55">{state.physics.replace('-', ' ')}</p></div></div>
-          </aside>
+      <section className="relative z-10 flex min-h-[690px] items-center px-6 pb-44 pt-32 sm:px-12 lg:min-h-[760px] lg:px-[5.5vw]">
+        <div className="max-w-xl [text-shadow:0_3px_24px_rgba(0,0,0,.65)]">
+          <p className="mb-5 text-[10px] uppercase tracking-[.34em] text-[#ddc39a]">A living fashion estate</p>
+          <h1 className="font-serif text-5xl font-light leading-[.95] tracking-[-.035em] sm:text-7xl lg:text-[5.4rem]">
+            2 HARMONIC
+            <span className="mt-3 block text-[.62em] tracking-[-.015em]">FASHION HOUSE</span>
+          </h1>
+          <p className="mt-8 max-w-md font-serif text-base text-white/80 sm:text-lg">Every stitch remembers a melody.</p>
+          <button className="group mt-9 flex items-center gap-12 border-b border-white/55 pb-3 text-[11px] uppercase tracking-[.12em] transition hover:border-[#ddb97d] hover:text-[#f1d39e]">
+            Enter the house
+            <span className="text-xl transition group-hover:translate-x-2">→</span>
+          </button>
+        </div>
+
+        <div className="absolute right-[4.2vw] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-4 lg:flex">
+          {destinations.map((item, index) => (
+            <button
+              key={item.title}
+              aria-label={`View ${item.title}`}
+              onClick={() => setActive(index)}
+              className={`rounded-full border transition ${active === index ? 'h-2 w-2 border-white bg-white' : 'h-1.5 w-1.5 border-white/45'}`}
+            />
+          ))}
+        </div>
+
+        <div className="absolute bottom-36 right-[4.2vw] hidden w-[218px] rounded-sm border border-white/15 bg-[#17100b]/70 p-4 shadow-2xl backdrop-blur-xl md:block">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[8px] uppercase tracking-[.18em] text-white/45">Now playing</p>
+              <p className="mt-2 font-serif text-sm">Desert Hymn</p>
+              <p className="mt-1 text-[9px] text-white/50">2 Harmonic</p>
+            </div>
+            <button onClick={() => setSoundOn(!soundOn)} className="grid h-9 w-9 place-items-center rounded-full border border-white/35 text-[10px]">
+              {soundOn ? 'Ⅱ' : '▶'}
+            </button>
+          </div>
+          <div className="mt-4 flex h-5 items-end gap-[2px]">
+            {[3, 7, 12, 5, 16, 8, 11, 4, 14, 7, 10, 5, 12, 6, 9, 4, 7, 3].map((height, index) => (
+              <span key={index} className="w-px bg-[#e7d2ad]/75" style={{ height: soundOn ? height : 2 }} />
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="harmonic-container py-8"><div className="mb-5"><p className="text-xs font-black uppercase tracking-[.34em] text-white/40">Drop System</p><h2 className="mt-3 text-3xl font-black tracking-[-.06em] sm:text-5xl">Garments inside the archive</h2></div><div className="grid gap-4 lg:grid-cols-4">{drops.map((drop, index) => <article key={drop.title} className="harmonic-drop-card rounded-[2rem] border border-white/10 bg-white/[.05] p-5 backdrop-blur-xl"><p className="font-mono text-xs text-[#f5dfb8]/45">0{index + 1}</p><h3 className="mt-5 text-2xl font-black leading-none tracking-[-.05em]">{drop.title}</h3><p className="mt-3 text-sm font-black text-[#36b2cb]/75">{drop.status}</p><p className="mt-4 text-sm leading-7 text-white/55">{drop.detail}</p></article>)}</div></section>
+      <section className="relative z-20 -mt-32 px-4 pb-24 sm:px-8">
+        <div className="mx-auto grid max-w-[1600px] gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {destinations.map((destination, index) => (
+            <article
+              key={destination.title}
+              onMouseEnter={() => setActive(index)}
+              className={`group relative min-h-[286px] cursor-pointer overflow-hidden rounded-[3px] border transition duration-500 ${active === index ? 'border-[#ddbd86]/70 -translate-y-2' : 'border-white/15 hover:-translate-y-2 hover:border-white/35'}`}
+              style={{ backgroundImage: destination.image, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0906] via-transparent to-black/10 transition duration-500 group-hover:bg-black/5" />
+              <span className="absolute right-4 top-4 text-[9px] tracking-[.2em] text-white/50">{destination.number}</span>
+              <div className="absolute inset-x-0 bottom-0 p-5">
+                <h2 className="font-serif text-xl uppercase tracking-[.015em]">{destination.title}</h2>
+                <div className="mt-3 flex items-center justify-between text-[11px] text-white/65">
+                  <p>{destination.description}</p>
+                  <span className="text-lg transition group-hover:translate-x-1">→</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-      <section className="harmonic-container py-8"><div className="grid gap-5 lg:grid-cols-[.9fr_1.1fr]"><div className="glass-panel rounded-[2rem] p-6"><p className="text-xs font-black uppercase tracking-[.32em] text-white/40">2Harmonic Philosophy</p><h2 className="mt-4 text-3xl font-black tracking-[-.05em]">The garment is the body of the message.</h2><p className="mt-4 text-sm leading-7 text-white/62">Harmonic transforms the Melodic Bible into wearable form: balance, duality, stitched melodies, and the idea that every person carries a frequency worth expressing.</p></div><div className="glass-panel rounded-[2rem] p-6"><p className="text-xs font-black uppercase tracking-[.32em] text-white/40">Production Flow</p><div className="mt-5 grid gap-3 sm:grid-cols-6">{process.map((item, index) => <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-4"><p className="font-mono text-xs text-[#f5dfb8]">0{index + 1}</p><p className="mt-3 text-sm font-bold leading-6 text-white/72">{item}</p></div>)}</div></div></div></section>
-
-      <section className="harmonic-container py-8"><HarmonicEnginePreview state={state} /></section>
+      <footer className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0a0704]/70 backdrop-blur-xl">
+        <div className="mx-auto flex h-[62px] max-w-[1600px] items-center justify-between px-5 text-[10px] uppercase tracking-[.14em] text-white/70 sm:px-8">
+          <Link href="/" className="flex items-center gap-3"><CompassIcon /> World map</Link>
+          <span className="hidden items-center gap-3 sm:flex">↕ <span>Scroll to explore</span></span>
+          <button onClick={() => setSoundOn(!soundOn)} className="flex items-center gap-3">Sound <WaveIcon /> {soundOn ? 'On' : 'Off'}</button>
+        </div>
+      </footer>
     </main>
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
-  return <div className="rounded-2xl border border-white/10 bg-white/[.04] p-4"><p className="text-xs font-black uppercase tracking-[.2em] text-white/35">{label}</p><p className="mt-2 text-3xl font-black tracking-[-.05em]">{value}%</p></div>;
+function BrandMark() {
+  return (
+    <svg viewBox="0 0 64 64" className="h-11 w-11" fill="none" aria-hidden="true">
+      <path d="M32 52 10 31C-2 18 15 3 27 15l5 5 5-5C49 3 66 18 54 31L32 52Z" stroke="currentColor" strokeWidth="3" />
+      <path d="M18 53h29M23 46h18" stroke="currentColor" strokeWidth="2" />
+      <text x="26" y="59" fill="currentColor" fontSize="18" fontFamily="serif">2</text>
+    </svg>
+  );
+}
+
+function BagIcon() {
+  return <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>;
+}
+
+function CompassIcon() {
+  return <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg>;
+}
+
+function WaveIcon() {
+  return <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor"><path d="M3 12h2m2-4v8m3-12v16m3-12v8m3-6v4m3-2h2"/></svg>;
 }
