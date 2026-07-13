@@ -5,7 +5,7 @@ import { ContactShadows, Environment, SoftShadows } from '@react-three/drei';
 import { Suspense, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import type { WebGLDistrictCanvasProps } from './WebGLDistrictCanvasV3';
-import { TwoHarmonicBeigeDynasty } from './TwoHarmonicBeigeDynasty';
+import { TwoHarmonicMatureWorld } from './TwoHarmonicMatureWorld';
 
 export type TwoHarmonicCanvasProps = WebGLDistrictCanvasProps & {
   onSelectLandmark?: (index: number) => void;
@@ -68,10 +68,10 @@ function MaterialRealismPass() {
         material.envMapIntensity = 0.42;
 
         const isDark = color === '#11100e' || color === '#2a2622';
-        const isGold = color === '#d6aa45';
+        const isGold = color === '#d6aa45' || color === '#b98b3f';
         const isStone = !isDark && !isGold && material.roughness > 0.45;
 
-        if (isStone) {
+        if (isStone && !material.bumpMap) {
           material.bumpMap = texture;
           material.bumpScale = 0.055;
           material.roughness = Math.max(material.roughness, 0.76);
@@ -208,7 +208,7 @@ function Scene(props: TwoHarmonicCanvasProps) {
     <directionalLight position={[-24, 15, -22]} intensity={0.9} color="#91a5c2" />
     <spotLight position={[0, 22, 15]} angle={0.42} penumbra={0.8} intensity={5.5} color="#e8c994" distance={90} castShadow={props.quality === 'cinematic'} />
     <GroundDetail />
-    <TwoHarmonicBeigeDynasty accent={props.accent} quality={props.quality} activeLandmark={props.activeLandmark} onSelectLandmark={props.onSelectLandmark} />
+    <TwoHarmonicMatureWorld accent={props.accent} quality={props.quality} activeLandmark={props.activeLandmark} onSelectLandmark={props.onSelectLandmark} />
     <MaterialRealismPass />
     {props.quality === 'cinematic' && <ContactShadows position={[0, -0.56, -14]} opacity={0.78} scale={92} blur={2.2} far={48} resolution={1024} />}
     {props.quality === 'cinematic' && <Environment preset="warehouse" background={false} environmentIntensity={0.24} />}
