@@ -2,6 +2,7 @@
 
 import type { CSSProperties, PointerEvent } from 'react';
 import styles from './UniverseExperience.module.css';
+import polish from './UniversePolish.module.css';
 
 type Props = {
   dragging: boolean;
@@ -22,6 +23,7 @@ export function HarmonicHeart({ dragging, rotation, onPointerDown, onPointerMove
       role="img"
       aria-label="Interactive 3D 2 Harmonic interlocked heart logo"
     >
+      <div className={polish.heartEnergy} />
       <div className={styles.heartShadow} />
       <div className={styles.heartObject} style={{ transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)` }}>
         {Array.from({ length: 26 }, (_, index) => (
