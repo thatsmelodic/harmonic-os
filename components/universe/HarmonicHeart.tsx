@@ -3,6 +3,7 @@
 import type { CSSProperties, PointerEvent } from 'react';
 import styles from './UniverseExperience.module.css';
 import polish from './UniversePolish.module.css';
+import identity from './UniverseIdentity.module.css';
 
 type Props = {
   dragging: boolean;
@@ -21,8 +22,11 @@ export function HarmonicHeart({ dragging, rotation, onPointerDown, onPointerMove
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       role="img"
-      aria-label="Interactive 3D 2 Harmonic interlocked heart logo"
+      aria-label="Interactive Harmonic Runtime core built from the official 2 Harmonic interlocked heart"
     >
+      <div className={identity.runtimeShell} />
+      <div className={identity.runtimeLabel}>Harmonic Runtime · Core Identity</div>
+      <div className={identity.runtimeStatus}><i /> Runtime live</div>
       <div className={polish.heartEnergy} />
       <div className={styles.heartShadow} />
       <div className={styles.heartObject} style={{ transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)` }}>

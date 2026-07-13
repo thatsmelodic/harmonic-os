@@ -3,10 +3,14 @@
 import Link from 'next/link';
 import { UniverseScene } from './UniverseScene';
 import styles from './UniverseExperience.module.css';
+import identity from './UniverseIdentity.module.css';
 
 export function UniverseExperience() {
   return (
     <main className={styles.shell}>
+      <div className={identity.galaxyBackdrop} />
+      <div className={identity.galaxyBand} />
+      <div className={identity.galaxyDust} />
       <div className={styles.starfield} />
       <div className={styles.nebula} />
       <div className={styles.noise} />
