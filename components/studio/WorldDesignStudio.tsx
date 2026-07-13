@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { EditorCommandBar } from '@/components/studio/EditorCommandBar';
+import { useEditorHistory } from '@/components/studio/useEditorHistory';
 import { Phase4WorldRuntime } from '@/components/studio/Phase4WorldRuntime';
 import { useWorldCustomization, type WorldKey, type WorldMediaAsset } from '@/components/studio/WorldCustomizationProvider';
 import { WorldEngineShell } from '@/components/WorldEngineShell';
@@ -56,6 +58,7 @@ export function WorldDesignStudio(){
   const [fullscreen,setFullscreen]=useState(false);
   const scrollRef=useRef<HTMLDivElement>(null);
   const active=settings[world];
+  const editorHistory=useEditorHistory(active);
   const worldInfo=useMemo(()=>worlds.find((item)=>item.key===world)!,[world]);
   const extraCopy=worldCopy[world]??[];
   const hasSecret=Boolean(secret);
@@ -86,7 +89,10 @@ export function WorldDesignStudio(){
   }
   const preview=<LiveWorldPreview world={worldInfo.engineSlug} active={active} viewport={viewport} highlighted={section} />;
 
+  useEffect(()=>{function handleStudioShortcut(event:KeyboardEvent){if(!(event.metaKey||event.ctrlKey))return;const key=event.key.toLowerCase();if(event.key.toLowerCase()==='z'){event.preventDefault();if(event.shiftKey)editorHistory.redo();else editorHistory.undo();}if(event.key.toLowerCase()==='s'){event.preventDefault();void runAuthenticated('draft');}}window.addEventListener('keydown',handleStudioShortcut);return()=>window.removeEventListener('keydown',handleStudioShortcut);},[editorHistory]);
+
   return <div className="mx-auto max-w-[96rem] pb-28 text-white">
+    <EditorCommandBar canUndo={editorHistory.canUndo} canRedo={editorHistory.canRedo} isUnsaved={isUnsaved} saving={saving} onUndo={editorHistory.undo} onRedo={editorHistory.redo} onSaveDraft={()=>void runAuthenticated('draft')} onPublish={()=>void runAuthenticated('publish')} />
     <header className="rounded-[2.5rem] border border-white/10 bg-black/45 p-6 backdrop-blur-2xl sm:p-9"><p className="text-xs font-black uppercase tracking-[.34em] text-white/35">Design Department · Studio Repair</p><h1 className="mt-3 text-5xl font-black tracking-[-.07em] sm:text-7xl">World Design Studio</h1><p className="mt-4 max-w-3xl text-base leading-8 text-white/55">Edit and preview the same draft state side by side. Save Draft is private; Publish Changes updates the public world.</p></header>
     <div className="mt-5 flex rounded-full border border-white/10 bg-black/45 p-1 lg:hidden"><button onClick={()=>setMobileMode('edit')} className={`flex-1 rounded-full px-4 py-3 text-sm font-black ${mobileMode==='edit'?'bg-white text-black':'text-white/60'}`}>Edit</button><button onClick={()=>setMobileMode('preview')} className={`flex-1 rounded-full px-4 py-3 text-sm font-black ${mobileMode==='preview'?'bg-white text-black':'text-white/60'}`}>Preview</button></div>
     <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(420px,0.9fr)_minmax(520px,1.1fr)]">

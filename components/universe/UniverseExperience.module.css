@@ -1,1 +1,633 @@
-.shell{position:relative;min-height:100vh;overflow:hidden;background:#08090d;color:#f5f2ea}.sky{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,rgba(72,82,128,.28),transparent 32%),linear-gradient(180deg,#111629 0%,#171722 36%,#4f3427 67%,#0a0b0f 100%)}.stars,.stars:before,.stars:after{position:absolute;inset:0;content:"";background-image:radial-gradient(circle,#fff 0 1px,transparent 1.4px);background-size:83px 83px;opacity:.45;animation:drift 48s linear infinite}.stars:before{background-size:137px 137px;opacity:.28;animation-duration:70s}.stars:after{background-size:211px 211px;opacity:.18;animation-duration:94s}.haze{position:absolute;inset:18% -20% 0;background:radial-gradient(ellipse at 50% 70%,rgba(223,160,103,.24),transparent 44%),radial-gradient(ellipse at 22% 52%,rgba(104,79,121,.2),transparent 36%);filter:blur(36px);animation:breathe 12s ease-in-out infinite}.city{position:absolute;left:0;right:0;bottom:0;height:40vh;background:linear-gradient(180deg,transparent,rgba(7,8,12,.78) 30%),repeating-linear-gradient(90deg,#0b0c10 0 42px,#14151b 42px 68px,#090a0d 68px 108px);clip-path:polygon(0 36%,5% 36%,5% 18%,9% 18%,9% 43%,14% 43%,14% 7%,18% 7%,18% 34%,23% 34%,23% 21%,27% 21%,27% 49%,32% 49%,32% 11%,37% 11%,37% 33%,42% 33%,42% 17%,47% 17%,47% 45%,54% 45%,54% 9%,59% 9%,59% 29%,64% 29%,64% 15%,69% 15%,69% 38%,75% 38%,75% 5%,80% 5%,80% 28%,85% 28%,85% 18%,90% 18%,90% 42%,95% 42%,95% 24%,100% 24%,100% 100%,0 100%)}.reflection{position:absolute;left:0;right:0;bottom:0;height:17vh;background:linear-gradient(180deg,rgba(15,16,20,.2),rgba(8,9,12,.95)),repeating-linear-gradient(90deg,transparent 0 10%,rgba(231,161,91,.1) 10% 12%,transparent 12% 25%);filter:blur(2px)}.intro{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:#050609;transition:opacity .9s ease,visibility .9s ease}.introHidden{opacity:0;visibility:hidden}.cup{position:relative;width:170px;height:210px;border:1px solid rgba(255,255,255,.25);border-radius:22px 22px 54px 54px;background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.03));box-shadow:0 35px 90px rgba(0,0,0,.65),inset 0 0 35px rgba(255,255,255,.04);transform:rotate(-7deg)}.cup:before{content:"";position:absolute;left:25px;right:25px;top:28px;height:72px;border-radius:50%;background:radial-gradient(ellipse at 50% 38%,#d7a6ff,#6f2d95 52%,#281331 75%);box-shadow:0 0 50px rgba(183,108,255,.45)}.pour{position:absolute;left:50%;top:78%;width:26px;height:0;border-radius:20px;background:linear-gradient(180deg,#d7a6ff,#74389e 55%,#25112e);filter:drop-shadow(0 0 18px rgba(183,108,255,.65));animation:pour 2.7s .9s cubic-bezier(.3,.7,.3,1) forwards}.flood{position:absolute;left:50%;bottom:-35vh;width:12vw;height:12vw;border-radius:50%;background:radial-gradient(circle,#caa1eb 0,#6e318c 48%,#1a0c23 72%);transform:translateX(-50%) scale(.2);animation:flood 3.1s 1.7s ease-in forwards}.mark{position:relative;display:grid;place-items:center;width:96px;height:96px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(10,11,15,.48);box-shadow:0 0 60px rgba(255,255,255,.08),0 0 90px rgba(183,108,255,.22);backdrop-filter:blur(18px);animation:pulse 3.2s ease-in-out infinite}.mark:before,.mark:after{content:"";position:absolute;width:44px;height:44px;border:2px solid #f3ece2;border-radius:50% 50% 46% 54%;transform:rotate(45deg) translate(-11px,11px)}.mark:after{transform:rotate(-45deg) translate(11px,11px)}.hero{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:28px clamp(20px,5vw,72px) 64px}.nav{display:flex;justify-content:space-between;align-items:center;gap:18px}.brand{display:flex;align-items:center;gap:16px}.brandText{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.56)}.navLinks{display:flex;gap:12px;flex-wrap:wrap}.navLink{padding:11px 16px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(8,9,12,.32);backdrop-filter:blur(14px);font-size:.72rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.72)}.heroCopy{max-width:980px;padding-top:11vh}.eyebrow{font-size:.68rem;letter-spacing:.38em;text-transform:uppercase;color:rgba(255,255,255,.46)}.title{margin-top:18px;font-size:clamp(4rem,10vw,10rem);line-height:.84;letter-spacing:-.085em;font-weight:800;max-width:9ch}.lede{margin-top:28px;max-width:720px;font-size:clamp(1rem,1.7vw,1.4rem);line-height:1.7;color:rgba(255,255,255,.65)}.ctaRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}.ctaPrimary,.ctaSecondary{padding:15px 22px;border-radius:999px;font-size:.78rem;font-weight:800;letter-spacing:.08em}.ctaPrimary{background:#eee5d7;color:#17130f}.ctaSecondary{border:1px solid rgba(255,255,255,.18);background:rgba(5,6,9,.35);color:#fff}.districts{position:relative;z-index:12;padding:80px clamp(20px,5vw,72px) 120px;background:linear-gradient(180deg,rgba(5,6,9,.05),#08090d 17%)}.sectionIntro{max-width:780px}.sectionTitle{font-size:clamp(2.6rem,6vw,5.8rem);line-height:.95;letter-spacing:-.06em}.sectionCopy{margin-top:20px;line-height:1.75;color:rgba(255,255,255,.56)}.districtGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:46px}.district{position:relative;min-height:420px;overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:30px;background:#111;isolation:isolate;transition:transform .45s ease,border-color .45s ease}.district:hover{transform:translateY(-8px);border-color:rgba(255,255,255,.24)}.district:before{content:"";position:absolute;inset:0;background:var(--scene);z-index:-2;transform:scale(1.03);transition:transform .8s ease}.district:hover:before{transform:scale(1.08)}.district:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.82) 78%);z-index:-1}.districtBody{position:absolute;left:0;right:0;bottom:0;padding:28px}.districtKicker{font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.52)}.districtName{margin-top:10px;font-size:clamp(2.1rem,4vw,4.2rem);letter-spacing:-.06em;line-height:.92}.districtDesc{margin-top:13px;max-width:52ch;font-size:.9rem;line-height:1.7;color:rgba(255,255,255,.62)}.districtAction{display:inline-flex;margin-top:22px;padding:11px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(8,9,12,.35);font-size:.68rem;font-weight:800;letter-spacing:.08em}.footer{padding:28px clamp(20px,5vw,72px) 46px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;color:rgba(255,255,255,.38);font-size:.72rem;letter-spacing:.08em}.skip{position:absolute;right:24px;bottom:24px;z-index:4;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px 14px;color:rgba(255,255,255,.62);font-size:.68rem;letter-spacing:.1em;background:rgba(0,0,0,.2)}@keyframes drift{to{transform:translate3d(-40px,30px,0)}}@keyframes breathe{50%{opacity:.65;transform:scale(1.05)}}@keyframes pulse{50%{transform:scale(1.045);box-shadow:0 0 80px rgba(255,255,255,.12),0 0 120px rgba(183,108,255,.32)}}@keyframes pour{0%{height:0}100%{height:42vh}}@keyframes flood{0%{transform:translateX(-50%) scale(.2)}100%{transform:translateX(-50%) scale(18);opacity:0}}@media(max-width:800px){.districtGrid{grid-template-columns:1fr}.district{min-height:360px}.navLinks{display:none}.heroCopy{padding-top:14vh}.title{font-size:clamp(3.8rem,18vw,6rem)}}@media(prefers-reduced-motion:reduce){.stars,.stars:before,.stars:after,.haze,.mark,.pour,.flood{animation:none}.district,.district:before{transition:none}}
+.shell {
+  --heart-primary: #d9b875;
+  --heart-secondary: #fff0c6;
+  --selected-world: #d9b875;
+  --selected-accent: #fff0c6;
+  --camera-x: 0px;
+  --camera-y: 0px;
+  --camera-z: 0px;
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #020204;
+  color: #fff7ea;
+}
+
+.starfield,
+.nebula,
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.starfield {
+  z-index: 0;
+  background-image:
+    radial-gradient(circle, #fff 0 1px, transparent 1.4px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.3px);
+  background-size: 97px 97px, 173px 173px;
+  opacity: .42;
+  animation: starDrift 80s linear infinite;
+}
+
+.nebula {
+  z-index: 1;
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--heart-primary) 28%, transparent), transparent 27rem),
+    radial-gradient(circle at 72% 18%, rgba(168, 85, 247, .22), transparent 24rem),
+    radial-gradient(circle at 18% 82%, rgba(16, 185, 129, .12), transparent 26rem),
+    linear-gradient(180deg, #06050a, #020204 72%);
+  filter: saturate(1.12);
+}
+
+.noise {
+  z-index: 2;
+  opacity: .16;
+  mix-blend-mode: overlay;
+  background-image:
+    radial-gradient(circle at 18% 24%, rgba(255, 255, 255, .55) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 64%, rgba(255, 255, 255, .24) 0 1px, transparent 1.5px);
+  background-size: 71px 71px, 127px 127px;
+}
+
+.nav {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem clamp(1rem, 4vw, 4rem);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+}
+
+.brandMark {
+  width: 2.9rem;
+  height: 2.9rem;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--heart-secondary), var(--heart-primary) 48%, #17100a 74%);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--heart-primary) 42%, transparent), inset 0 0 18px rgba(255, 255, 255, .2);
+}
+
+.brand strong {
+  display: block;
+  font-weight: 950;
+  letter-spacing: -.04em;
+}
+
+.brand small,
+.eyebrow,
+.panelKicker {
+  display: block;
+  color: rgba(255, 255, 255, .52);
+  font-size: .64rem;
+  font-weight: 950;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+}
+
+.navLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+}
+
+.navLinks a {
+  border: 1px solid rgba(255, 255, 255, .13);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .055);
+  padding: .75rem 1rem;
+  color: rgba(255, 255, 255, .74);
+  font-size: .72rem;
+  font-weight: 850;
+  backdrop-filter: blur(18px);
+  transition: transform .25s ease, border-color .25s ease;
+}
+
+.navLinks a:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--heart-primary) 48%, white 12%);
+}
+
+.stage {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: minmax(16rem, .62fr) minmax(26rem, 1.1fr) minmax(18rem, .66fr);
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: center;
+  min-height: calc(100vh - 5.5rem);
+  padding: 1rem clamp(1rem, 4vw, 4rem) 4rem;
+}
+
+.copyBlock {
+  align-self: start;
+  margin-top: 9vh;
+}
+
+.copyBlock h1 {
+  margin-top: 1rem;
+  font-size: clamp(3.8rem, 7vw, 8.6rem);
+  font-weight: 950;
+  letter-spacing: -.095em;
+  line-height: .82;
+  text-shadow: 0 0 45px rgba(255, 255, 255, .12);
+}
+
+.copyBlock p:not(.eyebrow) {
+  max-width: 33rem;
+  margin-top: 1.35rem;
+  color: rgba(255, 255, 255, .62);
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1.8;
+}
+
+.universe {
+  position: relative;
+  display: grid;
+  min-height: min(68vw, 44rem);
+  place-items: center;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.universe::before {
+  content: '';
+  position: absolute;
+  width: min(52vw, 42rem);
+  height: min(52vw, 42rem);
+  border: 1px solid color-mix(in srgb, var(--heart-primary) 22%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 80px color-mix(in srgb, var(--heart-primary) 10%, transparent), inset 0 0 80px rgba(255, 255, 255, .025);
+  transform: rotateX(68deg);
+}
+
+.cameraRig {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: translate3d(var(--camera-x), var(--camera-y), var(--camera-z));
+  transform-style: preserve-3d;
+  transition: transform .9s cubic-bezier(.2, .8, .2, 1);
+}
+
+.orbitPlane {
+  position: absolute;
+  inset: 5%;
+  transform-style: preserve-3d;
+  animation: orbitSpin 42s linear infinite;
+}
+
+.universeSelected .orbitPlane {
+  animation-duration: 120s;
+}
+
+.orbitRing,
+.orbitRingInner {
+  position: absolute;
+  inset: 10%;
+  border: 1px solid color-mix(in srgb, var(--selected-world) 22%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 42px color-mix(in srgb, var(--selected-world) 10%, transparent);
+  transform: rotateX(68deg);
+}
+
+.orbitRingInner {
+  inset: 25%;
+  opacity: .48;
+}
+
+.portal {
+  --portal-color: #fff;
+  --portal-accent: #fff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  width: 7.4rem;
+  height: 7.4rem;
+  margin: -3.7rem;
+  place-items: center;
+  gap: .45rem;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transform: rotateY(var(--portal-angle)) translateZ(min(23vw, 18rem)) rotateY(calc(var(--portal-angle) * -1));
+  transform-style: preserve-3d;
+  animation: portalFloat 7s ease-in-out infinite;
+  animation-delay: var(--portal-delay);
+  transition: opacity .35s ease, filter .35s ease;
+}
+
+.universeSelected .portal:not(.portalSelected) {
+  opacity: .36;
+  filter: saturate(.55) blur(.2px);
+}
+
+.portalAtmosphere {
+  position: absolute;
+  inset: .8rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--portal-color) 30%, transparent), transparent 68%);
+  filter: blur(14px);
+}
+
+.portalCore {
+  position: relative;
+  display: grid;
+  width: 4.1rem;
+  height: 4.1rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--portal-color) 50%, white 10%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 25%, var(--portal-accent), var(--portal-color) 42%, rgba(0, 0, 0, .78) 76%);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--portal-color) 55%, transparent), inset 0 0 18px rgba(255, 255, 255, .22);
+  font-size: .85rem;
+  font-weight: 950;
+  letter-spacing: -.05em;
+}
+
+.portalLabel {
+  border: 1px solid color-mix(in srgb, var(--portal-color) 26%, rgba(255, 255, 255, .1));
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .54);
+  padding: .36rem .62rem;
+  color: rgba(255, 255, 255, .82);
+  font-size: .64rem;
+  font-weight: 900;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+}
+
+.portal:hover .portalCore,
+.portalSelected .portalCore {
+  transform: scale(1.1);
+  box-shadow: 0 0 52px color-mix(in srgb, var(--portal-color) 80%, transparent), inset 0 0 22px rgba(255, 255, 255, .28);
+}
+
+.heartRig {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  width: min(38vw, 28rem);
+  height: min(38vw, 28rem);
+  place-items: center;
+  cursor: grab;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 40px 70px rgba(0, 0, 0, .6));
+}
+
+.heartDragging {
+  cursor: grabbing;
+}
+
+.heartRig::before {
+  content: '';
+  position: absolute;
+  inset: 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--heart-primary) 24%, transparent), transparent 66%);
+  filter: blur(22px);
+  animation: heartAura 4.8s ease-in-out infinite;
+}
+
+.heartShadow {
+  position: absolute;
+  bottom: 8%;
+  width: 54%;
+  height: 13%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, .62), transparent 70%);
+  filter: blur(10px);
+  transform: translateY(7rem) rotateX(74deg);
+}
+
+.heartObject {
+  position: relative;
+  width: 72%;
+  height: 72%;
+  transform-style: preserve-3d;
+  animation: heartBreathe 5s ease-in-out infinite;
+}
+
+.heartLayer,
+.heartBacklight,
+.heartFace,
+.heartRim,
+.heartGlass,
+.heartGlint {
+  position: absolute;
+  inset: 0;
+  display: block;
+  -webkit-mask: url('/identity/two-harmonic-mark-gold.svg') center / contain no-repeat;
+  mask: url('/identity/two-harmonic-mark-gold.svg') center / contain no-repeat;
+}
+
+.heartLayer {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--heart-primary) 82%, #000), #21170e 58%, color-mix(in srgb, var(--heart-secondary) 30%, #000));
+  opacity: .72;
+  transform: translateZ(var(--layer-depth));
+}
+
+.heartBacklight {
+  background: var(--heart-secondary);
+  filter: blur(18px);
+  opacity: .3;
+  transform: translateZ(-18px) scale(1.08);
+}
+
+.heartFace {
+  background: radial-gradient(circle at 30% 18%, #fff, var(--heart-secondary) 12%, var(--heart-primary) 45%, #2a1b0b 78%);
+  box-shadow: inset -24px -30px 45px rgba(0, 0, 0, .44), inset 14px 16px 35px rgba(255, 255, 255, .22), 0 0 70px color-mix(in srgb, var(--heart-primary) 42%, transparent);
+  transform: translateZ(14px);
+}
+
+.heartRim {
+  background: linear-gradient(135deg, #fff8, var(--heart-secondary), transparent 48%);
+  filter: blur(.4px);
+  opacity: .72;
+  transform: translateZ(18px) scale(1.018);
+}
+
+.heartGlass {
+  background: radial-gradient(circle at 20% 12%, rgba(255, 255, 255, .85), transparent 18%), linear-gradient(135deg, rgba(255, 255, 255, .16), transparent 54%);
+  mix-blend-mode: screen;
+  opacity: .7;
+  transform: translateZ(20px) scale(.985);
+}
+
+.heartGlint {
+  background: linear-gradient(118deg, transparent 25%, rgba(255, 255, 255, .72), transparent 42%);
+  mix-blend-mode: screen;
+  animation: glint 4.5s ease-in-out infinite;
+  transform: translateZ(21px) scale(.92);
+}
+
+.controlPanel,
+.worldPanel {
+  position: relative;
+  z-index: 12;
+  border: 1px solid color-mix(in srgb, var(--selected-world) 28%, rgba(255, 255, 255, .12));
+  border-radius: 2rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .03));
+  box-shadow: 0 24px 90px rgba(0, 0, 0, .48), 0 0 70px color-mix(in srgb, var(--selected-world) 15%, transparent);
+  padding: 1.25rem;
+  backdrop-filter: blur(24px);
+}
+
+.controlPanel {
+  align-self: end;
+}
+
+.controlPanel h2,
+.worldPanel h2 {
+  margin-top: .6rem;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 950;
+  letter-spacing: -.07em;
+  line-height: .9;
+}
+
+.controlPanel p:not(.panelKicker),
+.worldPanel p:not(.panelKicker) {
+  margin-top: .8rem;
+  color: rgba(255, 255, 255, .62);
+  line-height: 1.7;
+}
+
+.presetGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .55rem;
+  margin-top: 1rem;
+}
+
+.presetGrid button,
+.colorInputs label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .7rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, .28);
+  padding: .7rem;
+  color: rgba(255, 255, 255, .76);
+  font-size: .72rem;
+  font-weight: 850;
+}
+
+.presetGrid span {
+  width: 2.2rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(255, 255, 255, .14);
+}
+
+.colorInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .65rem;
+  margin-top: .8rem;
+}
+
+.colorInputs input {
+  width: 2.5rem;
+  height: 2rem;
+  border: 0;
+  background: transparent;
+}
+
+.worldPanel {
+  position: absolute;
+  right: clamp(1rem, 4vw, 4rem);
+  bottom: 3.5rem;
+  max-width: 27rem;
+}
+
+.closePanel {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .34);
+  padding: .45rem .75rem;
+  color: rgba(255, 255, 255, .62);
+  font-size: .68rem;
+  font-weight: 850;
+}
+
+.panelActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: 1.1rem;
+}
+
+.panelActions a,
+.panelActions button {
+  border: 1px solid color-mix(in srgb, var(--selected-world) 42%, rgba(255, 255, 255, .14));
+  border-radius: 999px;
+  padding: .85rem 1rem;
+  font-size: .72rem;
+  font-weight: 950;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.panelActions a {
+  background: linear-gradient(135deg, var(--selected-accent), var(--selected-world));
+  color: #050505;
+}
+
+.panelActions button {
+  background: rgba(0, 0, 0, .26);
+  color: rgba(255, 255, 255, .75);
+}
+
+.fallbackMap {
+  position: relative;
+  z-index: 8;
+  display: none;
+  padding: 1rem clamp(1rem, 4vw, 4rem) 4rem;
+}
+
+.fallbackMap h2 {
+  margin: .8rem 0 1rem;
+  font-size: 2.4rem;
+  font-weight: 950;
+  letter-spacing: -.07em;
+}
+
+.fallbackMap div {
+  display: grid;
+  gap: .8rem;
+}
+
+.fallbackMap a {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, .055);
+  padding: 1rem;
+  font-weight: 900;
+}
+
+.fallbackMap span {
+  color: rgba(255, 255, 255, .48);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+@keyframes starDrift {
+  to { transform: translate3d(-80px, 55px, 0); }
+}
+
+@keyframes orbitSpin {
+  to { transform: rotateY(360deg); }
+}
+
+@keyframes portalFloat {
+  50% { margin-top: -4.25rem; }
+}
+
+@keyframes heartAura {
+  50% { opacity: .72; transform: scale(1.08); }
+}
+
+@keyframes heartBreathe {
+  50% { transform: scale(1.045) rotateZ(.8deg); }
+}
+
+@keyframes glint {
+  0%, 38%, 100% { opacity: 0; transform: translateZ(21px) translateX(-18%) scale(.92); }
+  52% { opacity: .95; transform: translateZ(21px) translateX(22%) scale(.92); }
+}
+
+@media (max-width: 1100px) {
+  .stage {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .copyBlock { margin-top: 2rem; }
+  .universe { min-height: 38rem; }
+  .controlPanel { max-width: 42rem; }
+
+  .worldPanel {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    max-width: none;
+    margin: 0 clamp(1rem, 4vw, 4rem) 3rem;
+  }
+
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .heartRig {
+    width: 22rem;
+    height: 22rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .navLinks { display: none; }
+  .copyBlock h1 { font-size: clamp(3.2rem, 18vw, 5.2rem); }
+  .universe { min-height: 31rem; perspective: 900px; }
+  .universe::before { width: 22rem; height: 22rem; }
+  .heartRig { width: 17rem; height: 17rem; }
+
+  .portal {
+    width: 5.5rem;
+    height: 5.5rem;
+    margin: -2.75rem;
+    transform: rotateY(var(--portal-angle)) translateZ(11rem) rotateY(calc(var(--portal-angle) * -1));
+  }
+
+  .portalCore { width: 3.1rem; height: 3.1rem; }
+  .portalLabel { font-size: .56rem; }
+  .colorInputs { grid-template-columns: 1fr; }
+}
+
+@supports not (transform-style: preserve-3d) {
+  .stage { display: block; }
+  .universe,
+  .controlPanel,
+  .worldPanel { display: none; }
+  .fallbackMap { display: block; }
+  .shell { overflow: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starfield,
+  .orbitPlane,
+  .portal,
+  .heartRig::before,
+  .heartObject,
+  .heartGlint {
+    animation: none;
+  }
+
+  .portal,
+  .navLinks a,
+  .cameraRig {
+    transition: none;
+  }
+
+  .fallbackMap { display: block; }
+}

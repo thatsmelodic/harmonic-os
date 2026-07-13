@@ -31,7 +31,7 @@ for (const route of ['/worlds/melodic', '/worlds/fried-em', '/worlds/schmackinn'
 }
 
 const canonicalPage = readFileSync('app/worlds/2-harmonic/page.tsx', 'utf8');
-assert.match(canonicalPage, /TwoHarmonicWorldExperience/, 'Canonical 2 Harmonic route renders the public fashion house experience');
-assert.match(canonicalPage, /getTwoHarmonicCatalog/, 'Canonical 2 Harmonic route loads the same catalog as the public world');
+assert.match(canonicalPage, /\.\.\/two-harmonic\/page/, 'Backward-compatible 2 Harmonic route aliases the canonical two-harmonic implementation');
+assert.doesNotMatch(canonicalPage, /getTwoHarmonicCatalog|TwoHarmonicWorldExperience/, 'Backward-compatible 2 Harmonic route does not duplicate canonical world logic');
 
 console.log('routing and studio UX assertions passed');
