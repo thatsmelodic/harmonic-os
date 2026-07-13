@@ -1,6 +1,6 @@
 'use client';
 
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows, Environment } from '@react-three/drei';
 import { Suspense, useEffect, useRef } from 'react';
 import * as THREE from 'three';
@@ -16,7 +16,7 @@ const routes = [
 ];
 
 function DynastyCamera({ activeLandmark }: { activeLandmark: number }) {
-  const { camera, pointer } = useThree();
+  const { camera, pointer, gl } = useThree();
   const targetPosition = useRef(new THREE.Vector3());
   const targetLookAt = useRef(new THREE.Vector3());
   const free = useRef(new THREE.Vector3());
@@ -27,6 +27,16 @@ function DynastyCamera({ activeLandmark }: { activeLandmark: number }) {
     targetPosition.current.set(route.position[0], route.position[1], route.position[2]);
     targetLookAt.current.set(route.lookAt[0], route.lookAt[1], route.lookAt[2]);
   }, [activeLandmark]);
+
+  useEffect(() => {
+    const route = routes[0];
+    camera.position.set(route.position[0], route.position[1], route.position[2]);
+    targetPosition.current.copy(camera.position);
+    targetLookAt.current.set(route.lookAt[0], route.lookAt[1], route.lookAt[2]);
+    gl.outputColorSpace = THREE.SRGBColorSpace;
+    gl.toneMapping = THREE.ACESFilmicToneMapping;
+    gl.toneMappingExposure = 1.12;
+  }, [camera, gl]);
 
   useEffect(() => {
     const setKey = (event: KeyboardEvent, pressed: boolean) => {
@@ -46,43 +56,26 @@ function DynastyCamera({ activeLandmark }: { activeLandmark: number }) {
     };
   }, []);
 
-  useThree(({ gl }) => {
-    gl.outputColorSpace = THREE.SRGBColorSpace;
-    gl.toneMapping = THREE.ACESFilmicToneMapping;
-    gl.toneMappingExposure = 1.12;
-  });
+  useFrame(({ clock }, delta) => {
+    const speed = Math.min(delta, 0.05) * 4.2;
+    if (keys.current.w) free.current.z -= speed;
+    if (keys.current.s) free.current.z += speed;
+    if (keys.current.a) free.current.x -= speed;
+    if (keys.current.d) free.current.x += speed;
+    free.current.x = THREE.MathUtils.clamp(free.current.x, -5.5, 5.5);
+    free.current.z = THREE.MathUtils.clamp(free.current.z, -7, 5);
 
-  useEffect(() => {
-    const route = routes[0];
-    camera.position.set(route.position[0], route.position[1], route.position[2]);
-    targetPosition.current.copy(camera.position);
-    targetLookAt.current.set(route.lookAt[0], route.lookAt[1], route.lookAt[2]);
-  }, [camera]);
-
-  useThree(({ invalidate }) => {
-    const animate = () => invalidate();
-    const interval = window.setInterval(animate, 32);
-    return () => window.clearInterval(interval);
-  });
-
-  useThree(({ clock }) => {
-    const update = () => {
-      const delta = Math.min(clock.getDelta(), 0.05);
-      const speed = delta * 4.2;
-      if (keys.current.w) free.current.z -= speed;
-      if (keys.current.s) free.current.z += speed;
-      if (keys.current.a) free.current.x -= speed;
-      if (keys.current.d) free.current.x += speed;
-      free.current.x = THREE.MathUtils.clamp(free.current.x, -5.5, 5.5);
-      free.current.z = THREE.MathUtils.clamp(free.current.z, -7, 5);
-
-      const desired = targetPosition.current.clone().add(new THREE.Vector3(pointer.x * 1.2 + free.current.x, pointer.y * 0.55 + Math.sin(clock.elapsedTime * 0.2) * 0.12, free.current.z));
-      camera.position.lerp(desired, 0.055);
-      camera.lookAt(targetLookAt.current.x + free.current.x * 0.25, targetLookAt.current.y, targetLookAt.current.z + free.current.z * 0.28);
-      requestAnimationFrame(update);
-    };
-    const frame = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(frame);
+    const desired = targetPosition.current.clone().add(new THREE.Vector3(
+      pointer.x * 1.2 + free.current.x,
+      pointer.y * 0.55 + Math.sin(clock.elapsedTime * 0.2) * 0.12,
+      free.current.z,
+    ));
+    camera.position.lerp(desired, 1 - Math.pow(0.0012, delta));
+    camera.lookAt(
+      targetLookAt.current.x + free.current.x * 0.25,
+      targetLookAt.current.y,
+      targetLookAt.current.z + free.current.z * 0.28,
+    );
   });
 
   return null;
