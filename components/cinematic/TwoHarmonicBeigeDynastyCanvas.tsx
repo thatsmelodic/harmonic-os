@@ -19,6 +19,85 @@ const routes = [
   { position: [8, 7.6, -10] as const, lookAt: [0, 5.2, -43] as const },
 ];
 
+function createSurfaceTexture(size = 128) {
+  const data = new Uint8Array(size * size * 4);
+  let seed = 93821;
+  const random = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967295;
+  };
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const i = (y * size + x) * 4;
+      const broad = Math.sin(x * 0.19) * 11 + Math.cos(y * 0.13) * 9;
+      const grain = (random() - 0.5) * 34;
+      const pores = random() > 0.965 ? -44 : 0;
+      const value = THREE.MathUtils.clamp(132 + broad + grain + pores, 34, 224);
+      data[i] = value;
+      data[i + 1] = value;
+      data[i + 2] = value;
+      data[i + 3] = 255;
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(4, 4);
+  texture.colorSpace = THREE.NoColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function MaterialRealismPass() {
+  const { scene, gl } = useThree();
+  const textureRef = useRef<THREE.DataTexture | null>(null);
+
+  useEffect(() => {
+    const texture = createSurfaceTexture();
+    texture.anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
+    textureRef.current = texture;
+
+    scene.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      object.castShadow = true;
+      object.receiveShadow = true;
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach((material) => {
+        if (!(material instanceof THREE.MeshStandardMaterial)) return;
+        const color = `#${material.color.getHexString()}`;
+        material.envMapIntensity = 0.42;
+
+        const isDark = color === '#11100e' || color === '#2a2622';
+        const isGold = color === '#d6aa45';
+        const isStone = !isDark && !isGold && material.roughness > 0.45;
+
+        if (isStone) {
+          material.bumpMap = texture;
+          material.bumpScale = 0.055;
+          material.roughness = Math.max(material.roughness, 0.76);
+          material.metalness = Math.min(material.metalness, 0.06);
+        }
+        if (isDark) {
+          material.roughness = 0.16;
+          material.metalness = 0.68;
+          material.envMapIntensity = 1.15;
+        }
+        if (isGold) {
+          material.roughness = 0.24;
+          material.metalness = 0.9;
+          material.envMapIntensity = 1.35;
+          material.emissiveIntensity = Math.min(material.emissiveIntensity, 0.12);
+        }
+        material.needsUpdate = true;
+      });
+    });
+
+    return () => texture.dispose();
+  }, [gl, scene]);
+
+  return null;
+}
+
 function DynastyCamera({ activeLandmark }: { activeLandmark: number }) {
   const { camera, pointer, gl } = useThree();
   const targetPosition = useRef(new THREE.Vector3());
@@ -130,6 +209,7 @@ function Scene(props: TwoHarmonicCanvasProps) {
     <spotLight position={[0, 22, 15]} angle={0.42} penumbra={0.8} intensity={5.5} color="#e8c994" distance={90} castShadow={props.quality === 'cinematic'} />
     <GroundDetail />
     <TwoHarmonicBeigeDynasty accent={props.accent} quality={props.quality} activeLandmark={props.activeLandmark} onSelectLandmark={props.onSelectLandmark} />
+    <MaterialRealismPass />
     {props.quality === 'cinematic' && <ContactShadows position={[0, -0.56, -14]} opacity={0.78} scale={92} blur={2.2} far={48} resolution={1024} />}
     {props.quality === 'cinematic' && <Environment preset="warehouse" background={false} environmentIntensity={0.24} />}
     <DynastyCamera activeLandmark={props.activeLandmark} />
