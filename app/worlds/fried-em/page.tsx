@@ -1,3 +1,4 @@
+import { CinematicDistrictScene } from '@/components/cinematic/CinematicDistrictScene';
 import { FriedEmParkExperience } from '@/components/worlds/FriedEmParkExperience';
 import { WorldClimateLayer } from '@/components/worlds/WorldClimateLayer';
 
@@ -9,7 +10,8 @@ export const metadata = {
 export default function FriedEmWorldPage() {
   return (
     <>
-      <FriedEmParkExperience />
+      <CinematicDistrictScene district="fried-em" compact />
+      <div id="district-content"><FriedEmParkExperience /></div>
       <WorldClimateLayer />
     </>
   );
