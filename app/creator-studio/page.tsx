@@ -1,10 +1,15 @@
 import { CreatorStudioWorkbench } from '@/components/studio/CreatorStudioWorkbench';
+import { OwnerStudioGate } from '@/components/studio/OwnerStudioGate';
 
 export const metadata = {
   title: 'Creator Studio | Harmonic OS',
-  description: 'Visually edit, preview, compare, approve, and publish every Harmonic OS world without changing code.',
+  description: 'Private owner workspace for editing and publishing Harmonic OS.',
 };
 
 export default function CreatorStudioPage() {
-  return <CreatorStudioWorkbench />;
+  return (
+    <OwnerStudioGate>
+      <CreatorStudioWorkbench />
+    </OwnerStudioGate>
+  );
 }
