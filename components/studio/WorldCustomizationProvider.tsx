@@ -26,47 +26,48 @@ const defaults:Store={
 };
 const STORAGE_KEY='harmonic-world-customization-v4';
 const PROPOSAL_KEY='harmonic-studio-proposal-v1';
+const SECRET_KEY='harmonic-studio-secret-session';
 const Ctx=createContext<ContextValue|null>(null);
 function resolveWorld(path:string):WorldKey { if(path.includes('/worlds/melodic'))return'melodic'; if(path.includes('/worlds/fried-em'))return'fried-em'; if(path.includes('/worlds/schmack'))return'schmackinn'; if(path.includes('/worlds/harmonic')||path.includes('/worlds/2-harmonic')||path.includes('/worlds/two-harmonic')||path.includes('/shop'))return'two-harmonic'; if(path==='/')return'home'; return'global'; }
 function mergeStore(source?:Partial<Store>):Store { return Object.fromEntries(Object.entries(defaults).map(([key,value])=>{const saved=source?.[key as WorldKey];return[key,{...value,...saved,labels:{...value.labels,...saved?.labels},media:saved?.media??value.media}]})) as Store; }
 
 export function WorldCustomizationProvider({children}:{children:ReactNode}) {
  const pathname=usePathname(); const activeWorld=resolveWorld(pathname); const studioMode=pathname.startsWith('/studio')||pathname.startsWith('/creator-studio');
- const isolatedPreview=useRef(false);
+ const isolatedPreview=useRef(false); const dirtyWorld=useRef<WorldKey>('global'); const initialized=useRef(false);
  const [settings,setSettings]=useState<Store>(defaults); const [cloudStatus,setCloudStatus]=useState<CloudStatus>('loading'); const [lastSavedAt,setLastSavedAt]=useState<number|null>(null); const [versions,setVersions]=useState<WorldVersion[]>([]);
  useEffect(()=>{
-  const params=new URLSearchParams(window.location.search);
-  const proposalMode=params.get('studioProposal')==='1';
-  isolatedPreview.current=proposalMode;
-  const local=window.localStorage.getItem(STORAGE_KEY)||window.localStorage.getItem('harmonic-world-customization-v3');
-  let localStore:Store=defaults;
+  const params=new URLSearchParams(window.location.search); const proposalMode=params.get('studioProposal')==='1'; isolatedPreview.current=proposalMode;
+  const local=window.localStorage.getItem(STORAGE_KEY)||window.localStorage.getItem('harmonic-world-customization-v3'); let localStore:Store=defaults;
   if(local)try{localStore=mergeStore(JSON.parse(local))}catch{}
-  if(proposalMode){
-   try{const proposal=JSON.parse(window.localStorage.getItem(PROPOSAL_KEY)||'null') as {world:WorldKey;settings:WorldCustomization}|null;if(proposal)setSettings(mergeStore({...localStore,[proposal.world]:proposal.settings}));else setSettings(localStore);}catch{setSettings(localStore)}
-   setCloudStatus('local');
-   return;
-  }
+  if(proposalMode){try{const proposal=JSON.parse(window.localStorage.getItem(PROPOSAL_KEY)||'null') as {world:WorldKey;settings:WorldCustomization}|null;if(proposal)setSettings(mergeStore({...localStore,[proposal.world]:proposal.settings}));else setSettings(localStore);}catch{setSettings(localStore)} setCloudStatus('local');initialized.current=true;return;}
   setSettings(localStore);
-  fetch(`/api/world-design?mode=${studioMode?'draft':'live'}`).then(r=>r.json()).then(data=>{if(data.designs&&Object.keys(data.designs).length)setSettings(current=>mergeStore({...current,...data.designs}));setCloudStatus('ready')}).catch(()=>setCloudStatus('local'));
+  fetch(`/api/world-design?mode=${studioMode?'draft':'live'}`).then(r=>r.json()).then(data=>{if(data.designs&&Object.keys(data.designs).length)setSettings(current=>mergeStore({...current,...data.designs}));setCloudStatus('ready');initialized.current=true}).catch(()=>{setCloudStatus('local');initialized.current=true});
  },[studioMode]);
  useEffect(()=>{if(!isolatedPreview.current)window.localStorage.setItem(STORAGE_KEY,JSON.stringify(settings))},[settings]);
  useEffect(()=>{const active=settings[activeWorld]||settings.global;const root=document.documentElement;(['primary','secondary','accent','background','surface','text','muted','border','glow'] as const).forEach(k=>root.style.setProperty(`--world-${k}`,active[k]));root.dataset.world=activeWorld},[settings,activeWorld]);
- const mutate=(fn:(current:Store)=>Store)=>{setSettings(fn);setCloudStatus('dirty')};
+ useEffect(()=>{
+  if(!studioMode||isolatedPreview.current||cloudStatus!=='dirty'||!initialized.current)return;
+  const secret=window.sessionStorage.getItem(SECRET_KEY)||''; if(!secret)return;
+  const world=dirtyWorld.current; const snapshot=settings[world];
+  const timer=window.setTimeout(()=>{void request(world,secret,{action:'save-draft',settings:snapshot}).then(data=>{if(data)setCloudStatus('draft-saved')})},900);
+  return()=>window.clearTimeout(timer);
+ },[settings,cloudStatus,studioMode]);
+ const mutate=(world:WorldKey,fn:(current:Store)=>Store)=>{dirtyWorld.current=world;setSettings(fn);setCloudStatus('dirty')};
  async function request(world:WorldKey,secret:string,payload:Record<string,unknown>){setCloudStatus('saving');try{const r=await fetch('/api/world-design',{method:'PUT',headers:{'Content-Type':'application/json','x-harmonic-studio-key':secret},body:JSON.stringify({world,...payload})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Request failed');setLastSavedAt(Date.now());return data}catch{setCloudStatus('error');return null}}
  const saveDraftAction=async(world:WorldKey,secret:string)=>{const data=await request(world,secret,{action:'save-draft',settings:settings[world]});if(data){setCloudStatus('draft-saved');return true}return false};
  const value=useMemo<ContextValue>(()=>({settings,activeWorld,cloudStatus,lastSavedAt,versions,
-  updateWorld:(world,patch)=>mutate(c=>({...c,[world]:{...c[world],...patch}})),
-  updateLabel:(world,key,label)=>mutate(c=>({...c,[world]:{...c[world],labels:{...c[world].labels,[key]:label}}})),
-  addMedia:(world,asset)=>mutate(c=>({...c,[world]:{...c[world],media:[...c[world].media,{...asset,id:crypto.randomUUID(),motion:asset.motion||'none',duration:asset.duration||6,delay:asset.delay||0}]}})),
-  updateMedia:(world,id,patch)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.map(a=>a.id===id?{...a,...patch}:a)}})),
-  removeMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.filter(a=>a.id!==id)}})),
-  duplicateMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:[...c[world].media,...c[world].media.filter(a=>a.id===id).map(a=>({...a,id:crypto.randomUUID(),name:`${a.name} Copy`,x:Math.min(100,a.x+4),y:Math.min(100,a.y+4)}))]}})),
-  replaceSettings:(next)=>mutate(()=>next), replaceWorld:(world,next)=>mutate(c=>({...c,[world]:next})), saveDraft:saveDraftAction, saveWorldToCloud:saveDraftAction,
+  updateWorld:(world,patch)=>mutate(world,c=>({...c,[world]:{...c[world],...patch}})),
+  updateLabel:(world,key,label)=>mutate(world,c=>({...c,[world]:{...c[world],labels:{...c[world].labels,[key]:label}}})),
+  addMedia:(world,asset)=>mutate(world,c=>({...c,[world]:{...c[world],media:[...c[world].media,{...asset,id:crypto.randomUUID(),motion:asset.motion||'none',duration:asset.duration||6,delay:asset.delay||0}]}})),
+  updateMedia:(world,id,patch)=>mutate(world,c=>({...c,[world]:{...c[world],media:c[world].media.map(a=>a.id===id?{...a,...patch}:a)}})),
+  removeMedia:(world,id)=>mutate(world,c=>({...c,[world]:{...c[world],media:c[world].media.filter(a=>a.id!==id)}})),
+  duplicateMedia:(world,id)=>mutate(world,c=>({...c,[world]:{...c[world],media:[...c[world].media,...c[world].media.filter(a=>a.id===id).map(a=>({...a,id:crypto.randomUUID(),name:`${a.name} Copy`,x:Math.min(100,a.x+4),y:Math.min(100,a.y+4)}))]}})),
+  replaceSettings:(next)=>mutate('global',()=>next), replaceWorld:(world,next)=>mutate(world,c=>({...c,[world]:next})), saveDraft:saveDraftAction, saveWorldToCloud:saveDraftAction,
   publishWorld:async(world,secret,label)=>{const data=await request(world,secret,{action:'publish',settings:settings[world],label});if(data){setCloudStatus('published');return true}return false},
   loadVersions:async(world)=>{const data=await fetch(`/api/world-design?mode=draft&world=${encodeURIComponent(world)}`).then(r=>r.json());setVersions(data.versions||[])},
   restoreVersion:async(world,versionId,secret)=>{const data=await request(world,secret,{action:'restore',versionId});if(data?.settings){setSettings(c=>({...c,[world]:data.settings}));setCloudStatus('published');return true}return false},
-  copyToAll:(world)=>mutate(c=>Object.fromEntries(Object.keys(c).map(k=>[k,{...c[world],labels:{...c[world].labels},media:c[world].media.map(a=>({...a,id:crypto.randomUUID()}))}])) as Store),
-  resetWorld:(world)=>mutate(c=>({...c,[world]:defaults[world]}))
+  copyToAll:(world)=>mutate(world,c=>Object.fromEntries(Object.keys(c).map(k=>[k,{...c[world],labels:{...c[world].labels},media:c[world].media.map(a=>({...a,id:crypto.randomUUID()}))}])) as Store),
+  resetWorld:(world)=>mutate(world,c=>({...c,[world]:defaults[world]}))
  }),[settings,activeWorld,cloudStatus,lastSavedAt,versions]);
  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
