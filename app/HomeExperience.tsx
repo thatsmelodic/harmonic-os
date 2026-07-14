@@ -1,195 +1,177 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './homepage.module.css';
 
-type World = { id: string; label: string; href: string; feature: string };
-type Hotspot = { x: number; y: number; width: number; height: number };
-type HomeSettings = {
-  imagePath: string;
-  fit: 'cover' | 'contain';
-  zoom: number;
-  positionX: number;
-  positionY: number;
-  brightness: number;
-  saturation: number;
-  camera: number;
-  stars: number;
-  motion: boolean;
-  hotspots: boolean;
-  worldPositions: Record<string, Hotspot>;
-};
-
-const STORAGE_KEY = 'harmonic-home-settings-v2';
-const defaultPositions: Record<string, Hotspot> = {
-  melodic: { x: 25.5, y: 8, width: 20, height: 25 },
-  fried: { x: 57, y: 3.5, width: 22.5, height: 34 },
-  business: { x: 21.5, y: 43, width: 17, height: 22 },
-  heart: { x: 38.5, y: 27, width: 22, height: 39 },
-  schmackinn: { x: 61, y: 44, width: 22, height: 35 },
-  harmonic: { x: 39, y: 59, width: 20, height: 36 },
-};
-const defaults: HomeSettings = {
-  imagePath: '/cinematic/harmonic-os-home.jpg.png', fit: 'cover', zoom: 1.035,
-  positionX: 50, positionY: 50, brightness: 1, saturation: 1,
-  camera: 1, stars: .28, motion: true, hotspots: true,
-  worldPositions: defaultPositions,
+type World = {
+  id: string;
+  prompt: string;
+  name: string;
+  frequency: string;
+  icon: string;
+  href: string;
+  color: string;
+  items: string[];
+  summary: string;
 };
 
 const worlds: World[] = [
-  { id: 'melodic', label: 'Melodic', href: '/worlds/melodic', feature: 'Sound Planet' },
-  { id: 'fried', label: 'Fried Em', href: '/worlds/fried-em', feature: 'Basketball Universe' },
-  { id: 'business', label: 'Business', href: '/worlds/business', feature: 'Growth Orbit' },
-  { id: 'heart', label: 'Harmonic OS', href: '/worlds', feature: 'Central Frequency' },
-  { id: 'schmackinn', label: 'Schmackinn', href: '/worlds/schmackinn', feature: 'Lasagna Mode' },
-  { id: 'harmonic', label: '2 Harmonic', href: '/worlds/two-harmonic', feature: 'Design World' },
+  {
+    id: 'melodic',
+    prompt: 'Hear something?',
+    name: 'Melodic',
+    frequency: 'Music Frequency',
+    icon: '♪',
+    href: '/worlds/melodic',
+    color: '#a952ff',
+    items: ['Beats & Songs', 'Studio Sessions', 'Behind The Sound', 'Melodic Voices'],
+    summary: 'The source frequency for music, performance, studio sessions, releases, and the creative process behind Melodic.',
+  },
+  {
+    id: 'two-harmonic',
+    prompt: 'Ready to resonate?',
+    name: '2 Harmonic',
+    frequency: 'Fashion Frequency',
+    icon: '∞',
+    href: '/worlds/two-harmonic',
+    color: '#57bfff',
+    items: ['Collections', 'Drops', 'Behind The Stitch', 'Harmonic Souls'],
+    summary: 'The fashion world of stitched melodies, collection stories, garment design, drops, and community expression.',
+  },
+  {
+    id: 'fried-em',
+    prompt: 'Feeling competitive?',
+    name: 'Fried Em',
+    frequency: 'Hoops Frequency',
+    icon: '◉',
+    href: '/worlds/fried-em',
+    color: '#ff8b2b',
+    items: ['Game Highlights', 'Training', 'Challenges', 'Behind The Grind'],
+    summary: 'Basketball, competition, smoke, training, highlights, challenges, and the grind behind every bucket.',
+  },
+  {
+    id: 'schmackinn',
+    prompt: 'Got the munchies?',
+    name: 'Schmackinn',
+    frequency: 'Food Frequency',
+    icon: '◒',
+    href: '/worlds/schmackinn',
+    color: '#c05cff',
+    items: ['Food Reviews', 'Tier Lists', 'Restaurant Map', 'Community Picks'],
+    summary: 'Real food reviews, honest rankings, restaurant discoveries, community picks, and the Schmackinn tier archive.',
+  },
 ];
 
 export default function HomeExperience() {
   const router = useRouter();
-  const pageRef = useRef<HTMLElement>(null);
-  const [activeWorld, setActiveWorld] = useState<string | null>(null);
-  const [selectedWorld, setSelectedWorld] = useState('heart');
-  const [entering, setEntering] = useState<string | null>(null);
-  const [editing, setEditing] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [settings, setSettings] = useState<HomeSettings>(defaults);
+  const [openWorld, setOpenWorld] = useState<string | null>(null);
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as Partial<HomeSettings>;
-        setSettings({ ...defaults, ...parsed, worldPositions: { ...defaultPositions, ...(parsed.worldPositions ?? {}) } });
-      }
-    } catch { /* ignore invalid local data */ }
-  }, []);
-
-  const cssVars = useMemo(() => ({
-    '--home-image': `url("${settings.imagePath}")`,
-    '--image-fit': settings.fit,
-    '--image-zoom': String(settings.zoom),
-    '--image-x': `${settings.positionX}%`,
-    '--image-y': `${settings.positionY}%`,
-    '--image-brightness': String(settings.brightness),
-    '--image-saturation': String(settings.saturation),
-    '--star-opacity': String(settings.stars),
-  } as React.CSSProperties), [settings]);
-
-  const patch = <K extends keyof HomeSettings>(key: K, value: HomeSettings[K]) => {
-    setSettings((current) => ({ ...current, [key]: value }));
-    setSaved(false);
-  };
-
-  const patchWorld = (key: keyof Hotspot, value: number) => {
-    setSettings((current) => ({
-      ...current,
-      worldPositions: {
-        ...current.worldPositions,
-        [selectedWorld]: { ...current.worldPositions[selectedWorld], [key]: value },
-      },
-    }));
-    setSaved(false);
-  };
-
-  const save = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    setSaved(true);
-  };
-
-  const reset = () => {
-    setSettings(defaults);
-    localStorage.removeItem(STORAGE_KEY);
-    setSaved(false);
-  };
-
-  const handlePointerMove = useCallback((event: React.PointerEvent<HTMLElement>) => {
-    if (editing || !settings.motion) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - .5;
-    const y = (event.clientY - bounds.top) / bounds.height - .5;
-    const strength = settings.camera;
-    event.currentTarget.style.setProperty('--camera-x', `${x * 12 * strength}px`);
-    event.currentTarget.style.setProperty('--camera-y', `${y * 8 * strength}px`);
-    event.currentTarget.style.setProperty('--tilt-x', `${y * -1.3 * strength}deg`);
-    event.currentTarget.style.setProperty('--tilt-y', `${x * 1.8 * strength}deg`);
-  }, [editing, settings.camera, settings.motion]);
-
-  const resetCamera = useCallback((event: React.PointerEvent<HTMLElement>) => {
-    event.currentTarget.style.setProperty('--camera-x', '0px');
-    event.currentTarget.style.setProperty('--camera-y', '0px');
-    event.currentTarget.style.setProperty('--tilt-x', '0deg');
-    event.currentTarget.style.setProperty('--tilt-y', '0deg');
-  }, []);
-
-  const enterWorld = useCallback((world: World) => {
-    if (editing || entering) return;
-    setEntering(world.id);
-    window.setTimeout(() => router.push(world.href), 650);
-  }, [editing, entering, router]);
-
-  const currentHotspot = settings.worldPositions[selectedWorld];
+  const active = worlds.find((world) => world.id === openWorld) ?? null;
 
   return (
-    <main ref={pageRef} style={cssVars} className={`${styles.page} ${entering ? styles.isEntering : ''} ${editing ? styles.editing : ''} ${!settings.motion ? styles.motionOff : ''}`} onPointerMove={handlePointerMove} onPointerLeave={resetCamera}>
-      <div className={styles.backdrop} aria-hidden="true" />
-      <div className={styles.image} role="img" aria-label="Harmonic OS cinematic universe" />
-      <div className={styles.starVeil} aria-hidden="true" />
+    <main className={styles.page}>
+      <div className={styles.noise} aria-hidden="true" />
+      <header className={styles.topbar}>
+        <button className={styles.brand} type="button" onClick={() => setOpenWorld(null)}>
+          <span className={styles.brandMark}>∞</span>
+          <span>Harmonic OS</span>
+        </button>
+        <nav className={styles.nav} aria-label="Primary navigation">
+          <button type="button" onClick={() => setOpenWorld(null)}>Home</button>
+          <a href="#worlds">Worlds</a>
+          <a href="#overview">About</a>
+          <a href="#community">Community</a>
+          <a href="/worlds/two-harmonic">Shop</a>
+        </nav>
+        <span className={styles.navLogo}>∞</span>
+      </header>
 
-      {settings.hotspots && worlds.map((world) => {
-        const hotspot = settings.worldPositions[world.id];
-        return (
-          <button
-            key={world.id}
-            type="button"
-            style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%`, width: `${hotspot.width}%`, height: `${hotspot.height}%` }}
-            className={`${styles.worldHotspot} ${world.id === selectedWorld && editing ? styles.selectedHotspot : ''}`}
-            aria-label={`Enter ${world.label}: ${world.feature}`}
-            onPointerEnter={() => setActiveWorld(world.id)}
-            onPointerLeave={() => setActiveWorld(null)}
-            onFocus={() => setActiveWorld(world.id)}
-            onBlur={() => setActiveWorld(null)}
-            onClick={() => editing ? setSelectedWorld(world.id) : enterWorld(world)}
-          >
-            <span className={styles.orbitRing} aria-hidden="true" /><span className={styles.worldPulse} aria-hidden="true" />
-            <span className={styles.worldTooltip}><strong>{world.label}</strong><small>{world.feature}</small></span>
-          </button>
-        );
-      })}
+      <section className={styles.hero}>
+        <div>
+          <p className={styles.eyebrow}>The connected multimedia ecosystem</p>
+          <h1>Harmonic OS</h1>
+          <p className={styles.tagline}>One Frequency. Many Worlds.</p>
+        </div>
+        <div className={styles.heroLogo} aria-hidden="true">∞</div>
+      </section>
 
-      <button className={styles.editButton} type="button" onClick={() => setEditing((value) => !value)}>{editing ? 'Close Editor' : 'Edit Home'}</button>
-      {editing && <aside className={styles.editor} aria-label="Homepage editor">
-        <header><div><small>Harmonic OS</small><h2>Homepage Editor</h2></div><button type="button" onClick={() => setEditing(false)}>×</button></header>
-        <div className={styles.tabs}><button className={styles.activeTab} type="button">Scene</button><button type="button">Worlds</button></div>
-        <label>Image path<input value={settings.imagePath} onChange={(event) => patch('imagePath', event.target.value)} /></label>
-        <label>Image fit<select value={settings.fit} onChange={(event) => patch('fit', event.target.value as HomeSettings['fit'])}><option value="cover">Fill screen</option><option value="contain">Show full image</option></select></label>
-        <label>Zoom <output>{settings.zoom.toFixed(3)}</output><input type="range" min="0.8" max="1.3" step="0.005" value={settings.zoom} onChange={(event) => patch('zoom', Number(event.target.value))} /></label>
-        <label>Horizontal position <output>{settings.positionX}%</output><input type="range" min="0" max="100" value={settings.positionX} onChange={(event) => patch('positionX', Number(event.target.value))} /></label>
-        <label>Vertical position <output>{settings.positionY}%</output><input type="range" min="0" max="100" value={settings.positionY} onChange={(event) => patch('positionY', Number(event.target.value))} /></label>
-        <label>Brightness <output>{settings.brightness.toFixed(2)}</output><input type="range" min="0.5" max="1.5" step="0.01" value={settings.brightness} onChange={(event) => patch('brightness', Number(event.target.value))} /></label>
-        <label>Saturation <output>{settings.saturation.toFixed(2)}</output><input type="range" min="0" max="1.8" step="0.01" value={settings.saturation} onChange={(event) => patch('saturation', Number(event.target.value))} /></label>
-        <label>Camera strength <output>{settings.camera.toFixed(1)}</output><input type="range" min="0" max="2" step="0.1" value={settings.camera} onChange={(event) => patch('camera', Number(event.target.value))} /></label>
-        <label>Star layer <output>{settings.stars.toFixed(2)}</output><input type="range" min="0" max="0.8" step="0.01" value={settings.stars} onChange={(event) => patch('stars', Number(event.target.value))} /></label>
-        <div className={styles.switches}><label><input type="checkbox" checked={settings.motion} onChange={(event) => patch('motion', event.target.checked)} /> Motion</label><label><input type="checkbox" checked={settings.hotspots} onChange={(event) => patch('hotspots', event.target.checked)} /> World hotspots</label></div>
+      <section className={styles.overview} id="overview">
+        <span>Overview</span>
+        <p>
+          Harmonic OS is a multimedia ecosystem under the Melodic brand. Each world represents a different frequency of expression — all connected by the same purpose: Inspire. Entertain. Elevate.
+        </p>
+      </section>
 
-        <section className={styles.worldEditor}>
-          <h3>World Hotspots</h3>
-          <select value={selectedWorld} onChange={(event) => setSelectedWorld(event.target.value)}>{worlds.map((world) => <option key={world.id} value={world.id}>{world.label}</option>)}</select>
-          <p>Click a hotspot on the preview or adjust it below.</p>
-          <label>Left <output>{currentHotspot.x.toFixed(1)}%</output><input type="range" min="0" max="100" step="0.5" value={currentHotspot.x} onChange={(event) => patchWorld('x', Number(event.target.value))} /></label>
-          <label>Top <output>{currentHotspot.y.toFixed(1)}%</output><input type="range" min="0" max="100" step="0.5" value={currentHotspot.y} onChange={(event) => patchWorld('y', Number(event.target.value))} /></label>
-          <label>Width <output>{currentHotspot.width.toFixed(1)}%</output><input type="range" min="4" max="45" step="0.5" value={currentHotspot.width} onChange={(event) => patchWorld('width', Number(event.target.value))} /></label>
-          <label>Height <output>{currentHotspot.height.toFixed(1)}%</output><input type="range" min="4" max="55" step="0.5" value={currentHotspot.height} onChange={(event) => patchWorld('height', Number(event.target.value))} /></label>
-        </section>
+      <section className={styles.sourceFlow}>
+        <button className={styles.sourceCard} type="button" onClick={() => setOpenWorld(null)}>
+          <span className={styles.crown}>♛</span>
+          <strong>Melodic</strong>
+          <small>The Source</small>
+          <p>Vision. Purpose. Creation.</p>
+        </button>
+        <span className={styles.flowLine} aria-hidden="true" />
+      </section>
 
-        <footer><button type="button" onClick={reset}>Reset</button><button type="button" onClick={save}>{saved ? 'Saved' : 'Save Changes'}</button></footer>
-        <p>Changes preview instantly and save to this browser.</p>
-      </aside>}
+      <section className={styles.worldSection} id="worlds">
+        <div className={styles.worldGrid}>
+          {worlds.map((world) => {
+            const isOpen = openWorld === world.id;
+            return (
+              <button
+                key={world.id}
+                type="button"
+                className={`${styles.worldCard} ${isOpen ? styles.worldCardOpen : ''}`}
+                style={{ '--world-color': world.color } as React.CSSProperties}
+                aria-expanded={isOpen}
+                onClick={() => setOpenWorld(isOpen ? null : world.id)}
+              >
+                <span className={styles.worldPrompt}>{world.prompt}</span>
+                <span className={styles.worldIcon}>{world.icon}</span>
+                <span className={styles.worldName}>{world.name}</span>
+                <span className={styles.worldFrequency}>{world.frequency}</span>
+                <span className={styles.expandLabel}>{isOpen ? 'Close frequency' : 'Open frequency'}</span>
+              </button>
+            );
+          })}
+        </div>
 
-      <div className={styles.cameraHint} aria-hidden="true"><span>Move to orbit</span><i /><span>Click to enter</span></div>
-      <div className={`${styles.focusReadout} ${activeWorld ? styles.visible : ''}`} aria-live="polite">{activeWorld ? worlds.find((world) => world.id === activeWorld)?.label : ''}</div>
-      <div className={styles.transitionFlash} aria-hidden="true" />
+        <div className={`${styles.dropdown} ${active ? styles.dropdownOpen : ''}`} aria-live="polite">
+          {active && (
+            <div className={styles.dropdownInner} style={{ '--world-color': active.color } as React.CSSProperties}>
+              <div className={styles.dropdownLead}>
+                <span className={styles.dropdownIcon}>{active.icon}</span>
+                <div>
+                  <small>{active.frequency}</small>
+                  <h2>{active.name}</h2>
+                </div>
+              </div>
+              <p>{active.summary}</p>
+              <ul>
+                {active.items.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+              <button type="button" onClick={() => router.push(active.href)}>Enter {active.name}</button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className={styles.community} id="community">
+        <span className={styles.communityIcon}>♙♙♙</span>
+        <div>
+          <h2>Harmonic Community</h2>
+          <p>One community. Different frequencies.</p>
+        </div>
+        <div className={styles.communityLinks}>
+          <span>Engage</span><i /> <span>Support</span><i /> <span>Create</span><i /> <span>Elevate</span>
+        </div>
+      </section>
+
+      <footer className={styles.footer}>
+        <span>Stay in tune.</span>
+        <div className={styles.wave}>⌁⌁⌁⌁⌁</div>
+        <span>Stay in harmony.</span>
+      </footer>
     </main>
   );
 }
