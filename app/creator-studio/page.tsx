@@ -1,10 +1,10 @@
-import { CreatorStudioV1 } from '@/components/studio/CreatorStudioV1';
+import { CreatorStudioWorkbench } from '@/components/studio/CreatorStudioWorkbench';
 
 export const metadata = {
   title: 'Creator Studio | Harmonic OS',
-  description: 'Visually edit the Harmonic OS homepage and every connected world without changing code.',
+  description: 'Visually edit, preview, compare, approve, and publish every Harmonic OS world without changing code.',
 };
 
 export default function CreatorStudioPage() {
-  return <CreatorStudioV1 />;
+  return <CreatorStudioWorkbench />;
 }

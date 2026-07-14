@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 
 export type WorldKey = 'global' | 'home' | 'melodic' | 'fried-em' | 'schmackinn' | 'two-harmonic';
@@ -25,15 +25,31 @@ const defaults:Store={
  'two-harmonic':base({primary:'#36b2cb',secondary:'#f472b6',accent:'#facc15',background:'#07090b',surface:'#102027',text:'#ffffff',muted:'#bae6fd',border:'#155e75',glow:'#67e8f9',title:'Stitched Melodies.',subtitle:'Where songs become garments and garments become memory.',labels:{}})
 };
 const STORAGE_KEY='harmonic-world-customization-v4';
+const PROPOSAL_KEY='harmonic-studio-proposal-v1';
 const Ctx=createContext<ContextValue|null>(null);
 function resolveWorld(path:string):WorldKey { if(path.includes('/worlds/melodic'))return'melodic'; if(path.includes('/worlds/fried-em'))return'fried-em'; if(path.includes('/worlds/schmack'))return'schmackinn'; if(path.includes('/worlds/harmonic')||path.includes('/worlds/2-harmonic')||path.includes('/worlds/two-harmonic')||path.includes('/shop'))return'two-harmonic'; if(path==='/')return'home'; return'global'; }
 function mergeStore(source?:Partial<Store>):Store { return Object.fromEntries(Object.entries(defaults).map(([key,value])=>{const saved=source?.[key as WorldKey];return[key,{...value,...saved,labels:{...value.labels,...saved?.labels},media:saved?.media??value.media}]})) as Store; }
 
 export function WorldCustomizationProvider({children}:{children:ReactNode}) {
- const pathname=usePathname(); const activeWorld=resolveWorld(pathname); const studioMode=pathname.startsWith('/studio');
+ const pathname=usePathname(); const activeWorld=resolveWorld(pathname); const studioMode=pathname.startsWith('/studio')||pathname.startsWith('/creator-studio');
+ const isolatedPreview=useRef(false);
  const [settings,setSettings]=useState<Store>(defaults); const [cloudStatus,setCloudStatus]=useState<CloudStatus>('loading'); const [lastSavedAt,setLastSavedAt]=useState<number|null>(null); const [versions,setVersions]=useState<WorldVersion[]>([]);
- useEffect(()=>{const local=window.localStorage.getItem(STORAGE_KEY)||window.localStorage.getItem('harmonic-world-customization-v3'); if(local)try{setSettings(mergeStore(JSON.parse(local)))}catch{}; fetch(`/api/world-design?mode=${studioMode?'draft':'live'}`).then(r=>r.json()).then(data=>{if(data.designs&&Object.keys(data.designs).length)setSettings(current=>mergeStore({...current,...data.designs}));setCloudStatus('ready')}).catch(()=>setCloudStatus('local'));},[studioMode]);
- useEffect(()=>{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(settings))},[settings]);
+ useEffect(()=>{
+  const params=new URLSearchParams(window.location.search);
+  const proposalMode=params.get('studioProposal')==='1';
+  isolatedPreview.current=proposalMode;
+  const local=window.localStorage.getItem(STORAGE_KEY)||window.localStorage.getItem('harmonic-world-customization-v3');
+  let localStore:Store=defaults;
+  if(local)try{localStore=mergeStore(JSON.parse(local))}catch{}
+  if(proposalMode){
+   try{const proposal=JSON.parse(window.localStorage.getItem(PROPOSAL_KEY)||'null') as {world:WorldKey;settings:WorldCustomization}|null;if(proposal)setSettings(mergeStore({...localStore,[proposal.world]:proposal.settings}));else setSettings(localStore);}catch{setSettings(localStore)}
+   setCloudStatus('local');
+   return;
+  }
+  setSettings(localStore);
+  fetch(`/api/world-design?mode=${studioMode?'draft':'live'}`).then(r=>r.json()).then(data=>{if(data.designs&&Object.keys(data.designs).length)setSettings(current=>mergeStore({...current,...data.designs}));setCloudStatus('ready')}).catch(()=>setCloudStatus('local'));
+ },[studioMode]);
+ useEffect(()=>{if(!isolatedPreview.current)window.localStorage.setItem(STORAGE_KEY,JSON.stringify(settings))},[settings]);
  useEffect(()=>{const active=settings[activeWorld]||settings.global;const root=document.documentElement;(['primary','secondary','accent','background','surface','text','muted','border','glow'] as const).forEach(k=>root.style.setProperty(`--world-${k}`,active[k]));root.dataset.world=activeWorld},[settings,activeWorld]);
  const mutate=(fn:(current:Store)=>Store)=>{setSettings(fn);setCloudStatus('dirty')};
  async function request(world:WorldKey,secret:string,payload:Record<string,unknown>){setCloudStatus('saving');try{const r=await fetch('/api/world-design',{method:'PUT',headers:{'Content-Type':'application/json','x-harmonic-studio-key':secret},body:JSON.stringify({world,...payload})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Request failed');setLastSavedAt(Date.now());return data}catch{setCloudStatus('error');return null}}
@@ -45,10 +61,7 @@ export function WorldCustomizationProvider({children}:{children:ReactNode}) {
   updateMedia:(world,id,patch)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.map(a=>a.id===id?{...a,...patch}:a)}})),
   removeMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:c[world].media.filter(a=>a.id!==id)}})),
   duplicateMedia:(world,id)=>mutate(c=>({...c,[world]:{...c[world],media:[...c[world].media,...c[world].media.filter(a=>a.id===id).map(a=>({...a,id:crypto.randomUUID(),name:`${a.name} Copy`,x:Math.min(100,a.x+4),y:Math.min(100,a.y+4)}))]}})),
-  replaceSettings:(next)=>mutate(()=>next),
-  replaceWorld:(world,next)=>mutate(c=>({...c,[world]:next})),
-  saveDraft:saveDraftAction,
-  saveWorldToCloud:saveDraftAction,
+  replaceSettings:(next)=>mutate(()=>next), replaceWorld:(world,next)=>mutate(c=>({...c,[world]:next})), saveDraft:saveDraftAction, saveWorldToCloud:saveDraftAction,
   publishWorld:async(world,secret,label)=>{const data=await request(world,secret,{action:'publish',settings:settings[world],label});if(data){setCloudStatus('published');return true}return false},
   loadVersions:async(world)=>{const data=await fetch(`/api/world-design?mode=draft&world=${encodeURIComponent(world)}`).then(r=>r.json());setVersions(data.versions||[])},
   restoreVersion:async(world,versionId,secret)=>{const data=await request(world,secret,{action:'restore',versionId});if(data?.settings){setSettings(c=>({...c,[world]:data.settings}));setCloudStatus('published');return true}return false},
