@@ -11,7 +11,7 @@ export default function Home() {
       <div className={styles.backdrop} aria-hidden="true" />
       <img
         className={styles.image}
-        src="/harmonic-os-home.jpg?v=20260714-final"
+        src="/harmonic-os-home-wide.png?v=20260714-wide"
         alt="Harmonic OS cinematic universe with Melodic, Fried Em, Business, Schmackinn, and 2 Harmonic worlds"
       />
     </main>
