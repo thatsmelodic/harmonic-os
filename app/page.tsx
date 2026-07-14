@@ -9,10 +9,10 @@ export default function Home() {
   return (
     <main className={styles.page}>
       <div className={styles.backdrop} aria-hidden="true" />
-      <img
+      <div
         className={styles.image}
-        src="/harmonic-os-home-wide.png?v=20260714-wide"
-        alt="Harmonic OS cinematic universe with Melodic, Fried Em, Business, Schmackinn, and 2 Harmonic worlds"
+        role="img"
+        aria-label="Harmonic OS cinematic universe with Melodic, Fried Em, Business, Schmackinn, and 2 Harmonic worlds"
       />
     </main>
   );
