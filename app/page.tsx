@@ -1,4 +1,4 @@
-import styles from './homepage.module.css';
+import HomeExperience from './HomeExperience';
 
 export const metadata = {
   title: 'Harmonic OS | Enter the Frequency',
@@ -6,14 +6,5 @@ export const metadata = {
 };
 
 export default function Home() {
-  return (
-    <main className={styles.page}>
-      <div className={styles.backdrop} aria-hidden="true" />
-      <div
-        className={styles.image}
-        role="img"
-        aria-label="Harmonic OS cinematic universe with Melodic, Fried Em, Business, Schmackinn, and 2 Harmonic worlds"
-      />
-    </main>
-  );
+  return <HomeExperience />;
 }
