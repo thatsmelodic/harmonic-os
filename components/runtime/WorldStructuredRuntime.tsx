@@ -1,31 +1,27 @@
 'use client';
 
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, type CSSProperties, type ReactNode } from 'react';
 import { useWorldCustomization, type WorldKey } from '@/components/studio/WorldCustomizationProvider';
-import { createDefaultWorldStructure } from '@/lib/world-component-registry';
+import { parseStudioSections, readElementStyle } from '@/lib/creator-studio-model';
 
 type RuntimeSection = { id: string; node: ReactNode };
-type StructureItem = { id: string; visible: boolean; order: number };
 
-function parseStructure(raw: string | undefined, world: WorldKey): StructureItem[] {
-  const defaults = createDefaultWorldStructure(world);
-  if (!raw) return defaults;
-  try {
-    const parsed = JSON.parse(raw) as StructureItem[];
-    const allowed = new Set(defaults.map((item) => item.id));
-    const current = parsed.filter((item) => allowed.has(item.id));
-    return [...current, ...defaults.filter((item) => !current.some((entry) => entry.id === item.id))]
-      .map((item, order) => ({ ...item, order }));
-  } catch {
-    return defaults;
-  }
-}
+const motionClass = {
+  none: '',
+  fade: 'animate-[fadeIn_.45s_ease-out_both]',
+  'slide-up': 'animate-[fadeIn_.55s_ease-out_both]',
+  float: 'animate-[float_6s_ease-in-out_infinite]',
+  pulse: 'animate-pulse',
+  spin: 'animate-[spin_18s_linear_infinite]',
+  parallax: 'transition-transform duration-500 hover:-translate-y-1',
+} as const;
 
 export function WorldStructuredRuntime({ world, sections }: { world: WorldKey; sections: RuntimeSection[] }) {
   const { settings } = useWorldCustomization();
+  const active = settings[world];
   const structure = useMemo(
-    () => parseStructure(settings[world]?.labels.sectionStructure, world),
-    [settings, world],
+    () => parseStudioSections(active?.labels.sectionStructure, world),
+    [active?.labels.sectionStructure, world],
   );
   const sectionMap = useMemo(() => new Map(sections.map((section) => [section.id, section.node])), [sections]);
 
@@ -34,11 +30,31 @@ export function WorldStructuredRuntime({ world, sections }: { world: WorldKey; s
       {structure
         .filter((item) => item.visible && sectionMap.has(item.id))
         .sort((left, right) => left.order - right.order)
-        .map((item) => (
-          <div key={item.id} data-world-section={item.id} className="animate-[fadeIn_.45s_ease-out_both]">
-            {sectionMap.get(item.id)}
-          </div>
-        ))}
+        .map((item) => {
+          const style = readElementStyle(active?.labels ?? {}, item.id);
+          const wrapperStyle = {
+            width: `${style.width}%`,
+            minHeight: style.minHeight,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            padding: style.padding,
+            borderRadius: style.radius,
+            opacity: style.opacity / 100,
+            filter: `blur(${style.blur}px)`,
+            boxShadow: style.glow > 0 ? `0 0 ${style.glow}px ${active?.glow ?? '#a855f7'}22` : undefined,
+          } as CSSProperties;
+          return (
+            <div
+              key={item.id}
+              data-world-section={item.id}
+              data-studio-kind={item.kind}
+              className={motionClass[style.motion]}
+              style={wrapperStyle}
+            >
+              {sectionMap.get(item.id)}
+            </div>
+          );
+        })}
     </>
   );
 }
