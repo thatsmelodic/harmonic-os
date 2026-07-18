@@ -1,15 +1,48 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
-import { useWorldCustomization } from '@/components/studio/WorldCustomizationProvider';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useWorldCustomization, type WorldCustomization } from '@/components/studio/WorldCustomizationProvider';
 
 const SECRET_KEY='harmonic-studio-secret-session';
 
 export function StudioSafetyShell({children}:{children:ReactNode}){
-  const {activeWorld,cloudStatus,lastSavedAt,versions,saveDraft,publishWorld,loadVersions,restoreVersion,undo,redo,canUndo,canRedo,resetWorld}=useWorldCustomization();
+  const {settings,activeWorld,cloudStatus,lastSavedAt,versions,saveDraft,publishWorld,loadVersions,restoreVersion,replaceWorld,resetWorld}=useWorldCustomization();
   const [message,setMessage]=useState('');
   const [versionLabel,setVersionLabel]=useState('Manual publish');
   const [showVersions,setShowVersions]=useState(false);
+  const [historyState,setHistoryState]=useState({undo:0,redo:0});
+  const undoStack=useRef<WorldCustomization[]>([]);
+  const redoStack=useRef<WorldCustomization[]>([]);
+  const previous=useRef<WorldCustomization|null>(null);
+  const applyingHistory=useRef(false);
+
+  useEffect(()=>{
+    const current=settings[activeWorld];
+    if(applyingHistory.current){applyingHistory.current=false;previous.current=current;return;}
+    if(previous.current&&JSON.stringify(previous.current)!==JSON.stringify(current)){
+      undoStack.current=[...undoStack.current.slice(-49),previous.current];
+      redoStack.current=[];
+      setHistoryState({undo:undoStack.current.length,redo:0});
+    }
+    previous.current=current;
+  },[settings,activeWorld]);
+
+  function undo(){
+    const snapshot=undoStack.current.pop();
+    if(!snapshot)return;
+    redoStack.current.push(settings[activeWorld]);
+    applyingHistory.current=true;
+    replaceWorld(activeWorld,snapshot);
+    setHistoryState({undo:undoStack.current.length,redo:redoStack.current.length});
+  }
+  function redo(){
+    const snapshot=redoStack.current.pop();
+    if(!snapshot)return;
+    undoStack.current.push(settings[activeWorld]);
+    applyingHistory.current=true;
+    replaceWorld(activeWorld,snapshot);
+    setHistoryState({undo:undoStack.current.length,redo:redoStack.current.length});
+  }
 
   useEffect(()=>{
     const handler=(event:KeyboardEvent)=>{
@@ -52,10 +85,7 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
     setMessage((await publishWorld(activeWorld,key,versionLabel||'Manual publish'))?'Published successfully.':'Publish failed.');
     await loadVersions(activeWorld);
   }
-  async function openVersions(){
-    await loadVersions(activeWorld);
-    setShowVersions(value=>!value);
-  }
+  async function openVersions(){await loadVersions(activeWorld);setShowVersions(value=>!value);}
   async function restore(versionId:number){
     if(!window.confirm('Restore this version? Current unsaved changes will be replaced.'))return;
     const key=secret();
@@ -69,8 +99,8 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
     <div className="sticky top-0 z-[100] flex flex-wrap items-center gap-2 border-b border-white/10 bg-[#07050a]/95 px-4 py-2 text-white backdrop-blur-xl">
       <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider">{cloudStatus.replace('-',' ')}</span>
       {lastSavedAt&&<span className="text-[10px] text-white/45">Saved {new Date(lastSavedAt).toLocaleTimeString()}</span>}
-      <button className="btn" disabled={!canUndo} onClick={undo}>Undo</button>
-      <button className="btn" disabled={!canRedo} onClick={redo}>Redo</button>
+      <button className="btn disabled:opacity-30" disabled={!historyState.undo} onClick={undo}>Undo</button>
+      <button className="btn disabled:opacity-30" disabled={!historyState.redo} onClick={redo}>Redo</button>
       <button className="btn" onClick={()=>void manualSave()}>Save Draft</button>
       <button className="btn" onClick={preview}>Preview</button>
       <input value={versionLabel} onChange={event=>setVersionLabel(event.target.value)} className="min-w-[150px] rounded-lg border border-white/10 bg-black px-3 py-2 text-xs" aria-label="Publish version label"/>
