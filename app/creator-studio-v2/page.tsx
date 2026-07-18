@@ -1,15 +1,10 @@
-import { VisualCanvasStudio } from '@/components/studio/VisualCanvasStudio';
-import { StudioSafetyShell } from '@/components/studio/StudioSafetyShell';
+import { redirect } from 'next/navigation';
 
 export const metadata = {
   title: 'Creator Studio | Harmonic OS',
-  description: 'The unified visual command center for designing, previewing, saving, and publishing Harmonic OS worlds.',
+  description: 'Unified Harmonic OS creator studio.',
 };
 
-export default function CreatorStudioPage(){
-  return (
-    <StudioSafetyShell>
-      <VisualCanvasStudio />
-    </StudioSafetyShell>
-  );
+export default function CreatorStudioV2Page(){
+  redirect('/creator-studio');
 }
