@@ -7,7 +7,8 @@ const SECRET_KEY='harmonic-studio-secret-session';
 
 export function StudioSafetyShell({children}:{children:ReactNode}){
   const {settings,activeWorld,cloudStatus,lastSavedAt,versions,saveDraft,publishWorld,loadVersions,restoreVersion,replaceWorld,resetWorld}=useWorldCustomization();
-  const [message,setMessage]=useState('');
+  const [message,setMessage]=useState('Editor unlocked. Enter the Studio Secret only when saving or publishing.');
+  const [studioKey,setStudioKey]=useState('');
   const [versionLabel,setVersionLabel]=useState('Manual publish');
   const [showVersions,setShowVersions]=useState(false);
   const [historyState,setHistoryState]=useState({undo:0,redo:0});
@@ -15,6 +16,8 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
   const redoStack=useRef<WorldCustomization[]>([]);
   const previous=useRef<WorldCustomization|null>(null);
   const applyingHistory=useRef(false);
+
+  useEffect(()=>{setStudioKey(window.sessionStorage.getItem(SECRET_KEY)||'');},[]);
 
   useEffect(()=>{
     const current=settings[activeWorld];
@@ -72,25 +75,29 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
     return()=>window.removeEventListener('beforeunload',warn);
   },[cloudStatus]);
 
-  function secret(){return window.sessionStorage.getItem(SECRET_KEY)||'';}
+  function secret(){
+    const key=studioKey.trim()||window.sessionStorage.getItem(SECRET_KEY)||'';
+    if(key)window.sessionStorage.setItem(SECRET_KEY,key);
+    return key;
+  }
   async function manualSave(){
     const key=secret();
-    if(!key){setMessage('Studio key required before cloud save.');return;}
-    setMessage((await saveDraft(activeWorld,key))?'Draft saved.':'Draft save failed.');
+    if(!key){setMessage('Enter the Studio Secret in the top toolbar before cloud save.');return;}
+    setMessage((await saveDraft(activeWorld,key))?'Draft saved.':'Draft save failed. The Studio Secret does not match Vercel.');
   }
   async function publish(){
     if(!window.confirm('Publish this world to the live site?'))return;
     const key=secret();
-    if(!key){setMessage('Studio key required before publishing.');return;}
-    setMessage((await publishWorld(activeWorld,key,versionLabel||'Manual publish'))?'Published successfully.':'Publish failed.');
+    if(!key){setMessage('Enter the Studio Secret in the top toolbar before publishing.');return;}
+    setMessage((await publishWorld(activeWorld,key,versionLabel||'Manual publish'))?'Published successfully.':'Publish failed. The Studio Secret does not match Vercel.');
     await loadVersions(activeWorld);
   }
   async function openVersions(){await loadVersions(activeWorld);setShowVersions(value=>!value);}
   async function restore(versionId:number){
     if(!window.confirm('Restore this version? Current unsaved changes will be replaced.'))return;
     const key=secret();
-    if(!key){setMessage('Studio key required before restoring.');return;}
-    setMessage((await restoreVersion(activeWorld,versionId,key))?'Version restored.':'Restore failed.');
+    if(!key){setMessage('Enter the Studio Secret in the top toolbar before restoring.');return;}
+    setMessage((await restoreVersion(activeWorld,versionId,key))?'Version restored.':'Restore failed. The Studio Secret does not match Vercel.');
   }
   function preview(){window.open(`${window.location.origin}?studioProposal=1`,'_blank','noopener,noreferrer');}
   function reset(){if(window.confirm('Reset this world to its original defaults? This cannot be undone after publishing.'))resetWorld(activeWorld);}
@@ -99,6 +106,7 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
     <div className="sticky top-0 z-[100] flex flex-wrap items-center gap-2 border-b border-white/10 bg-[#07050a]/95 px-4 py-2 text-white backdrop-blur-xl">
       <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider">{cloudStatus.replace('-',' ')}</span>
       {lastSavedAt&&<span className="text-[10px] text-white/45">Saved {new Date(lastSavedAt).toLocaleTimeString()}</span>}
+      <input type="password" value={studioKey} onChange={event=>setStudioKey(event.target.value)} placeholder="Studio Secret for save/publish" className="min-w-[220px] rounded-lg border border-white/10 bg-black px-3 py-2 text-xs" aria-label="Studio Secret"/>
       <button className="btn disabled:opacity-30" disabled={!historyState.undo} onClick={undo}>Undo</button>
       <button className="btn disabled:opacity-30" disabled={!historyState.redo} onClick={redo}>Redo</button>
       <button className="btn" onClick={()=>void manualSave()}>Save Draft</button>
