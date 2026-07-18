@@ -1,11 +1,10 @@
-import { VisualCanvasStudio } from '@/components/studio/VisualCanvasStudio';
-import { StudioSafetyShell } from '@/components/studio/StudioSafetyShell';
+import { redirect } from 'next/navigation';
 
 export const metadata = {
-  title: 'Visual Canvas | Harmonic Creator Studio',
-  description: 'Direct manipulation visual editor for Harmonic OS worlds.',
+  title: 'Creator Studio | Harmonic OS',
+  description: 'Unified Harmonic OS creator studio.',
 };
 
 export default function VisualCanvasPage(){
-  return <StudioSafetyShell><VisualCanvasStudio /></StudioSafetyShell>;
+  redirect('/creator-studio');
 }
