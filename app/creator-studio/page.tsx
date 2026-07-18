@@ -1,5 +1,6 @@
 import { StudioSafetyShell } from '@/components/studio/StudioSafetyShell';
 import { StudioMediaUploadGuard } from '@/components/studio/StudioMediaUploadGuard';
+import { StudioMediaDragFix } from '@/components/studio/StudioMediaDragFix';
 import { VisualCanvasStudio } from '@/components/studio/VisualCanvasStudio';
 
 export const metadata = {
@@ -11,6 +12,7 @@ export default function CreatorStudioPage() {
   return (
     <StudioMediaUploadGuard>
       <StudioSafetyShell>
+        <StudioMediaDragFix />
         <VisualCanvasStudio />
       </StudioSafetyShell>
     </StudioMediaUploadGuard>
