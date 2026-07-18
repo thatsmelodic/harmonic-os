@@ -16,47 +16,47 @@ function formatBytes(bytes:number){if(bytes<1024*1024)return`${Math.max(1,Math.r
 async function canvasBlob(canvas:HTMLCanvasElement,quality:number){return await new Promise<Blob|null>(resolve=>canvas.toBlob(resolve,'image/jpeg',quality))}
 async function optimizeImage(file:File):Promise<File>{
  if(!file.type.startsWith('image/')||file.type==='image/gif'||file.type==='image/svg+xml')return file;
- const bitmap=await createImageBitmap(file);
- let width=bitmap.width,height=bitmap.height;
+ const bitmap=await createImageBitmap(file);let width=bitmap.width,height=bitmap.height;
  const firstScale=Math.min(1,IMAGE_MAX_EDGE/Math.max(width,height));width=Math.max(1,Math.round(width*firstScale));height=Math.max(1,Math.round(height*firstScale));
  let quality=.86;let blob:Blob|null=null;
  for(let pass=0;pass<8;pass++){
   const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
   const context=canvas.getContext('2d');if(!context){bitmap.close();return file}
   context.imageSmoothingEnabled=true;context.imageSmoothingQuality='high';context.drawImage(bitmap,0,0,width,height);
-  blob=await canvasBlob(canvas,quality);
-  if(blob&&blob.size<=IMAGE_TARGET_BYTES)break;
-  quality=Math.max(.48,quality-.08);
-  if(quality<=.5){width=Math.max(640,Math.round(width*.8));height=Math.max(640,Math.round(height*.8));quality=.72}
+  blob=await canvasBlob(canvas,quality);if(blob&&blob.size<=IMAGE_TARGET_BYTES)break;
+  quality=Math.max(.48,quality-.08);if(quality<=.5){width=Math.max(640,Math.round(width*.8));height=Math.max(640,Math.round(height*.8));quality=.72}
  }
- bitmap.close();
- if(!blob)throw new Error('This image could not be optimized in the browser.');
+ bitmap.close();if(!blob)throw new Error('This image could not be optimized in the browser.');
  const base=file.name.replace(/\.[^.]+$/,'');return new File([blob],`${base}.jpg`,{type:'image/jpeg',lastModified:file.lastModified});
 }
 
 export function StudioMediaUploadGuard({children}:{children:ReactNode}){
- const {settings,addMedia,updateMedia,removeMedia}=useWorldCustomization();const settingsRef=useRef(settings);const [items,setItems]=useState<UploadItem[]>([]);
+ const {settings,addMedia,updateMedia}=useWorldCustomization();const settingsRef=useRef(settings);const [items,setItems]=useState<UploadItem[]>([]);
  useEffect(()=>{settingsRef.current=settings},[settings]);useEffect(()=>{function capture(event:Event){const input=event.target as HTMLInputElement|null;if(!input||input.type!=='file'||!input.files?.length)return;for(const file of Array.from(input.files))void persist(file)}document.addEventListener('change',capture,true);return()=>document.removeEventListener('change',capture,true)},[]);
  async function findTemporary(name:string){for(let attempt=0;attempt<30;attempt++){for(const world of worlds){const asset=settingsRef.current[world].media.find(item=>item.name===name&&item.url.startsWith('blob:'));if(asset)return{world,asset}}await new Promise(resolve=>setTimeout(resolve,100))}return null}
+ async function uploadImage(file:File,world:WorldKey,headers:Record<string,string>){
+  const form=new FormData();form.append('file',file);form.append('world',world);
+  const response=await fetch('/api/world-design/upload/image',{method:'POST',headers,body:form});
+  const data=await response.json().catch(()=>({}));if(!response.ok||!data.url)throw new Error(data.error||'Image upload failed.');return data;
+ }
+ async function prepareAndUploadVideo(file:File,world:WorldKey,headers:Record<string,string>,id:string){
+  const response=await fetch('/api/world-design/upload',{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({world,name:file.name,size:file.size,mimeType:file.type})});
+  const data=await response.json().catch(()=>({}));if(!response.ok||!data.token||!data.endpoint)throw new Error(data.error||'Upload could not be prepared.');
+  await new Promise<void>((resolve,reject)=>{const upload=new tus.Upload(file,{endpoint:data.endpoint,retryDelays:[0,3000,5000,10000,20000],headers:{'x-signature':data.token,'x-upsert':'false'},uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,chunkSize:6*1024*1024,metadata:{bucketName:'world-assets',objectName:data.path,contentType:file.type||'application/octet-stream',cacheControl:'3600'},onError:reject,onProgress:(uploaded,total)=>{const progress=total?Math.round(uploaded/total*100):0;setItems(current=>current.map(item=>item.id===id?{...item,progress,message:`Uploading ${progress}% · resumes automatically if interrupted`}:item))},onSuccess:()=>resolve()});void upload.findPreviousUploads().then(previous=>{if(previous.length)upload.resumeFromPreviousUpload(previous[0]);upload.start()}).catch(reject)});
+  return data;
+ }
  async function persist(original:File){
   const id=crypto.randomUUID(),preview=URL.createObjectURL(original);setItems(current=>[...current,{id,name:original.name,preview,status:'preview',progress:0}]);
   const temporary=await findTemporary(original.name);const world=temporary?.world??selectedWorldFromStudio();
   try{
    if(original.size>MAX_BYTES)throw new Error('This file is larger than the 5 GB upload limit.');
    setItems(current=>current.map(item=>item.id===id?{...item,status:'uploading',message:'Optimizing media for reliable upload…'}:item));
-   const file=await optimizeImage(original);
-   if(file.type.startsWith('image/')&&file.size>IMAGE_TARGET_BYTES*1.25)throw new Error(`Image optimization stopped at ${formatBytes(file.size)}. Please export this image as JPG and try again.`);
-   if(file!==original)setItems(current=>current.map(item=>item.id===id?{...item,name:file.name,message:`Optimized ${formatBytes(original.size)} → ${formatBytes(file.size)}. Preparing upload…`}:item));
-   const headers=await studioAuthHeaders();
-   const response=await fetch('/api/world-design/upload',{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({world,name:file.name,size:file.size,mimeType:file.type})});
-   const data=await response.json().catch(()=>({}));if(!response.ok||!data.token||!data.endpoint)throw new Error(data.error||'Upload could not be prepared.');
-   await new Promise<void>((resolve,reject)=>{
-    const upload=new tus.Upload(file,{endpoint:data.endpoint,retryDelays:[0,3000,5000,10000,20000],headers:{'x-signature':data.token,'x-upsert':'false'},uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,chunkSize:6*1024*1024,metadata:{bucketName:'world-assets',objectName:data.path,contentType:file.type||'application/octet-stream',cacheControl:'3600'},onError:error=>reject(new Error(error.message.includes('maximum allowed size')?'Supabase is blocking this file at the project level. Raster images are now forced below roughly 1 MB; refresh after deployment and retry.':error.message)),onProgress:(uploaded,total)=>{const progress=total?Math.round(uploaded/total*100):0;setItems(current=>current.map(item=>item.id===id?{...item,progress,message:`Uploading ${progress}% · resumes automatically if interrupted`}:item))},onSuccess:()=>resolve()});
-    void upload.findPreviousUploads().then(previous=>{if(previous.length)upload.resumeFromPreviousUpload(previous[0]);upload.start()}).catch(reject);
-   });
+   const file=await optimizeImage(original);if(file.type.startsWith('image/')&&file.size>IMAGE_TARGET_BYTES*1.25)throw new Error(`Image optimization stopped at ${formatBytes(file.size)}.`);
+   if(file!==original)setItems(current=>current.map(item=>item.id===id?{...item,name:file.name,message:`Optimized ${formatBytes(original.size)} → ${formatBytes(file.size)}. Uploading…`}:item));
+   const headers=await studioAuthHeaders();const data=file.type.startsWith('image/')?await uploadImage(file,world,headers):await prepareAndUploadVideo(file,world,headers,id);
    if(temporary)updateMedia(world,temporary.asset.id,{name:file.name,url:data.url,kind:data.type==='video'?'video':'image',visible:true});else addMedia(world,{name:file.name,url:data.url,kind:data.type==='video'?'video':'image',placement:'hero',section:'hero',x:50,y:50,width:100,opacity:100,rotation:0,zIndex:2,loop:true,muted:true,fit:'cover',visible:true,locked:false});
    setItems(current=>current.map(item=>item.id===id?{...item,status:'ready',progress:100,preview:data.url,message:`Uploaded to ${world} and autosaving…`}:item));setTimeout(()=>setItems(current=>current.filter(item=>item.id!==id)),5000);
-  }catch(error){if(temporary)removeMedia(world,temporary.asset.id);setItems(current=>current.map(item=>item.id===id?{...item,status:'error',message:error instanceof Error?error.message:'Upload failed'}:item))}
+  }catch(error){setItems(current=>current.map(item=>item.id===id?{...item,status:'error',message:`Upload failed, but your preview was kept. ${error instanceof Error?error.message:'Try again.'}`}:item))}
  }
  return <><div className="fixed bottom-5 right-5 z-[250] grid w-[min(380px,calc(100vw-2rem))] gap-2">{items.map(item=><div key={item.id} className="flex items-center gap-3 rounded-2xl border border-white/15 bg-black/95 p-3 text-white shadow-2xl"><div className="h-14 w-14 overflow-hidden rounded-xl bg-white/5">{item.preview&&<img src={item.preview} alt="Upload preview" className="h-full w-full object-cover"/>}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-black">{item.name}</p><p className={`mt-1 text-xs ${item.status==='error'?'text-red-200':item.status==='ready'?'text-emerald-200':'text-cyan-100/70'}`}>{item.status==='preview'?'Preparing preview…':item.message}</p>{item.status==='uploading'&&<div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10"><div className="h-full bg-cyan-200 transition-[width]" style={{width:`${item.progress||0}%`}}/></div>}</div>{item.status==='error'&&<button onClick={()=>setItems(current=>current.filter(entry=>entry.id!==item.id))} className="text-xs text-white/50">Dismiss</button>}</div>)}</div>{children}</>;
 }
