@@ -1,4 +1,5 @@
 import { VisualCanvasStudio } from '@/components/studio/VisualCanvasStudio';
+import { StudioSafetyShell } from '@/components/studio/StudioSafetyShell';
 
 export const metadata = {
   title: 'Visual Canvas | Harmonic Creator Studio',
@@ -6,5 +7,5 @@ export const metadata = {
 };
 
 export default function VisualCanvasPage(){
-  return <VisualCanvasStudio />;
+  return <StudioSafetyShell><VisualCanvasStudio /></StudioSafetyShell>;
 }
