@@ -19,11 +19,12 @@ type DesignRow = {
 type MediaLike={url?:unknown;width?:unknown;height?:unknown;x?:unknown;y?:unknown;opacity?:unknown;zIndex?:unknown;[key:string]:unknown};
 type SettingsLike={media?:unknown;[key:string]:unknown};
 function finite(value:unknown,fallback:number,min:number,max:number){const number=Number(value);return Number.isFinite(number)?Math.max(min,Math.min(max,number)):fallback;}
+function validMedia(item:MediaLike){const url=item.url;return typeof url==='string'&&url.length>0&&!url.startsWith('blob:')&&!url.startsWith('data:');}
 function sanitizeSettings(input:unknown){
   if(!input||typeof input!=='object')return input;
   const settings={...(input as SettingsLike)};
   const media=Array.isArray(settings.media)?settings.media:[];
-  settings.media=media.filter((item):item is MediaLike=>Boolean(item&&typeof item==='object')).filter(item=>typeof item.url==='string'&&item.url.length>0&&!item.url.startsWith('blob:')&&!item.url.startsWith('data:')).map(item=>({...item,x:finite(item.x,50,0,100),y:finite(item.y,50,0,100),width:finite(item.width,30,1,100),height:item.height===undefined?undefined:finite(item.height,30,1,100),opacity:finite(item.opacity,100,0,100),zIndex:finite(item.zIndex,1,-1000,1000)}));
+  settings.media=media.filter((item):item is MediaLike=>Boolean(item&&typeof item==='object')).filter(validMedia).map(item=>({...item,x:finite(item.x,50,0,100),y:finite(item.y,50,0,100),width:finite(item.width,30,1,100),height:item.height===undefined?undefined:finite(item.height,30,1,100),opacity:finite(item.opacity,100,0,100),zIndex:finite(item.zIndex,1,-1000,1000)}));
   return settings;
 }
 
