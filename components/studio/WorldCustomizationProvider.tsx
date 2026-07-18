@@ -33,7 +33,7 @@ function mergeStore(source?:Partial<Store>):Store { return Object.fromEntries(Ob
 
 export function WorldCustomizationProvider({children}:{children:ReactNode}) {
  const pathname=usePathname(); const activeWorld=resolveWorld(pathname); const studioMode=pathname.startsWith('/studio')||pathname.startsWith('/creator-studio');
- const isolatedPreview=useRef(false); const dirtyWorld=useRef<WorldKey>('global'); const initialized=useRef(false);
+ const isolatedPreview=useRef(false); const dirtyWorld=useRef<WorldKey>('global'); const initialized=useRef(false); const revision=useRef(0);
  const [settings,setSettings]=useState<Store>(defaults); const [cloudStatus,setCloudStatus]=useState<CloudStatus>('loading'); const [lastSavedAt,setLastSavedAt]=useState<number|null>(null); const [versions,setVersions]=useState<WorldVersion[]>([]);
  useEffect(()=>{
   const params=new URLSearchParams(window.location.search); const proposalMode=params.get('studioProposal')==='1'; isolatedPreview.current=proposalMode;
@@ -47,14 +47,23 @@ export function WorldCustomizationProvider({children}:{children:ReactNode}) {
  useEffect(()=>{const active=settings[activeWorld]||settings.global;const root=document.documentElement;(['primary','secondary','accent','background','surface','text','muted','border','glow'] as const).forEach(k=>root.style.setProperty(`--world-${k}`,active[k]));root.dataset.world=activeWorld},[settings,activeWorld]);
  useEffect(()=>{
   if(!studioMode||isolatedPreview.current||cloudStatus!=='dirty'||!initialized.current)return;
-  const secret=window.sessionStorage.getItem(SECRET_KEY)||''; if(!secret)return;
-  const world=dirtyWorld.current; const snapshot=settings[world];
-  const timer=window.setTimeout(()=>{void request(world,secret,{action:'save-draft',settings:snapshot}).then(data=>{if(data)setCloudStatus('draft-saved')})},900);
+  const secret=window.sessionStorage.getItem(SECRET_KEY)||window.localStorage.getItem(SECRET_KEY)||''; if(!secret)return;
+  const world=dirtyWorld.current; const snapshot=settings[world]; const saveRevision=revision.current;
+  const timer=window.setTimeout(()=>{void request(world,secret,{action:'save-draft',settings:snapshot},saveRevision,'draft-saved')},900);
   return()=>window.clearTimeout(timer);
  },[settings,cloudStatus,studioMode]);
- const mutate=(world:WorldKey,fn:(current:Store)=>Store)=>{dirtyWorld.current=world;setSettings(fn);setCloudStatus('dirty')};
- async function request(world:WorldKey,secret:string,payload:Record<string,unknown>){setCloudStatus('saving');try{const r=await fetch('/api/world-design',{method:'PUT',headers:{'Content-Type':'application/json','x-harmonic-studio-key':secret},body:JSON.stringify({world,...payload})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Request failed');setLastSavedAt(Date.now());return data}catch{setCloudStatus('error');return null}}
- const saveDraftAction=async(world:WorldKey,secret:string)=>{const data=await request(world,secret,{action:'save-draft',settings:settings[world]});if(data){setCloudStatus('draft-saved');return true}return false};
+ const mutate=(world:WorldKey,fn:(current:Store)=>Store)=>{dirtyWorld.current=world;revision.current+=1;setSettings(fn);setCloudStatus('dirty')};
+ async function request(world:WorldKey,secret:string,payload:Record<string,unknown>,saveRevision=revision.current,successStatus:CloudStatus='ready'){
+  setCloudStatus('saving');
+  try{
+   const r=await fetch('/api/world-design',{method:'PUT',headers:{'Content-Type':'application/json','x-harmonic-studio-key':secret},body:JSON.stringify({world,...payload})});
+   const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Request failed');
+   setLastSavedAt(Date.now());
+   setCloudStatus(revision.current===saveRevision?successStatus:'dirty');
+   return data;
+  }catch{setCloudStatus('error');return null}
+ }
+ const saveDraftAction=async(world:WorldKey,secret:string)=>{const saveRevision=revision.current;const data=await request(world,secret,{action:'save-draft',settings:settings[world]},saveRevision,'draft-saved');return Boolean(data)};
  const value=useMemo<ContextValue>(()=>({settings,activeWorld,cloudStatus,lastSavedAt,versions,
   updateWorld:(world,patch)=>mutate(world,c=>({...c,[world]:{...c[world],...patch}})),
   updateLabel:(world,key,label)=>mutate(world,c=>({...c,[world]:{...c[world],labels:{...c[world].labels,[key]:label}}})),
@@ -63,9 +72,9 @@ export function WorldCustomizationProvider({children}:{children:ReactNode}) {
   removeMedia:(world,id)=>mutate(world,c=>({...c,[world]:{...c[world],media:c[world].media.filter(a=>a.id!==id)}})),
   duplicateMedia:(world,id)=>mutate(world,c=>({...c,[world]:{...c[world],media:[...c[world].media,...c[world].media.filter(a=>a.id===id).map(a=>({...a,id:crypto.randomUUID(),name:`${a.name} Copy`,x:Math.min(100,a.x+4),y:Math.min(100,a.y+4)}))]}})),
   replaceSettings:(next)=>mutate('global',()=>next), replaceWorld:(world,next)=>mutate(world,c=>({...c,[world]:next})), saveDraft:saveDraftAction, saveWorldToCloud:saveDraftAction,
-  publishWorld:async(world,secret,label)=>{const data=await request(world,secret,{action:'publish',settings:settings[world],label});if(data){setCloudStatus('published');return true}return false},
+  publishWorld:async(world,secret,label)=>{const saveRevision=revision.current;const data=await request(world,secret,{action:'publish',settings:settings[world],label},saveRevision,'published');return Boolean(data)},
   loadVersions:async(world)=>{const data=await fetch(`/api/world-design?mode=draft&world=${encodeURIComponent(world)}`).then(r=>r.json());setVersions(data.versions||[])},
-  restoreVersion:async(world,versionId,secret)=>{const data=await request(world,secret,{action:'restore',versionId});if(data?.settings){setSettings(c=>({...c,[world]:data.settings}));setCloudStatus('published');return true}return false},
+  restoreVersion:async(world,versionId,secret)=>{const saveRevision=revision.current;const data=await request(world,secret,{action:'restore',versionId},saveRevision,'published');if(data?.settings){setSettings(c=>({...c,[world]:data.settings}));return true}return false},
   copyToAll:(world)=>mutate(world,c=>Object.fromEntries(Object.keys(c).map(k=>[k,{...c[world],labels:{...c[world].labels},media:c[world].media.map(a=>({...a,id:crypto.randomUUID()}))}])) as Store),
   resetWorld:(world)=>mutate(world,c=>({...c,[world]:defaults[world]}))
  }),[settings,activeWorld,cloudStatus,lastSavedAt,versions]);
