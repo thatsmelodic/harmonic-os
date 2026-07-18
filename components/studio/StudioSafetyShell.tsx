@@ -1,13 +1,25 @@
 'use client';
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { useWorldCustomization, type WorldCustomization } from '@/components/studio/WorldCustomizationProvider';
+import { useWorldCustomization, type WorldCustomization, type WorldKey } from '@/components/studio/WorldCustomizationProvider';
 
 const SECRET_KEY='harmonic-studio-secret-session';
 
+function selectedWorldFromStudio(fallback:WorldKey):WorldKey{
+  const active=Array.from(document.querySelectorAll('button')).find((button)=>button.className.includes('bg-purple-200')||button.className.includes('bg-white/12')||button.className.includes('bg-purple-300/15'));
+  const label=(active?.querySelector('p')?.textContent||active?.textContent||'').trim().toLowerCase();
+  if(label.includes('homepage'))return'home';
+  if(label.includes('melodic'))return'melodic';
+  if(label.includes('fried em'))return'fried-em';
+  if(label.includes('schmackinn'))return'schmackinn';
+  if(label.includes('2 harmonic'))return'two-harmonic';
+  if(label.includes('global system'))return'global';
+  return fallback==='global'?'home':fallback;
+}
+
 export function StudioSafetyShell({children}:{children:ReactNode}){
   const {settings,activeWorld,cloudStatus,lastSavedAt,versions,saveDraft,publishWorld,loadVersions,restoreVersion,replaceWorld,resetWorld}=useWorldCustomization();
-  const [message,setMessage]=useState('Editor unlocked. Enter the Studio Secret only when saving or publishing.');
+  const [message,setMessage]=useState('Editor unlocked. Your Studio Secret is remembered on this device after the first successful setup.');
   const [studioKey,setStudioKey]=useState('');
   const [versionLabel,setVersionLabel]=useState('Manual publish');
   const [showVersions,setShowVersions]=useState(false);
@@ -17,7 +29,8 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
   const previous=useRef<WorldCustomization|null>(null);
   const applyingHistory=useRef(false);
 
-  useEffect(()=>{setStudioKey(window.sessionStorage.getItem(SECRET_KEY)||'');},[]);
+  useEffect(()=>{setStudioKey(window.sessionStorage.getItem(SECRET_KEY)||window.localStorage.getItem(SECRET_KEY)||'');},[]);
+  useEffect(()=>{if(studioKey.trim())window.localStorage.setItem(SECRET_KEY,studioKey.trim());},[studioKey]);
 
   useEffect(()=>{
     const current=settings[activeWorld];
@@ -30,20 +43,23 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
     previous.current=current;
   },[settings,activeWorld]);
 
+  function currentWorld(){return selectedWorldFromStudio(activeWorld);}
   function undo(){
     const snapshot=undoStack.current.pop();
     if(!snapshot)return;
-    redoStack.current.push(settings[activeWorld]);
+    const world=currentWorld();
+    redoStack.current.push(settings[world]);
     applyingHistory.current=true;
-    replaceWorld(activeWorld,snapshot);
+    replaceWorld(world,snapshot);
     setHistoryState({undo:undoStack.current.length,redo:redoStack.current.length});
   }
   function redo(){
     const snapshot=redoStack.current.pop();
     if(!snapshot)return;
-    undoStack.current.push(settings[activeWorld]);
+    const world=currentWorld();
+    undoStack.current.push(settings[world]);
     applyingHistory.current=true;
-    replaceWorld(activeWorld,snapshot);
+    replaceWorld(world,snapshot);
     setHistoryState({undo:undoStack.current.length,redo:redoStack.current.length});
   }
 
@@ -76,37 +92,40 @@ export function StudioSafetyShell({children}:{children:ReactNode}){
   },[cloudStatus]);
 
   function secret(){
-    const key=studioKey.trim()||window.sessionStorage.getItem(SECRET_KEY)||'';
-    if(key)window.sessionStorage.setItem(SECRET_KEY,key);
+    const key=studioKey.trim()||window.sessionStorage.getItem(SECRET_KEY)||window.localStorage.getItem(SECRET_KEY)||'';
+    if(key){window.sessionStorage.setItem(SECRET_KEY,key);window.localStorage.setItem(SECRET_KEY,key);}
     return key;
   }
   async function manualSave(){
     const key=secret();
-    if(!key){setMessage('Enter the Studio Secret in the top toolbar before cloud save.');return;}
-    setMessage((await saveDraft(activeWorld,key))?'Draft saved.':'Draft save failed. The Studio Secret does not match Vercel.');
+    if(!key){setMessage('Enter the Studio Secret once in the top toolbar before cloud save.');return;}
+    const world=currentWorld();
+    setMessage((await saveDraft(world,key))?`${world} draft saved.`:'Draft save failed. The Studio Secret does not match Vercel.');
   }
   async function publish(){
     if(!window.confirm('Publish this world to the live site?'))return;
     const key=secret();
-    if(!key){setMessage('Enter the Studio Secret in the top toolbar before publishing.');return;}
-    setMessage((await publishWorld(activeWorld,key,versionLabel||'Manual publish'))?'Published successfully.':'Publish failed. The Studio Secret does not match Vercel.');
-    await loadVersions(activeWorld);
+    if(!key){setMessage('Enter the Studio Secret once in the top toolbar before publishing.');return;}
+    const world=currentWorld();
+    setMessage((await publishWorld(world,key,versionLabel||'Manual publish'))?`${world} published successfully.`:'Publish failed. The Studio Secret does not match Vercel.');
+    await loadVersions(world);
   }
-  async function openVersions(){await loadVersions(activeWorld);setShowVersions(value=>!value);}
+  async function openVersions(){const world=currentWorld();await loadVersions(world);setShowVersions(value=>!value);}
   async function restore(versionId:number){
     if(!window.confirm('Restore this version? Current unsaved changes will be replaced.'))return;
     const key=secret();
-    if(!key){setMessage('Enter the Studio Secret in the top toolbar before restoring.');return;}
-    setMessage((await restoreVersion(activeWorld,versionId,key))?'Version restored.':'Restore failed. The Studio Secret does not match Vercel.');
+    if(!key){setMessage('Enter the Studio Secret once in the top toolbar before restoring.');return;}
+    const world=currentWorld();
+    setMessage((await restoreVersion(world,versionId,key))?'Version restored.':'Restore failed. The Studio Secret does not match Vercel.');
   }
   function preview(){window.open(`${window.location.origin}?studioProposal=1`,'_blank','noopener,noreferrer');}
-  function reset(){if(window.confirm('Reset this world to its original defaults? This cannot be undone after publishing.'))resetWorld(activeWorld);}
+  function reset(){const world=currentWorld();if(window.confirm('Reset this world to its original defaults? This cannot be undone after publishing.'))resetWorld(world);}
 
   return <div>
     <div className="sticky top-0 z-[100] flex flex-wrap items-center gap-2 border-b border-white/10 bg-[#07050a]/95 px-4 py-2 text-white backdrop-blur-xl">
       <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider">{cloudStatus.replace('-',' ')}</span>
       {lastSavedAt&&<span className="text-[10px] text-white/45">Saved {new Date(lastSavedAt).toLocaleTimeString()}</span>}
-      <input type="password" value={studioKey} onChange={event=>setStudioKey(event.target.value)} placeholder="Studio Secret for save/publish" className="min-w-[220px] rounded-lg border border-white/10 bg-black px-3 py-2 text-xs" aria-label="Studio Secret"/>
+      <input type="password" value={studioKey} onChange={event=>setStudioKey(event.target.value)} placeholder="Studio Secret · remembered on this device" className="min-w-[220px] rounded-lg border border-white/10 bg-black px-3 py-2 text-xs" aria-label="Studio Secret"/>
       <button className="btn disabled:opacity-30" disabled={!historyState.undo} onClick={undo}>Undo</button>
       <button className="btn disabled:opacity-30" disabled={!historyState.redo} onClick={redo}>Redo</button>
       <button className="btn" onClick={()=>void manualSave()}>Save Draft</button>
