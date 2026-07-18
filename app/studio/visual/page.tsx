@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function VisualCanvasPage(){
-  redirect('/creator-studio-v2');
+  redirect('/creator-studio');
 }
