@@ -34,6 +34,7 @@ export type StudioElementStyle = {
   marginRight: number;
   marginBottom: number;
   marginLeft: number;
+  padding: number;
   paddingTop: number;
   paddingRight: number;
   paddingBottom: number;
@@ -98,6 +99,7 @@ export const defaultElementStyle: StudioElementStyle = {
   marginRight: 0,
   marginBottom: 0,
   marginLeft: 0,
+  padding: 24,
   paddingTop: 24,
   paddingRight: 24,
   paddingBottom: 24,
@@ -160,12 +162,14 @@ export function readElementStyle(labels: Record<string, string>, elementId: stri
   const raw = labels[`studio.style.${elementId}`];
   if (!raw) return defaultElementStyle;
   try {
-    const parsed = JSON.parse(raw) as Partial<StudioElementStyle> & { padding?: number };
+    const parsed = JSON.parse(raw) as Partial<StudioElementStyle>;
     const legacyPadding = typeof parsed.padding === 'number' ? parsed.padding : undefined;
+    const paddingTop = parsed.paddingTop ?? legacyPadding ?? defaultElementStyle.paddingTop;
     return {
       ...defaultElementStyle,
       ...parsed,
-      paddingTop: parsed.paddingTop ?? legacyPadding ?? defaultElementStyle.paddingTop,
+      padding: legacyPadding ?? paddingTop,
+      paddingTop,
       paddingRight: parsed.paddingRight ?? legacyPadding ?? defaultElementStyle.paddingRight,
       paddingBottom: parsed.paddingBottom ?? legacyPadding ?? defaultElementStyle.paddingBottom,
       paddingLeft: parsed.paddingLeft ?? legacyPadding ?? defaultElementStyle.paddingLeft,
@@ -176,7 +180,7 @@ export function readElementStyle(labels: Record<string, string>, elementId: stri
 }
 
 export function writeElementStyle(style: StudioElementStyle): string {
-  return JSON.stringify(style);
+  return JSON.stringify({ ...style, padding: style.paddingTop });
 }
 
 export function moveStudioSection(sections: StudioSection[], id: string, direction: -1 | 1): StudioSection[] {
