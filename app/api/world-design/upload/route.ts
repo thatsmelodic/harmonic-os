@@ -1,12 +1,47 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { requireStudioUser, studioAuthError } from '@/lib/studio-auth-server';
 
-const BUCKET='world-assets';const MAX_BYTES=100*1024*1024;
-function getEnv(){const url=process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/,'');const serviceKey=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!url||!serviceKey)throw new Error('World asset storage is not configured');return{url,serviceKey}}
-function authHeaders(serviceKey:string){return{apikey:serviceKey,Authorization:`Bearer ${serviceKey}`}}
-async function ensureBucket(url:string,serviceKey:string){const existing=await fetch(`${url}/storage/v1/bucket/${BUCKET}`,{headers:authHeaders(serviceKey),cache:'no-store'});if(existing.ok)return;if(existing.status!==404&&existing.status!==400)throw new Error(`Storage check failed: ${await existing.text()}`);const created=await fetch(`${url}/storage/v1/bucket`,{method:'POST',headers:{...authHeaders(serviceKey),'Content-Type':'application/json'},body:JSON.stringify({id:BUCKET,name:BUCKET,public:true,file_size_limit:MAX_BYTES,allowed_mime_types:['image/*','video/*']})});if(!created.ok&&created.status!==409)throw new Error(`Storage bucket could not be created: ${await created.text()}`)}
+const BUCKET='world-assets';
+const MAX_BYTES=5*1024*1024*1024;
+
+function getEnv(){
+  const url=process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/,'');
+  const serviceKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if(!url||!serviceKey)throw new Error('World asset storage is not configured');
+  return{url,serviceKey};
+}
+
+async function ensureBucket(url:string,serviceKey:string){
+  const supabase=createClient(url,serviceKey,{auth:{persistSession:false,autoRefreshToken:false}});
+  const {data:bucket}=await supabase.storage.getBucket(BUCKET);
+  if(bucket){
+    const {error}=await supabase.storage.updateBucket(BUCKET,{public:true,fileSizeLimit:MAX_BYTES,allowedMimeTypes:['image/*','video/*']});
+    if(error)throw error;
+  }else{
+    const {error}=await supabase.storage.createBucket(BUCKET,{public:true,fileSizeLimit:MAX_BYTES,allowedMimeTypes:['image/*','video/*']});
+    if(error)throw error;
+  }
+  return supabase;
+}
+
 export async function POST(request:Request){
- try{await requireStudioUser(request)}catch(error){const auth=studioAuthError(error);return NextResponse.json({error:auth.error},{status:auth.status})}
- try{const{url,serviceKey}=getEnv();const form=await request.formData();const file=form.get('file');const world=String(form.get('world')||'global').replace(/[^a-z0-9-]/gi,'-');if(!(file instanceof File))return NextResponse.json({error:'Choose an image, GIF, or video file.'},{status:400});if(!file.type.startsWith('image/')&&!file.type.startsWith('video/'))return NextResponse.json({error:'Only images, GIFs, and videos are supported.'},{status:400});if(file.size<=0)return NextResponse.json({error:'The selected file is empty.'},{status:400});if(file.size>MAX_BYTES)return NextResponse.json({error:'Media must be 100 MB or smaller.'},{status:413});await ensureBucket(url,serviceKey);const safeName=file.name.replace(/[^a-z0-9._-]/gi,'-');const objectPath=`${world}/${crypto.randomUUID()}-${safeName}`;const response=await fetch(`${url}/storage/v1/object/${BUCKET}/${objectPath}`,{method:'POST',headers:{...authHeaders(serviceKey),'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});if(!response.ok)return NextResponse.json({error:`Upload failed: ${await response.text()}`},{status:response.status});return NextResponse.json({ok:true,url:`${url}/storage/v1/object/public/${BUCKET}/${objectPath}`,path:objectPath,name:file.name,size:file.size,mimeType:file.type,type:file.type.startsWith('video/')?'video':'image'})}
- catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Upload service failed.'},{status:500})}
+  try{await requireStudioUser(request)}catch(error){const auth=studioAuthError(error);return NextResponse.json({error:auth.error},{status:auth.status})}
+  try{
+    const {url,serviceKey}=getEnv();
+    const body=await request.json() as {world?:string;name?:string;size?:number;mimeType?:string};
+    const world=String(body.world||'global').replace(/[^a-z0-9-]/gi,'-');
+    const name=String(body.name||'upload').replace(/[^a-z0-9._-]/gi,'-');
+    const size=Number(body.size||0);
+    const mimeType=String(body.mimeType||'application/octet-stream');
+    if(size<=0)return NextResponse.json({error:'The selected file is empty.'},{status:400});
+    if(size>MAX_BYTES)return NextResponse.json({error:'Files must be 5 GB or smaller.'},{status:413});
+    if(!mimeType.startsWith('image/')&&!mimeType.startsWith('video/'))return NextResponse.json({error:'Only images, GIFs, and videos are supported.'},{status:400});
+    const supabase=await ensureBucket(url,serviceKey);
+    const path=`${world}/${crypto.randomUUID()}-${name}`;
+    const {data,error}=await supabase.storage.from(BUCKET).createSignedUploadUrl(path,{upsert:false});
+    if(error||!data?.token)throw error||new Error('Unable to prepare upload');
+    const projectId=new URL(url).hostname.split('.')[0];
+    return NextResponse.json({ok:true,token:data.token,path,url:`${url}/storage/v1/object/public/${BUCKET}/${path}`,endpoint:`https://${projectId}.storage.supabase.co/storage/v1/upload/resumable`,type:mimeType.startsWith('video/')?'video':'image',maxBytes:MAX_BYTES});
+  }catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Upload service failed.'},{status:500})}
 }
