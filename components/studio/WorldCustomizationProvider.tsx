@@ -7,7 +7,7 @@ export type WorldKey = 'global' | 'home' | 'melodic' | 'fried-em' | 'schmackinn'
 export type MediaKind = 'image' | 'video';
 export type MediaPlacement = 'background' | 'hero' | 'logo' | 'floating' | 'section';
 export type MotionPreset = 'none' | 'fade' | 'slide-up' | 'float' | 'pulse' | 'spin' | 'parallax';
-export type WorldMediaAsset = { id:string; name:string; url:string; kind:MediaKind; placement:MediaPlacement; section?:string; x:number; y:number; width:number; opacity:number; rotation:number; zIndex:number; loop:boolean; muted:boolean; fit:'cover'|'contain'; motion?:MotionPreset; duration?:number; delay?:number; };
+export type WorldMediaAsset = { id:string; name:string; url:string; kind:MediaKind; placement:MediaPlacement; section?:string; x:number; y:number; width:number; opacity:number; rotation:number; zIndex:number; loop:boolean; muted:boolean; fit:'cover'|'contain'; motion?:MotionPreset; duration?:number; delay?:number; height?:number; radius?:number; focalX?:number; focalY?:number; brightness?:number; contrast?:number; saturation?:number; flipX?:boolean; flipY?:boolean; alt?:string; link?:string; visible?:boolean; locked?:boolean; };
 export type WorldCustomization = { primary:string; secondary:string; accent:string; background:string; surface:string; text:string; muted:string; border:string; glow:string; title?:string; subtitle?:string; labels:Record<string,string>; media:WorldMediaAsset[]; layoutPreset?:string; themePreset?:string; };
 export type WorldVersion = { id:number; world:string; version:number; label:string; settings:WorldCustomization; created_at:string; };
 export type WorldCustomizationStore = Record<WorldKey,WorldCustomization>;
@@ -58,7 +58,7 @@ export function WorldCustomizationProvider({children}:{children:ReactNode}) {
  const value=useMemo<ContextValue>(()=>({settings,activeWorld,cloudStatus,lastSavedAt,versions,
   updateWorld:(world,patch)=>mutate(world,c=>({...c,[world]:{...c[world],...patch}})),
   updateLabel:(world,key,label)=>mutate(world,c=>({...c,[world]:{...c[world],labels:{...c[world].labels,[key]:label}}})),
-  addMedia:(world,asset)=>mutate(world,c=>({...c,[world]:{...c[world],media:[...c[world].media,{...asset,id:crypto.randomUUID(),motion:asset.motion||'none',duration:asset.duration||6,delay:asset.delay||0}]}})),
+  addMedia:(world,asset)=>mutate(world,c=>({...c,[world]:{...c[world],media:[...c[world].media,{...asset,id:crypto.randomUUID(),motion:asset.motion||'none',duration:asset.duration||6,delay:asset.delay||0,visible:asset.visible!==false,locked:Boolean(asset.locked)}]}})),
   updateMedia:(world,id,patch)=>mutate(world,c=>({...c,[world]:{...c[world],media:c[world].media.map(a=>a.id===id?{...a,...patch}:a)}})),
   removeMedia:(world,id)=>mutate(world,c=>({...c,[world]:{...c[world],media:c[world].media.filter(a=>a.id!==id)}})),
   duplicateMedia:(world,id)=>mutate(world,c=>({...c,[world]:{...c[world],media:[...c[world].media,...c[world].media.filter(a=>a.id===id).map(a=>({...a,id:crypto.randomUUID(),name:`${a.name} Copy`,x:Math.min(100,a.x+4),y:Math.min(100,a.y+4)}))]}})),
